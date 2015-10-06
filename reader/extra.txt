@@ -1,0 +1,119 @@
+/*function readVector4(DOM, elementToRead1, elementToRead2, elementToRead3, elementToRead4) {
+    if (DOM.length > 2) {
+        console.warn("More than one " + DOM.nodeName + " default protocol will be followed");
+    }
+
+    return new Array(DOM[0].attributes.getNamedItem(elementToRead1).value,
+        DOM[0].attributes.getNamedItem(elementToRead2).value,
+        DOM[0].attributes.getNamedItem(elementToRead3).value,
+        DOM[0].attributes.getNamedItem(elementToRead4).value);
+
+
+};*/
+/*
+//need to undo, what was done before??
+function parseRotate(transformation) {
+    if (transformation.angle == undefined) {
+        transformation.angle = 0;
+        console.warn("Angle not defined using default value: 0");
+    }
+
+    if (transformation.Z != 0) {
+        return [
+            [Math.cos(transformation.angle), -Math.sin(transformation.angle), 0, 0],
+            [Math.sin(transformation.angle), Math.cos(transformation.angle), 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ];
+    } else
+    if (transformation.Y != 0) {
+        return [
+            [Math.cos(transformation.angle), 0, Math.sin(transformation.angle), 0],
+            [0, 1, 0, 0],
+            [-Math.sin(transformation.angle), 0, Math.cos(transformation.angle), 0],
+            [0, 0, 0, 1]
+        ];
+    } else
+    if (transformation.X != 0) {
+        return [
+            [1, 0, 0, 0],
+            [0, Math.cos(transformation.angle), -Math.sin(transformation.angle), 0],
+            [0, Math.sin(transformation.angle), Math.cos(transformation.angle), 0],
+            [0, 0, 0, 1]
+        ];
+    } else {
+        console.warn("Unknown Axis:\n" + transformation.angle + " " + transformation.X + " " + transformation.Y + " " + transformation.Z);
+        return [
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1]
+        ];
+    }
+
+
+};
+
+function parseScale(transformation) {
+    if (transformation.X == undefined) {
+        transformation.X = 1;
+        console.warn("X value no defined in Scale using default value 1");
+    }
+    if (transformation.Y == undefined) {
+        transformation.Y = 1;
+        console.warn("Y value no defined in Scale using default value 1");
+    }
+    if (transformation.Z == undefined) {
+        transformation.Z = 1;
+        console.warn("Z value no defined in Scale using default value 1");
+    }
+    return [
+        [transformation.X, 0, 0, 0],
+        [0, transformation.Y, 0, 0],
+        [0, 0, transformation.Z, 0],
+        [0, 0, 0, 1]
+    ];
+};
+
+function parseTranslate(transformation) {
+    if (transformation.X == undefined) {
+        transformation.X = 0;
+        console.warn("X value no defined in Translate using default value 0");
+    }
+    if (transformation.Y == undefined) {
+        transformation.Y = 0;
+        console.warn("Y value no defined in Translate using default value 0");
+    }
+    if (transformation.Z == undefined) {
+        transformation.Z = 0;
+        console.warn("Z value no defined in Translate using default value 0");
+    }
+    return [
+        [1, 0, 0, transformation.X],
+        [0, 1, 0, transformation.Y],
+        [0, 0, 1, transformation.Z],
+        [0, 0, 0, 1]
+    ];
+};
+
+ 
+//ver como são passados os arumentos, impossivel de trocar valor mas pode-se modificar??
+MySceneGraph.prototype.parseTransformation = function(oldMatrix, type, transformation) {
+    //bool para as diferentes fases? por exemplo faz parsing da rot X e faz rotX=true etc...s
+    switch (type) {
+        case "rotation":
+            multiplyMatrix(parseRotate(transformation), oldMatrix);
+            break;
+        case "translate":
+            multiplyMatrix(parseTranslate(transformation), oldMatrix);
+            break;
+        case "scale":
+            multiplyMatrix(parseScale(transformation), oldMatrix);
+            break;
+        default:
+            console.warn("Unknown type of transformation:\n" + transformation.angle + " " + transformation.X + " " + transformation.Y + " " + transformation.Z);
+    }
+
+};
+
+*/
