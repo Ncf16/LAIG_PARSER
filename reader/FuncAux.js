@@ -41,6 +41,19 @@ function parseLeafAux(leave, type) {
 
 };
 
+function crossProduct(V1, V2) {
+	return [
+		V2[2] * V1[0] - V2[0] * V1[2],
+		V2[1] * V1[2] - V2[2] * V1[1],
+		V2[0] * V1[1] - V2[1] * V1[0]
+
+	];
+};
+
+function scalarProduct(V1, V2) {
+	return V2[0] * V1[0] + V2[1] * V1[1] + V2[2] * V1[2];
+}
+
 function addID(DOM, sceneGraph, ArrayOfIDs, newID) {
 	var tempIdStorage;
 	if (newID == undefined)
@@ -77,7 +90,7 @@ function addID(DOM, sceneGraph, ArrayOfIDs, newID) {
 };
 
 function readElement(DOM, elementToRead, DOMnumberOfElements) {
-	
+
 	if (DOM == undefined)
 		return [];
 	var size = elementToRead.length;

@@ -102,10 +102,17 @@ XMLscene.prototype.onGraphLoaded = function() {
 	this.axis = new CGFaxis(this, this.graph.initials.getAxisLength(), DEFAULT_THICKNESS);
 
 
+
+	this.appearance = new CGFappearance(this);
+	this.appearance.setAmbient(0.3, 0.3, 0.3, 1);
+	this.appearance.setDiffuse(1, 1, 1, 1);
+	this.appearance.setSpecular(0.8, 0.8, 0.8, 1);
+	this.appearance.setShininess(120);
+	this.appearance.loadTexture("../resources/images/board.png");
 	this.UpdateCamera();
 	this.CreateLights();
 	this.leaves = this.graph.initials.leaves;
-	/**this.rec = new Rectangle(this, [0, 1, 0], [1, 0, 0]);*/
+	this.rec = new Rectangle(this, [0, 1, 0], [1, 0, 0]);
 	this.tri = new Triangle(this, [1, 0, 0], [0, 0, 1], [0, 0, 0]);
 	this.CreateMaterials();
 };
@@ -140,14 +147,13 @@ XMLscene.prototype.display = function() {
 	// This is one possible way to do it
 	if (this.graph.loadedOk) {
 		this.graph.transformation.addMatrix();
-		this.pushMatrix();
-		this.tri.display();
-		this.popMatrix();
 
 		for (key in this.leaves) {
 			if (this.graph.initials.leaves[key].type != "Cylinder" && this.leaves[key].type != "Sphere") {
+				this.pushMatrix();
+				this.leaves[key].getElement().appearance.apply();
 				this.leaves[key].getElement().display();
-
+				this.popMatrix();
 			}
 		}
 		for (var j = 0; j < this.lights.length; j++)
