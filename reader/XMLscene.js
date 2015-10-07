@@ -105,8 +105,8 @@ XMLscene.prototype.onGraphLoaded = function() {
 	this.UpdateCamera();
 	this.CreateLights();
 	this.leaves = this.graph.initials.leaves;
-	/**this.rec = new Rectangle(this, [0, 1, 0], [1, 0, 0]);
-	this.tri = new Triangle(this, [1, 0, 0], [0, 0, 1], [0, 0, 0]);*/
+	/**this.rec = new Rectangle(this, [0, 1, 0], [1, 0, 0]);*/
+	this.tri = new Triangle(this, [1, 0, 0], [0, 0, 1], [0, 0, 0]);
 	this.CreateMaterials();
 };
 
@@ -141,13 +141,13 @@ XMLscene.prototype.display = function() {
 	if (this.graph.loadedOk) {
 		this.graph.transformation.addMatrix();
 		this.pushMatrix();
-		//this.tri.display();
+		this.tri.display();
 		this.popMatrix();
 
-		for (var i = 0; i < this.leaves.length; i++) {
-			if (this.leaves[i].type != "Cylinder" && this.leaves[i].type != "Sphere") {
-				console.log("SHOW ELEMENT: ");
-				this.leaves[i].getElement().display();
+		for (key in this.leaves) {
+			if (this.graph.initials.leaves[key].type != "Cylinder" && this.leaves[key].type != "Sphere") {
+				this.leaves[key].getElement().display();
+
 			}
 		}
 		for (var j = 0; j < this.lights.length; j++)

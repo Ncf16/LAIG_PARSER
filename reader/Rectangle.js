@@ -36,7 +36,7 @@ Rectangle.prototype.initBuffers = function() {
         this.rightBottom[0], this.rightBottom[1], 0,
         topRight[0], topRight[1], 0
     ];
-
+    console.log(this.vertices);
     this.indices = [
         0, 1, 2,
         2, 3, 0,
