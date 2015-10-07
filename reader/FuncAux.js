@@ -77,6 +77,7 @@ function addID(DOM, sceneGraph, ArrayOfIDs, newID) {
 };
 
 function readElement(DOM, elementToRead, DOMnumberOfElements) {
+	
 	if (DOM == undefined)
 		return [];
 	var size = elementToRead.length;

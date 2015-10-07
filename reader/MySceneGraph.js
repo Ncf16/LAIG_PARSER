@@ -50,28 +50,39 @@ MySceneGraph.prototype.onXMLReady = function() {
     var rootElement = this.reader.xmlDoc.documentElement;
 
     // Here should go the calls for different functions to parse the various blocks
-    this.loadedOk = true;
-    var error = this.parseLSX(rootElement);
+    try{
+        if (rootElement == null || rootElement.nodeName != "SCENE")
+            throw new XMLError("main block missing");
 
-    if (error != null) {
-        this.onXMLError(error);
-        return;
+        this.initials = new initials();
+        this.transformation = new Transformation(this.scene);
+
+        this.parseInitials(rootElement);
+        this.parseIllumination(rootElement);
+        this.parseLights(rootElement);
+        this.parseTextures(rootElement);
+        this.parseMaterials(rootElement);
+        this.parseLeaf(rootElement);
+        //this.parseNodes(rootElement);
     }
+    catch(err) {
+        if( err instanceof XMLError){
+            console.error(err.message);
+            this.loadedOk = false;
+            return;
+        }
+        else
+            console.error(err.message);
+    }
+
+    this.loadedOk=true;
+
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
     this.scene.onGraphLoaded();
 };
 
-MySceneGraph.prototype.parseLSX = function(rootElement) {
-    console.log("Start LSX");
-    this.initials = new initials();
-    this.transformation = new Transformation(this.scene);
-    this.parseInitials(rootElement);
-    this.parseLights(rootElement);
-    this.parseMaterials(rootElement);
-    this.parseLeaf(rootElement);
-    console.log("End LSX");
-};
 MySceneGraph.prototype.parseMaterials = function(rootElement) {
+    
     console.log("Start MATERIALS");
     var tempList = rootElement.getElementsByTagName('MATERIALS');
 
@@ -191,6 +202,8 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
 
     console.log("Start INITIALS");
     var tempList = rootElement.getElementsByTagName('INITIALS');
+    console.log(tempList);
+
     if (tempList == null || tempList.length == 0) {
         this.onXMLError("INITIALS element is missing.");
         return -1;
@@ -272,6 +285,118 @@ MySceneGraph.prototype.parseInitialsAux = function(DOM, typeOfElement) {
 
 };
 
+MySceneGraph.prototype.parseIllumination = function(rootElement) {
+
+    console.log("Start ILLUMINATION");
+    this.ambient={}; this.background = {};
+
+    var elems = this.checkTag(rootElement,'ILLUMINATION');
+    this.parseRGBA(this.ambient, elems, 'ambient');
+    this.parseRGBA(this.background, elems, 'background');
+
+    console.log("End ILLUMINATION");
+};
+
+MySceneGraph.prototype.parseTextures = function(rootElement) {
+
+    console.log("Start TEXTURES");
+    this.textures = [];
+
+    var elems = this.checkTag(rootElement,'TEXTURES', false);
+    elems = this.checkTag(elems[0],'TEXTURE', false, 1);
+
+    for (var i = 0; i < elems.length; i++) {
+        var texture = {};
+        this.idIndex(this.textures, texture, elems[i], 'texture');
+        /*
+        var elems2 = this.checkTag(elems[i], 'file', false, 1, 1);
+        texture.path = this.reader.getString(elems2[0], 'path');
+        texture.amplif_factor = {};
+        this.parseST(texture.amplif_factor, elems[i], 'amplif_factor');
+        this.textures.push(texture);
+        */
+    }
+
+    console.log("End TEXTURES");
+};
+
+MySceneGraph.prototype.idIndex = function (arr, obj, node, tag){
+
+    obj.id = this.reader.getString(node, 'id');
+    if (obj.id == null || obj.id == "")
+        throw new XMLError(tag + " ID not unique");
+    var pos = arr.map(function (e) {return e.id}).indexOf(obj.id);
+    //element already exists
+    if (pos > -1)
+        this.XMLWarn("a " + tag + " with same id already exists. It won't be added");
+};
+
+MySceneGraph.prototype.parseRGBA = function(obj, node, tag){
+
+    //default RGBA
+    if(node == null){
+        obj.r = 1.0; obj.g = 1.0; obj.b = 1.0; obj.a = 1.0;
+    }
+    else{
+        var elems = this.checkTag(node[0], tag);
+        if(elems == null){
+            obj.r = 1.0; obj.g = 1.0; obj.b = 1.0; obj.a = 1.0;
+        }
+        else{
+            obj.r = this.reader.getFloat(elems[0], 'r') || 1;
+            obj.g = this.reader.getFloat(elems[0], 'g') || 1;
+            obj.b = this.reader.getFloat(elems[0], 'b') || 1;
+            obj.a = this.reader.getFloat(elems[0], 'a') || 1;
+        }
+    }
+};
+
+MySceneGraph.prototype.parseST = function(obj, node, tag){
+
+    //default ST
+    if(node == null){
+        obj.s = 1.0; obj.t = 1.0;
+    }
+    else{
+        var elems = this.checkTag(node, tag);
+        if(elems == null){
+            obj.s = 1.0; obj.t = 1.0;
+        }
+        else{
+            obj.s = this.reader.getFloat(elems[0], 's') || 1;
+            obj.t = this.reader.getFloat(elems[0], 't') || 1;
+        }
+    }
+};
+
+MySceneGraph.prototype.checkTag = function(node, tag, def, min){
+
+    var various;
+    if (min===undefined) min=-1, various = 1;
+    else
+        various = 0;
+    if (def===undefined) def=true;
+
+    var elems = node.getElementsByTagName(tag);
+
+    //Number of tags smaller than needed
+    if(elems == null || (elems.length < min && min != -1) || (elems.length < various && min==-1)){
+        if (def)
+            this.onXMLWarn(tag + " not found. Using default values");
+        else
+            throw new XMLError(tag + " not found. Cannot proceed");
+        return null;
+    }
+
+    //Number of tags bigger than supposed
+    //Min = -1 means that there is no min or max but specific number of tags needed
+    //With min!=-1 there is no max value
+    else if (elems.length > various && min == -1)
+        this.XMLWarn("multiple " + tag + " found. Using the " + various + " first(s)");
+
+    return elems;
+};
+
 MySceneGraph.prototype.onXMLError = function(message) {
     console.error("XML Loading Error: " + message);
     this.loadedOk = false;
@@ -279,3 +404,9 @@ MySceneGraph.prototype.onXMLError = function(message) {
 MySceneGraph.prototype.onXMLWarn = function(message) {
     console.warn("XML Loading Warning: " + message);
 };
+
+function XMLError(message){
+
+    this.message = "XML Loading Error: " + message;
+    this.name = "XML Error";
+ }
