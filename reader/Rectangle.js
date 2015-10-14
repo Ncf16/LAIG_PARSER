@@ -1,81 +1,78 @@
-/**
- * MyUnitCubeQuad
- * @param gl {WebGLRenderingContext}
- * @constructor
- */
-//é para criar stuff já com as text coords??
-function Rectangle(scene, topLeft, rightBottom, minS, maxS, minT, maxT) {
+ /**
+  * Rectangle
+  * @param gl {WebGLRenderingContext}
+  * @constructor
+  */
+ function Rectangle(scene, leftTop, rightBottom) {
 
-    CGFobject.call(this, scene);
+     CGFobject.call(this, scene);
 
-    this.topLeft = typeof topLeft !== 'undefined' ? topLeft : [0, 0, 0];
-    this.rightBottom = typeof rightBottom !== 'undefined' ? rightBottom : [0, 1, 0];
-    this.minS = typeof minS !== 'undefined' ? minS : 0;
-    this.maxS = typeof maxS !== 'undefined' ? maxS : 1;
-    this.minT = typeof minT !== 'undefined' ? minT : 0;
-    this.maxT = typeof maxT !== 'undefined' ? maxT : 1;
+     this.leftTop = typeof leftTop !== 'undefined' ? leftTop : [0, 1, 0];
+     this.rightBottom = typeof rightBottom !== 'undefined' ? rightBottom : [1, 0, 0];
 
+     this.S = 1;
+     this.T = 1;
 
-    this.initBuffers();
-};
+     //console.log(leftTop, rightBottom);
+     this.initBuffers();
+ };
 
 
-Rectangle.prototype = Object.create(CGFobject.prototype);
-Rectangle.prototype.constructor = Rectangle;
+ Rectangle.prototype = Object.create(CGFobject.prototype);
+ Rectangle.prototype.constructor = Rectangle;
 
 
-Rectangle.prototype.initBuffers = function() {
+ Rectangle.prototype.initBuffers = function() {
+
+     this.height = this.leftTop[1] - this.rightBottom[1];
+     this.width = this.rightBottom[0] - this.leftTop[0];
+     var leftBottom = [this.leftTop[0], this.leftTop[1] - this.height, 0];
+     var topRight = [this.rightBottom[0], this.rightBottom[1] + this.height, 0];
+
+     this.vertices = [
+         this.leftTop[0], this.rightBottom[1], 0,
+         this.rightBottom[0], this.rightBottom[1], 0,
+         this.leftTop[0], this.leftTop[1], 0,
+         this.rightBottom[0], this.leftTop[1], 0
+
+     ];
+
+     //console.log(this.vertices);
+     this.indices = [
+         0, 1, 2,
+         3, 2, 1
+     ];
 
 
-    var height;
-    var width;
-    height = this.topLeft[1] - this.rightBottom[1];
-    width = this.rightBottom[0] - this.topLeft[0];
-    var leftBottom = [this.topLeft[0], this.topLeft[1] - height, 0];
-    var topRight = [this.rightBottom[0], this.rightBottom[1] + height, 0];
-    this.texCoords = [];
 
-    this.vertices = [
-        this.topLeft[0], this.topLeft[1], 0,
-        leftBottom[0], leftBottom[1], 0,
-        this.rightBottom[0], this.rightBottom[1], 0,
-        topRight[0], topRight[1], 0
-    ];
+     var P1_P2 = [this.leftTop[0] - topRight[0], this.leftTop[1] - topRight[1], this.leftTop[2] - topRight[2]];
+     var P2_P3 = [leftBottom[0] - topRight[0], leftBottom[1] - topRight[1], leftBottom[2] - topRight[2]];
 
-    this.indices = [
-        0, 1, 2,
-        2, 3, 0
-    ];
+     var normal = crossProduct(P1_P2, P2_P3);
 
-    var P1_P2 = [this.topLeft[0] - topRight[0], this.topLeft[1] - topRight[1], this.topLeft[2] - topRight[2]];
-    var P2_P3 = [leftBottom[0] - topRight[0], leftBottom[1] - topRight[1], leftBottom[2] - topRight[2]];
+     this.normals = [
+         normal[0], normal[1], normal[2],
+         normal[0], normal[1], normal[2],
+         normal[0], normal[1], normal[2],
+         normal[0], normal[1], normal[2]
+     ];
 
-    var normal = crossProduct(P1_P2, P2_P3);
+     this.updateTexCoords();
+     this.primitiveType = this.scene.gl.TRIANGLES;
+     this.initGLBuffers();
+ };
 
-    this.normals = [
-        normal[0], normal[1], normal[2],
-        normal[0], normal[1], normal[2],
-        normal[0], normal[1], normal[2],
-        normal[0], normal[1], normal[2]
-    ];
-
-    /*   var deltaS = (this.maxS - this.minS) / width;
-       var deltaT = (this.maxT - this.minT) / height;
-       for (var i = this.minS; i < this.maxS; i += deltaS) {
-           for (var j = this.minT; j < this.maxT; j += deltaT) {
-               this.texCoords.push(i, j);
-
-           }
-       }*/
-    console.log(this.minS, this.maxS, this.minT, this.maxT);
-    this.texCoords = [
-        this.minS, this.minT,
-        this.minS, this.maxT,
-        this.minT, this.maxT,
-        this.maxS, this.maxT
-    ];
-
-
-    this.primitiveType = this.scene.gl.TRIANGLES;
-    this.initGLBuffers();
-};
+ Rectangle.prototype.setAmplif = function(amplifS, amplifT) {
+     this.S = amplifS;
+     this.T = amplifT;
+     this.updateTexCoords();
+ };
+ Rectangle.prototype.updateTexCoords = function() {
+     this.texCoords = [
+         0.0, this.height / this.T,
+         this.width / this.S, this.height / this.T,
+         0.0, 0.0,
+         this.width / this.S, 0.0
+     ];
+     this.updateTexCoordsGLBuffers();
+ };

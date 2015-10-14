@@ -24,9 +24,42 @@ function stringArrayToNumber(array, nameOfType, lowerLimit, upperLimit, converte
 	return array;
 };
 
+function getElement(array, elementID) {
+	console.log(array.length);
+	for (var i = 0; i < array.length; i++) {
+		console.log(array[i].getID());
+		if (array[i].getID() == elementID)
+			return array[i];
+	}
+	return null;
+};
+
+function getLeftPoint(points) {
+
+	var leftPoint = points[0];
+	for (var i = 0; i < points.length; i++) {
+		if (points[i][1] < leftPoint[1]) {
+			leftPoint = points[i];
+		} else
+		if (points[i][2] > leftPoint[2]) {
+			leftPoint = points[i];
+		}
+	}
+	return leftPoint;
+};
+
+function getHigherPoint(points) {
+	var highPoint = points[0];
+	for (var i = 0; i < points.length; i++) {
+		if (points[i][1] > highPoint[1]) {
+			highPoint = points[i];
+		}
+	}
+	return highPoint;
+};
+
 function parseLeafAux(leave, type) {
 	if (type == "rectangle") {
-		console.log("correct");
 		return new LeafRectangle();
 	} else if (type == "triangle") {
 		return new LeafTriangle();
@@ -41,17 +74,33 @@ function parseLeafAux(leave, type) {
 
 };
 
+function normalVector(V) {
+	var v = Math.sqrt(scalarProduct(V, V));
+
+	for (var i = 0; i < V.length; i++)
+		V[i] = V[i] / v;
+}
+
 function crossProduct(V1, V2) {
 	return [
-		V2[2] * V1[0] - V2[0] * V1[2],
+
 		V2[1] * V1[2] - V2[2] * V1[1],
+		V2[2] * V1[0] - V2[0] * V1[2],
 		V2[0] * V1[1] - V2[1] * V1[0]
 
 	];
 };
 
 function scalarProduct(V1, V2) {
-	return V2[0] * V1[0] + V2[1] * V1[1] + V2[2] * V1[2];
+
+	if (V1.length != V2.length) {
+		console.error("Vector must have the same length, if you want to get the scalar product between them");
+	}
+	var soma = 0;
+	for (var i = 0; i < V1.length; i++)
+		soma += V2[i] * V1[i];
+
+	return soma;
 }
 
 function addID(DOM, sceneGraph, ArrayOfIDs, newID) {
@@ -80,7 +129,7 @@ function addID(DOM, sceneGraph, ArrayOfIDs, newID) {
 			break;
 		} else {
 			tempIdStorage = "MachineGeneratedID" + "_" + i;
-			sceneGraph.onXMLWarn("LightID already in use, new ID ( " + tempIdStorage + " ) will be used");
+			sceneGraph.onXMLWarn("ID already in use, new ID ( " + tempIdStorage + " ) will be used");
 		}
 		i++;
 	}
@@ -179,4 +228,30 @@ function parseScale(graph, initials, currElement) {
 
     console.log("Scale: " + graph.matrix);
 };
+
+
+			var point = [this.vertices[slice + jump], this.vertices[slice + jump + 1], this.vertices[slice + jump + 2]];
+			var point1 = [this.vertices[slice + jump + 3], this.vertices[slice + jump + 4], this.vertices[slice + jump + 5]];
+			var point2;
+			if (stack != this.sections_per_height) {
+				point2 = [this.vertices[(this.parts_per_section + 1) * 3 * (stack + 1) + slice], this.vertices[(this.parts_per_section + 1) * 3 * (stack + 1) + 1 + slice],
+					this.vertices[(this.parts_per_section + 1) * 3 * (stack + 1) + 2 + slice]
+				];
+			} else {
+				point2 = [this.vertices[(this.parts_per_section + 1) * 3 * (stack) + slice], this.vertices[(this.parts_per_section + 1) * 3 * (stack) + 1 + slice],
+					this.vertices[(this.parts_per_section + 1) * 3 * (stack) + 2 + slice]
+				];
+			}
+			var vec = [point1[0] - point[0], point1[1] - point[1], point1[2] - point[2]];
+			var vec1 = [point2[0] - point1[0], point2[1] - point1[1], point2[2] - point1[2]];
+			console.log((this.parts_per_section + 1) * 3 * (stack + 1) + slice, (this.parts_per_section + 1) * 3 * (stack + 1) + 1 + slice, (this.parts_per_section + 1) * 3 * (stack + 1) + 2 + slice);
+			var normal = crossProduct(vec1, vec);
+
+
+			console.log(point);
+			console.log(point1);
+			console.log(point2);
+			console.log("End point");
+			normalVector(normal);
+			this.normals.push(normal[0], normal[1], normal[2]);
 */

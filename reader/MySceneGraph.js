@@ -1,7 +1,7 @@
 var nInitials = 1;
 var ERROR = -1;
 var FRUSTUM = "frustum";
-var TRANSLATE = "translate";
+var TRANSLATE = "translation";
 var ROTATE = "rotation";
 var SCALE = "scale";
 var AXIS = "reference";
@@ -29,7 +29,21 @@ function MySceneGraph(filename, scene) {
     // Establish bidirectional references between scene and graph
     this.scene = scene;
     scene.graph = this;
+    this.LightsID = [];
+    this.materialsID = [];
+    this.lights = [];
+    this.materials = [];
+    this.nodesID = [];
+    this.nodes = [];
+    this.rootNode = null;
+    this.texArray = [];
+    this.matArray = [];
 
+    this.defaultMaterial = new CGFappearance(scene);
+    this.defaultMaterial.setAmbient(0.5, 0.5, 0.5, 1.0);
+    this.defaultMaterial.setDiffuse(0.5, 0.5, 0.5, 1.0);
+    this.defaultMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
+    this.defaultMaterial.setShininess(10.0);
     // File reading 
     this.reader = new CGFXMLreader();
     MAX_LIGHTS = this.scene.lights.length;
@@ -41,7 +55,12 @@ function MySceneGraph(filename, scene) {
      */
     this.reader.open('scenes/' + filename, this);
 };
-
+MySceneGraph.prototype.display = function() {
+    if (this.rootNode != null) {
+        this.rootNode.display(this.rootNode);
+    } else
+        this.XMLError("Element Root missing");
+};
 /*
  * Callback to be executed after successful reading
  */
@@ -50,39 +69,39 @@ MySceneGraph.prototype.onXMLReady = function() {
     var rootElement = this.reader.xmlDoc.documentElement;
 
     // Here should go the calls for different functions to parse the various blocks
-    try{
+    try {
         if (rootElement == null || rootElement.nodeName != "SCENE")
             throw new XMLError("main block missing");
 
         this.initials = new initials();
         this.transformation = new Transformation(this.scene);
-
-        this.parseInitials(rootElement);
-        this.parseIllumination(rootElement);
+        /*
+                this.parseInitials(rootElement);
+                this.parseIllumination(rootElement);
+              */
         this.parseLights(rootElement);
         this.parseTextures(rootElement);
         this.parseMaterials(rootElement);
         this.parseLeaf(rootElement);
-        //this.parseNodes(rootElement);
-    }
-    catch(err) {
-        if( err instanceof XMLError){
+        this.parseNodes(rootElement);
+
+    } catch (err) {
+        if (err instanceof XMLError) {
             console.error(err.message);
             this.loadedOk = false;
             return;
-        }
-        else
+        } else
             console.error(err.message);
     }
 
-    this.loadedOk=true;
+    this.loadedOk = true;
 
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
     this.scene.onGraphLoaded();
 };
 
 MySceneGraph.prototype.parseMaterials = function(rootElement) {
-    
+
     console.log("Start MATERIALS");
     var tempList = rootElement.getElementsByTagName('MATERIALS');
 
@@ -101,7 +120,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
             //por as classes a tratar do parsing dos objetos em si
 
             var newMaterial = new Materials();
-            var newID = addID(currLight, this, this.initials.materialsID);
+            var newID = addID(currLight, this, this.materialsID);
             var newSpec = readElement(tempList[FIRST_ELEMENT].children[i].getElementsByTagName("specular"), RGB_VARIABLES, 1);
             var newShin = readElement(tempList[FIRST_ELEMENT].children[i].getElementsByTagName("shininess"), ["value"], 1);
             var newEmi = readElement(tempList[FIRST_ELEMENT].children[i].getElementsByTagName("emission"), RGB_VARIABLES, 1);
@@ -114,39 +133,19 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
             newMaterial.setAmbient(newAmb);
             newMaterial.setDiffuse(newDiff);
             newMaterial.setSpecular(newSpec);
-            this.initials.materials.push(newMaterial);
+
+            this.materials[newID] = newMaterial; // this.materials.push(newMaterial);
         } else {
             this.onXMLWarn("Element was not MATERIAL it was: " + currLight.nodeName);
         }
     }
+
+    for (key in this.materials) {
+        console.log(this.materials[key]);
+    }
     console.log("End MATERIALS");
 };
 
-MySceneGraph.prototype.parseBlock = function(rootElement, mainBlockName, subBlockName, moreThanOneBlock, elementsToParse) {
-    //MATERIALS
-    var tempList = rootElement.getElementsByTagName(mainBlockName);
-
-    if (tempList == null || tempList.length == 0) {
-        console.warn("No " + mainBlockName + " available, default light will be created ");
-    } else
-    if (tempList.length > 1) {
-        this.onXMLWarn("More than 1 set of " + mainBlockName + ", only the first set will be used");
-    }
-    var size = tempList[0].children.length;
-    for (var i = 0; i < size; i++) {
-        if (currLight.nodeName == subBlockName) {
-            var currLight = tempList[FIRST_ELEMENT].children[i];
-            for (var j = 0; j < variablesToObtain.length; j++) {
-                //array para guardar vairáveis e depois função de parsing para o  inside deals com o que for do que??    
-                addID(currLight, this, arrayToStoreValues);
-                readElement(tempList[FIRST_ELEMENT].children[i].getElementsByTagName(variablesToObtain[j].nameOfElement), variablesToObtain[j].variables, variablesToObtain[j].timesInBlock);
-            }
-        } else {
-            this.onXMLWarn("Element was not " + subBlockName + " it was: " + currLight.nodeName);
-        }
-
-    }
-};
 MySceneGraph.prototype.parseLights = function(rootElement) {
     console.log("Start LIGHTS");
 
@@ -159,14 +158,14 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
     }
     var nLight = tempList[0].children.length;
 
-    if (this.initials.lights == undefined) {
-        this.initials.lights = [];
+    if (this.lights == undefined) {
+        this.lights = [];
     }
     for (var j = 0; j < numberLights; j++) {
 
         for (var i = 0; i < nLight; i++) {
             //alterar segunda parte do if
-            if (MAX_LIGHTS <= this.initials.LightsID.length) {
+            if (MAX_LIGHTS <= this.LightsID.length) {
 
                 this.onXMLWarn("Max number of lights have been added ( " + MAX_LIGHTS + ")");
                 return;
@@ -175,7 +174,7 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
             if (currLight.nodeName == 'LIGHT') {
                 //por as classes a tratar do parsing dos objetos em si
                 var newLight = new Lights();
-                var newID = addID(currLight, this, this.initials.LightsID);
+                var newID = addID(currLight, this, this.LightsID);
                 var newEnable = readElement(tempList[j].children[i].getElementsByTagName("enable"), ["value"], 1);
                 var newPos = readElement(tempList[j].children[i].getElementsByTagName("position"), POSITION_VARIABLES, 1);
                 var newAmb = readElement(tempList[j].children[i].getElementsByTagName("ambient"), RGB_VARIABLES, 1);
@@ -188,7 +187,7 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
                 newLight.setAmbient(newAmb);
                 newLight.setDiffuse(newDiff);
                 newLight.setSpecular(newSpec);
-                this.initials.lights.push(newLight);
+                this.lights.push(newLight);
             } else {
                 this.onXMLWarn("Element not LIGHT it was: " + currLight.nodeName);
             }
@@ -202,7 +201,6 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
 
     console.log("Start INITIALS");
     var tempList = rootElement.getElementsByTagName('INITIALS');
-    console.log(tempList);
 
     if (tempList == null || tempList.length == 0) {
         this.onXMLError("INITIALS element is missing.");
@@ -215,16 +213,18 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
 
     var expectedElements = [FRUSTUM, TRANSLATE, ROTATE, ROTATE, ROTATE, SCALE, AXIS];
     var nNodes = tempList[0].children.length;
-    for (var i = nNodes - 1; i >= 0; i--) {
 
+    for (var i = nNodes - 1; i >= 0; i--) {
+        console.log(tempList[0].children[i].nodeName, "Expected: " + expectedElements[i]);
         if (tempList[0].children[i].nodeName != expectedElements[i]) {
-            this.onXMLError("Wrong order in Inititals,please place them in the correct order:\n" + FRUSTUM + "\n" + TRANSLATE + "\n" + ROTATE + "\n" + ROTATE + "\n" + ROTATE + "\n" + SCALE + "\n" + AXIS);
+
+            this.onXMLError("Wrong element in Inititals,please check your .lsx :\n" + FRUSTUM + "\n" + TRANSLATE + "\n" + ROTATE + "\n" + ROTATE + "\n" + ROTATE + "\n" + SCALE + "\n" + AXIS);
         } else
             this.parseInitialsAux(tempList[0].children[i], expectedElements[i]);
     }
 
     if (!(AxisX && AxisZ && AxisY)) {
-        this.onXMLError("Missing axis in the Initials Rotations, please check that you have one and ONLY one rotation per axis (x,y,z)");
+        this.onXMLError("Missing axis in the Initials Rotations, please check that you have one and ONLY one rotation per axis (x,y,z)\n" + "Axis X: " + AxisX + " Axis Y: " + AxisY + " Axis Z: " + AxisZ);
     }
 
     console.log("End INITIALS");
@@ -232,6 +232,7 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
 MySceneGraph.prototype.parseLeaf = function(rootElement) {
     console.log("Start LEAVES");
     var tempList = rootElement.getElementsByTagName('LEAVES');
+
     if (tempList == null || tempList.length == 0) {
         this.onXMLError("LEAVES element is missing.");
         return -1;
@@ -246,15 +247,18 @@ MySceneGraph.prototype.parseLeaf = function(rootElement) {
         var currLeaf = tempList[FIRST_ELEMENT].children[i];
         if (currLeaf.nodeName == 'LEAF') {
 
-            var tempLeaf = new Leaf();
-            var tempID = addID(currLeaf, this, this.initials.leavesID);
+            var tempLeaf = new Leaf(this);
+            var tempID = addID(currLeaf, this, this.nodesID);
             var leaf = [tempList[FIRST_ELEMENT].children[i]];
             var typeOfLeaf = readElement(leaf, ["type"], 1);
             var args = readElement(leaf, ["args"], 1);
 
+
             tempLeaf = parseLeafAux(tempLeaf, typeOfLeaf);
             tempLeaf.parseLeaf(args.toString().split(" "), this.scene);
-            this.initials.leaves.push(tempLeaf);
+            tempLeaf.setID(tempID);
+            tempLeaf.setGraph(this);
+            this.nodes.push(tempLeaf);
         } else {
             this.onXMLWarn("Element not LEAF it was: " + currLeaf.nodeName);
         }
@@ -288,9 +292,10 @@ MySceneGraph.prototype.parseInitialsAux = function(DOM, typeOfElement) {
 MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
     console.log("Start ILLUMINATION");
-    this.ambient={}; this.background = {};
+    this.ambient = {};
+    this.background = {};
 
-    var elems = this.checkTag(rootElement,'ILLUMINATION');
+    var elems = this.checkTag(rootElement, 'ILLUMINATION');
     this.parseRGBA(this.ambient, elems, 'ambient');
     this.parseRGBA(this.background, elems, 'background');
 
@@ -302,47 +307,72 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
     console.log("Start TEXTURES");
     this.textures = [];
 
-    var elems = this.checkTag(rootElement,'TEXTURES', false);
-    elems = this.checkTag(elems[0],'TEXTURE', false, 1);
+    var elems = this.checkTag(rootElement, 'TEXTURES', false);
+    elems = this.checkTag(elems[0], 'TEXTURE', false, 1);
 
     for (var i = 0; i < elems.length; i++) {
         var texture = {};
         this.idIndex(this.textures, texture, elems[i], 'texture');
-        /*
+
         var elems2 = this.checkTag(elems[i], 'file', false, 1, 1);
         texture.path = this.reader.getString(elems2[0], 'path');
         texture.amplif_factor = {};
         this.parseST(texture.amplif_factor, elems[i], 'amplif_factor');
-        this.textures.push(texture);
-        */
-    }
 
+        //this.textures.push(texture);
+        this.textures[texture.id] = texture;
+    }
+    for (key in this.textures) {
+        console.log(this.textures[key]);
+    }
     console.log("End TEXTURES");
+
+};
+MySceneGraph.prototype.getTexture = function(id) {
+    for (var i = 0; i < this.textures.length; i++) {
+        if (this.textures[i].id == id)
+            return this.textures[i];
+    }
+    return null;
+};
+MySceneGraph.prototype.getMaterial = function(id) {
+    for (var i = 0; i < this.materials.length; i++) {
+        if (this.materials[i].id == id)
+            return this.materials[i];
+    }
+    return null;
+
 };
 
-MySceneGraph.prototype.idIndex = function (arr, obj, node, tag){
+MySceneGraph.prototype.idIndex = function(arr, obj, node, tag) {
 
     obj.id = this.reader.getString(node, 'id');
     if (obj.id == null || obj.id == "")
         throw new XMLError(tag + " ID not unique");
-    var pos = arr.map(function (e) {return e.id}).indexOf(obj.id);
+    var pos = arr.map(function(e) {
+        return e.id
+    }).indexOf(obj.id);
     //element already exists
     if (pos > -1)
         this.XMLWarn("a " + tag + " with same id already exists. It won't be added");
 };
 
-MySceneGraph.prototype.parseRGBA = function(obj, node, tag){
+MySceneGraph.prototype.parseRGBA = function(obj, node, tag) {
 
     //default RGBA
-    if(node == null){
-        obj.r = 1.0; obj.g = 1.0; obj.b = 1.0; obj.a = 1.0;
-    }
-    else{
+    if (node == null) {
+        obj.r = 1.0;
+        obj.g = 1.0;
+        obj.b = 1.0;
+        obj.a = 1.0;
+    } else {
         var elems = this.checkTag(node[0], tag);
-        if(elems == null){
-            obj.r = 1.0; obj.g = 1.0; obj.b = 1.0; obj.a = 1.0;
-        }
-        else{
+        if (elems == null) {
+            obj.r = 1.0;
+            obj.g = 1.0;
+            obj.b = 1.0;
+            obj.a = 1.0;
+        } else {
             obj.r = this.reader.getFloat(elems[0], 'r') || 1;
             obj.g = this.reader.getFloat(elems[0], 'g') || 1;
             obj.b = this.reader.getFloat(elems[0], 'b') || 1;
@@ -351,36 +381,36 @@ MySceneGraph.prototype.parseRGBA = function(obj, node, tag){
     }
 };
 
-MySceneGraph.prototype.parseST = function(obj, node, tag){
+MySceneGraph.prototype.parseST = function(obj, node, tag) {
 
     //default ST
-    if(node == null){
-        obj.s = 1.0; obj.t = 1.0;
-    }
-    else{
+    if (node == null) {
+        obj.s = 1.0;
+        obj.t = 1.0;
+    } else {
         var elems = this.checkTag(node, tag);
-        if(elems == null){
-            obj.s = 1.0; obj.t = 1.0;
-        }
-        else{
+        if (elems == null) {
+            obj.s = 1.0;
+            obj.t = 1.0;
+        } else {
             obj.s = this.reader.getFloat(elems[0], 's') || 1;
             obj.t = this.reader.getFloat(elems[0], 't') || 1;
         }
     }
 };
 
-MySceneGraph.prototype.checkTag = function(node, tag, def, min){
+MySceneGraph.prototype.checkTag = function(node, tag, def, min) {
 
     var various;
-    if (min===undefined) min=-1, various = 1;
+    if (min === undefined) min = -1, various = 1;
     else
         various = 0;
-    if (def===undefined) def=true;
+    if (def === undefined) def = true;
 
     var elems = node.getElementsByTagName(tag);
 
     //Number of tags smaller than needed
-    if(elems == null || (elems.length < min && min != -1) || (elems.length < various && min==-1)){
+    if (elems == null || (elems.length < min && min != -1) || (elems.length < various && min == -1)) {
         if (def)
             this.onXMLWarn(tag + " not found. Using default values");
         else
@@ -405,8 +435,71 @@ MySceneGraph.prototype.onXMLWarn = function(message) {
     console.warn("XML Loading Warning: " + message);
 };
 
-function XMLError(message){
+MySceneGraph.prototype.parseNodes = function(rootElement) {
 
-    this.message = "XML Loading Error: " + message;
-    this.name = "XML Error";
- }
+    console.log("Start NODES");
+    //  this.nodes = [];
+
+    var elems = this.checkTag(rootElement, 'NODES', false);
+    var root = this.checkTag(elems[0], 'ROOT', false);
+    var rootName = this.reader.getString(root[0], 'id');
+
+    elems = this.checkTag(elems[0], 'NODE', false, 1);
+
+    for (var i = 0; i < elems.length; i++) {
+
+        var node = new Node(this);
+        var descendants = [];
+        var nodeTransformation = new Transformation(this.scene);
+        node.id = addID(elems[i], this, this.nodesID);
+        console.log("Node ID : " + node.id);
+        var elems2 = this.checkTag(elems[i], 'MATERIAL');
+        node.material = this.reader.getString(elems2[0], 'id');
+        elems2 = this.checkTag(elems[i], 'TEXTURE');
+        node.texture = this.reader.getString(elems2[0], 'id');
+
+        //descendants
+        elems2 = this.checkTag(elems[i], 'DESCENDANTS', false);
+        elems2 = this.checkTag(elems2[0], 'DESCENDANT', false, 1);
+
+        for (var j = 0; j < elems2.length; j++) {
+
+            var descendant = this.reader.getString(elems2[j], 'id');
+            descendants.push(descendant);
+            console.log(descendant);
+        }
+        node.descendents = descendants;
+        //transformations
+
+        parseNodeTransformation(node, elems[i].children, nodeTransformation);
+        node.transformation = nodeTransformation;
+
+
+        this.nodes.push(node);
+
+        if (node.id == rootName)
+            this.rootNode = node;
+
+        console.log("END NODES");
+
+    }
+};
+
+function parseNodeTransformation(node, element, Transformation) {
+
+    for (var i = element.length - 1; i >= 0; i--) {
+
+
+        if (element[i].nodeName == "ROTATION") {
+            Transformation.parseRotate(element[i]);
+        } else
+        if (element[i].nodeName == "TRANSLATION") {
+            Transformation.parseTranslate(element[i]);
+
+        } else if (element[i].nodeName == "SCALE") {
+            Transformation.parseScale(element[i]);
+
+        }
+
+    }
+};

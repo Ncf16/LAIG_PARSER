@@ -45,7 +45,7 @@ Lights.prototype.setID = function(newID) {
 	this.ID = newID;
 }
 Lights.prototype.setPosition = function(newPos) {
-	this.pos = stringArrayToNumber(newPos, "RGB", 0, 255, 255);
+	this.pos = stringArrayToNumber(newPos, "Position", "inf", "inf", 1);
 };
 Lights.prototype.setAmbient = function(newAmb) {
 	this.amb = stringArrayToNumber(newAmb, "RGB", 0, 255, 255);

@@ -3,14 +3,7 @@
 function initials() {
     this.frustum = new Frustum();
     this.axisLength = 1;
-    this.LightsID = [];
-    this.materialsID = [];
-    this.lights = [];
-    this.materials = [];
-    this.leavesID = [];
-    this.leaves = [];
-    this.nodesID = [];
-    this.nodes = [];
+ 
 };
 initials.prototype.getNear = function() {
     return this.frustum.near;
@@ -36,9 +29,4 @@ initials.prototype.setAxisLength = function(newLength) {
 initials.prototype.getAxisLength = function() {
     return this.axisLength;
 };
-initials.prototype.getLights = function() {
-    return this.lights;
-};
-initials.prototype.getMaterials = function() {
-    return this.materials;
-};
+ 

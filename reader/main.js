@@ -43,18 +43,19 @@ function getUrlVars() {
 }
 
 serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', 'Initials.js', 'Frustum.js', 'Lights.js',
-    'Materials.js', 'Triangle.js', 'Rectangle.js', 'Transformations.js', 'FuncAux.js', 'Leaves.js',
+    'Materials.js', 'Triangle.js', 'Rectangle.js', 'Transformations.js', 'FuncAux.js', 'Leaves.js', 'Sphere.js', 'Frame.js', 'Cube.js', 'Cylinder.js',
+    'Node.js', 'MyInterface.js',
 
     main = function() {
         // Standard application, scene and interface setup
         var app = new CGFapplication(document.body);
         var myScene = new XMLscene();
-        var myInterface = new CGFinterface();
-
+        var myInterface = new MyInterface();
+        app.setInterface(myInterface);
         app.init();
 
         app.setScene(myScene);
-        app.setInterface(myInterface);
+
 
         myInterface.setActiveCamera(myScene.camera);
 
@@ -66,9 +67,138 @@ serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', 'Initials.js',
         // create and load graph, and associate it to scene. 
         // Check console for loading errors
         var myGraph = new MySceneGraph(filename, myScene);
-
+        myScene.gui = myInterface;
         // start
         app.run();
     }
 
 ]);
+
+
+
+/*
+                       hhhhhhh                                 iiii                     
+                       h:::::h                                i::::i                    
+                       h:::::h                                 iiii                     
+                       h:::::h                                                          
+        cccccccccccccccch::::h hhhhh         aaaaaaaaaaaaa   iiiiiiirrrrr   rrrrrrrrr   
+      cc:::::::::::::::ch::::hh:::::hhh      a::::::::::::a  i:::::ir::::rrr:::::::::r  
+     c:::::::::::::::::ch::::::::::::::hh    aaaaaaaaa:::::a  i::::ir:::::::::::::::::r 
+    c:::::::cccccc:::::ch:::::::hhh::::::h            a::::a  i::::irr::::::rrrrr::::::r
+    c::::::c     ccccccch::::::h   h::::::h    aaaaaaa:::::a  i::::i r:::::r     r:::::r
+    c:::::c             h:::::h     h:::::h  aa::::::::::::a  i::::i r:::::r     rrrrrrr
+    c:::::c             h:::::h     h:::::h a::::aaaa::::::a  i::::i r:::::r            
+    c::::::c     ccccccch:::::h     h:::::ha::::a    a:::::a  i::::i r:::::r            
+    c:::::::cccccc:::::ch:::::h     h:::::ha::::a    a:::::a i::::::ir:::::r            
+     c:::::::::::::::::ch:::::h     h:::::ha:::::aaaa::::::a i::::::ir:::::r            
+      cc:::::::::::::::ch:::::h     h:::::h a::::::::::aa:::ai::::::ir:::::r            
+        cccccccccccccccchhhhhhh     hhhhhhh  aaaaaaaaaa  aaaaiiiiiiiirrrrrrr   
+
+    
+
+//////////////////////////////
+/////////////////////////////
+//Legs
+    this.pushMatrix();
+    this.translate(2.3, 0, 4.7);
+    this.scale(0.2, 1.5, 0.2);
+    this.cube.display();
+    this.popMatrix();
+
+    this.pushMatrix();
+    this.translate(1, 0, 4.7);
+    this.scale(0.2, 1.5, 0.2);
+    this.cube.display();
+    this.popMatrix();
+
+    this.pushMatrix();
+    this.translate(1, 0, 5.8);
+    this.scale(0.2, 1.5, 0.2);
+    this.cube.display();
+    this.popMatrix();
+
+    this.pushMatrix();
+    this.translate(2.3, 0, 5.8);
+    this.scale(0.2, 1.5, 0.2);
+    this.cube.display();
+    this.popMatrix();
+
+//cover
+/////////////////////////////////////
+////////////////////////////////////
+    this.pushMatrix();
+    this.translate(1, 1.5, 4.5);
+    this.scale(1.5, 0.2, 1.5);
+    this.cube.display();
+    this.popMatrix();
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //Subsituir por cilindros para dar o efeito redondos
+    this.pushMatrix();
+    this.translate(2.3, 1.5, 5.8);
+    this.scale(0.2, 2, 0.2);
+    this.cube.display();
+    this.popMatrix();
+
+    this.pushMatrix();
+    this.translate(1, 1.5, 5.8);
+    this.scale(0.2, 2, 0.2);
+    this.cube.display();
+    this.popMatrix();
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //verticalFrame
+    this.pushMatrix();
+    this.translate(1, 3, 5.8);
+    this.scale(1.5, 1, 0.2);
+    this.cube.display();
+    this.popMatrix();
+
+    /*
+    | |      | |   | |     
+    | |_ __ _| |__ | | ___ 
+    | __/ _` | '_ \| |/ _ \
+    | || (_| | |_) | |  __/
+     \__\__,_|_.__/|_|\___|
+    this.pushMatrix();
+    this.scale(0.25, 2, 0.25);
+    this.cube.display();
+    this.popMatrix();
+
+    this.pushMatrix();
+    this.translate(0, 0, 3);
+    this.scale(0.25, 2, 0.25);
+    this.cube.display();
+    this.popMatrix();
+
+    this.pushMatrix();
+    this.translate(4, 0, 0);
+    this.scale(0.25, 2, 0.25);
+    this.cube.display();
+    this.popMatrix();
+
+    this.pushMatrix();
+    this.translate(4, 0, 3);
+    this.scale(0.25, 2, 0.25);
+    this.cube.display();
+    this.popMatrix();
+
+    this.pushMatrix();
+    this.translate(0, 2, 0);
+    this.scale(4.5, 0.2, 3.5);
+    this.cube.display();
+    this.popMatrix();
+
+
+
+
+
+
+
+
+
+
+
+*/

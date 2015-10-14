@@ -1,0 +1,104 @@
+<NODE id="chair">
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <DESCENDANTS>
+        <DESCENDANT id="chairLegs" />
+        <DESCENDANT id="backLegs" />
+        <DESCENDANT id="verticalFrame" />
+        <DESCENDANT id="cover" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="cover">
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <TRANSLATION x="1" y="1.5" z="4.5" />
+    <DESCENDANTS>
+        <DESCENDANT id="cube" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="chairLegs">
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <!-- <SCALE sx="0.2" sy="1.5" sz="0.2" />-->
+    <DESCENDANTS>
+        <DESCENDANT id="chairLegs1" />
+        <DESCENDANT id="chairLegs2" />
+        <DESCENDANT id="chairLegs3" />
+        <DESCENDANT id="chairLegs4" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="chairLegs1">
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <TRANSLATION x="2.3" y="0" z="5.8" />
+    <SCALE sx="1.5" sy="0.2" sz="1.5" />
+    <DESCENDANTS>
+        <DESCENDANT id="cube" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="chairLegs2">
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <TRANSLATION x="1" y="0" z="5.8" />
+    <SCALE sx="1.5" sy="0.2" sz="1.5" />
+    <DESCENDANTS>
+        <DESCENDANT id="cube" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="chairLegs3">
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <TRANSLATION x="2.3" y="0" z="4.7" />
+    <SCALE sx="1.5" sy="0.2" sz="1.5" />
+    <DESCENDANTS>
+        <DESCENDANT id="cube" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="chairLegs4">
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <TRANSLATION x="1" y="0" z="4.7" />
+    <SCALE sx="1.5" sy="0.2" sz="1.5" />
+    <DESCENDANTS>
+        <DESCENDANT id="cube" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="backLegs">
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <SCALE sx="0.2" sy="2" sz="0.2" />
+    <DESCENDANTS>
+        <DESCENDANT id="backLegs1" />
+        <DESCENDANT id="backLegs2" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="backLegs1">
+    <!--alterar material e textura -->
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <TRANSLATION x="1" y="1.5" z="5.8" />
+    <SCALE sx="0.2" sy="2" sz="0.2" />
+    <DESCENDANTS>
+        <DESCENDANT id="cube" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="backLegs2">
+    <!--alterar material e textura -->
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <TRANSLATION x="2.3" y="1.5" z="5.8" />
+    <SCALE sx="0.2" sy="2" sz="0.2" />
+    <DESCENDANTS>
+        <DESCENDANT id="cube" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="verticalFrame">
+    <!--alterar material e textura -->
+    <MATERIAL id="null" />
+    <TEXTURE id="null" />
+    <TRANSLATION x="1" y="3" z="5.8" />
+    <SCALE sx="1.5" sy="1" sz="0.2" />
+    <DESCENDANTS>
+        <DESCENDANT id="cube" />
+    </DESCENDANTS>
+</NODE>
