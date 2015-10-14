@@ -37,19 +37,18 @@
 
      ];
 
-     //console.log(this.vertices);
+   
      this.indices = [
          0, 1, 2,
          3, 2, 1
      ];
 
-
-
+ 
      var P1_P2 = [this.leftTop[0] - topRight[0], this.leftTop[1] - topRight[1], this.leftTop[2] - topRight[2]];
      var P2_P3 = [leftBottom[0] - topRight[0], leftBottom[1] - topRight[1], leftBottom[2] - topRight[2]];
 
-     var normal = crossProduct(P1_P2, P2_P3);
-
+     var normal = crossProduct(P2_P3,P1_P2  );
+        normalVector(normal);
      this.normals = [
          normal[0], normal[1], normal[2],
          normal[0], normal[1], normal[2],

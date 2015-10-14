@@ -56,10 +56,10 @@ function MySceneGraph(filename, scene) {
     this.reader.open('scenes/' + filename, this);
 };
 MySceneGraph.prototype.display = function() {
-    if (this.rootNode != null) {
+   if (this.rootNode != null) {
         this.rootNode.display(this.rootNode);
     } else
-        this.XMLError("Element Root missing");
+        this.XMLError("Element Root missing"); 
 };
 /*
  * Callback to be executed after successful reading
@@ -75,15 +75,15 @@ MySceneGraph.prototype.onXMLReady = function() {
 
         this.initials = new initials();
         this.transformation = new Transformation(this.scene);
-        /*
+       
                 this.parseInitials(rootElement);
                 this.parseIllumination(rootElement);
-              */
-        this.parseLights(rootElement);
-        this.parseTextures(rootElement);
-        this.parseMaterials(rootElement);
-        this.parseLeaf(rootElement);
-        this.parseNodes(rootElement);
+              
+    this.parseLights(rootElement);
+    this.parseTextures(rootElement);
+    this.parseMaterials(rootElement);
+    this.parseLeaf(rootElement);
+    this.parseNodes(rootElement);
 
     } catch (err) {
         if (err instanceof XMLError) {
@@ -214,7 +214,7 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
     var expectedElements = [FRUSTUM, TRANSLATE, ROTATE, ROTATE, ROTATE, SCALE, AXIS];
     var nNodes = tempList[0].children.length;
 
-    for (var i = nNodes - 1; i >= 0; i--) {
+    for (var i = 0; i <nNodes; i++){
         console.log(tempList[0].children[i].nodeName, "Expected: " + expectedElements[i]);
         if (tempList[0].children[i].nodeName != expectedElements[i]) {
 
@@ -463,41 +463,48 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         elems2 = this.checkTag(elems2[0], 'DESCENDANT', false, 1);
 
         for (var j = 0; j < elems2.length; j++) {
-
+           
             var descendant = this.reader.getString(elems2[j], 'id');
             descendants.push(descendant);
-            console.log(descendant);
+             
         }
+         
         node.descendents = descendants;
         //transformations
-
+ 
         parseNodeTransformation(node, elems[i].children, nodeTransformation);
+        
         node.transformation = nodeTransformation;
-
-
-        this.nodes.push(node);
+         this.nodes.push(node);
 
         if (node.id == rootName)
             this.rootNode = node;
 
-        console.log("END NODES");
-
+console.log("FUCKING MATRIX: ",nodeTransformation.matrix);        
     }
+console.log("END NODES");
+
 };
 
 function parseNodeTransformation(node, element, Transformation) {
 
-    for (var i = element.length - 1; i >= 0; i--) {
-
-
+    console.log(node);
+    console.log(element);
+    for (var i =0; i < element.length ; i++) {
+console.log(element[i].nodeName);
+        console.log(i);
         if (element[i].nodeName == "ROTATION") {
+              console.log("START Rotations");
             Transformation.parseRotate(element[i]);
+            console.log("END Rotations");
         } else
         if (element[i].nodeName == "TRANSLATION") {
             Transformation.parseTranslate(element[i]);
+            console.log("END TRANSLATION");
 
         } else if (element[i].nodeName == "SCALE") {
             Transformation.parseScale(element[i]);
+            console.log("END SCALE");
 
         }
 

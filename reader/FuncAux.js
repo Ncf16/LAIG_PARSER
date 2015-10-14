@@ -79,7 +79,7 @@ function normalVector(V) {
 
 	for (var i = 0; i < V.length; i++)
 		V[i] = V[i] / v;
-}
+};
 
 function crossProduct(V1, V2) {
 	return [
@@ -101,7 +101,7 @@ function scalarProduct(V1, V2) {
 		soma += V2[i] * V1[i];
 
 	return soma;
-}
+};
 
 function addID(DOM, sceneGraph, ArrayOfIDs, newID) {
 	var tempIdStorage;
@@ -159,10 +159,7 @@ function readElement(DOM, elementToRead, DOMnumberOfElements) {
 	return returnValues;
 };
 
-function degToRad(angle) {
 
-	return (Math.PI * Number(angle)) / 180;
-}
 
 function parseRotate(graph, initials, currElement) {
 	var rot = readElement([currElement], ["axis", "angle"], 1);

@@ -27,16 +27,16 @@ Leaf.prototype.setGraph = function(newGraph) {
 Leaf.prototype.parseLeaf = function(args, scene) {};
 
 Leaf.prototype.display = function(parentElement) {
-	console.log("LEAF DISPLAY");
+	//console.log("LEAF DISPLAY");
 	var grafo = parentElement.graph;
 	var material = grafo.matArray[grafo.matArray.length - 1];
 	var textura = grafo.texArray[grafo.texArray.length - 1];
-	console.log("MATERIAL", material, grafo.matArray);
+	//console.log("MATERIAL", material, grafo.matArray);
 	//console.log(textura);
 
 	//material.setTexture(textura);
 	//material.apply();
-	console.log(this.element);
+//	console.log(this.element);
 	this.element.display();
 };
 
@@ -58,6 +58,7 @@ LeafRectangle.prototype.parseLeaf = function(args, scene) {
 		this.element = new Rectangle(scene, [args[0], args[1], 0], [args[2], args[3], 0]);
 	}
 };
+ 
 //
 //
 LeafTriangle.prototype = Object.create(Leaf.prototype);
@@ -81,6 +82,7 @@ LeafTriangle.prototype.parseLeaf = function(args, scene) {
 
 	}
 };
+ 
 //
 //
 LeafCylinder.prototype = Object.create(Leaf.prototype);
@@ -101,6 +103,7 @@ LeafCylinder.prototype.parseLeaf = function(args, scene) {
 		this.element = new Cylinder(scene, args[0], args[1], args[2], args[3], args[4]);
 	}
 };
+ 
 
 //
 //
@@ -110,7 +113,7 @@ LeafSphere.prototype.constructor = LeafSphere;
 function LeafSphere() {
 	Leaf.call(this);
 }
-
+ 
 LeafSphere.prototype.parseLeaf = function(args, scene) {
 	this.type = "Sphere";
 	var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
