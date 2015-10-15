@@ -59,7 +59,7 @@ MySceneGraph.prototype.display = function() {
    if (this.rootNode != null) {
         this.rootNode.display(this.rootNode);
     } else
-        this.XMLError("Element Root missing"); 
+        this.onXMLError("Element Root missing"); 
 };
 /*
  * Callback to be executed after successful reading
@@ -132,6 +132,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
             newMaterial.setAmbient(newAmb);
             newMaterial.setDiffuse(newDiff);
             newMaterial.setSpecular(newSpec);
+            newMaterial.setAppearence(this.scene);
 
             this.materials[newID] = newMaterial; // this.materials.push(newMaterial);
         } else {
@@ -139,9 +140,6 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
         }
     }
 
-    for (key in this.materials) {
-        console.log(this.materials[key]);
-    }
     console.log("End MATERIALS");
 };
 
@@ -214,7 +212,6 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
     var nNodes = tempList[0].children.length;
 
     for (var i = 0; i <nNodes; i++){
-        console.log(tempList[0].children[i].nodeName, "Expected: " + expectedElements[i]);
         if (tempList[0].children[i].nodeName != expectedElements[i]) {
 
             this.onXMLError("Wrong element in Inititals,please check your .lsx :\n" + FRUSTUM + "\n" + TRANSLATE + "\n" + ROTATE + "\n" + ROTATE + "\n" + ROTATE + "\n" + SCALE + "\n" + AXIS);
@@ -321,9 +318,7 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
         //this.textures.push(texture);
         this.textures[texture.id] = texture;
     }
-    for (key in this.textures) {
-        console.log(this.textures[key]);
-    }
+
     console.log("End TEXTURES");
 
 };
@@ -434,6 +429,12 @@ MySceneGraph.prototype.onXMLWarn = function(message) {
     console.warn("XML Loading Warning: " + message);
 };
 
+ function XMLError(message){
+
+    this.message = "XML Loading Error: " + message;
+    this.name = "XML Error";
+ }
+
 MySceneGraph.prototype.parseNodes = function(rootElement) {
 
     console.log("Start NODES");
@@ -451,7 +452,6 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
         node.id = addID(elems[i], this, this.nodesID);
-        console.log("Node ID : " + node.id);
         var elems2 = this.checkTag(elems[i], 'MATERIAL');
         node.material = this.reader.getString(elems2[0], 'id');
         elems2 = this.checkTag(elems[i], 'TEXTURE');
@@ -478,8 +478,7 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
 
         if (node.id == rootName)
             this.rootNode = node;
-
-console.log("FUCKING MATRIX: ",nodeTransformation.matrix);        
+      
     }
 console.log("END NODES");
 
@@ -487,24 +486,16 @@ console.log("END NODES");
 
 function parseNodeTransformation(node, element, Transformation) {
 
-    console.log(node);
-    console.log(element);
+
     for (var i =0; i < element.length ; i++) {
-console.log(element[i].nodeName);
-        console.log(i);
         if (element[i].nodeName == "ROTATION") {
-              console.log("START Rotations");
             Transformation.parseRotate(element[i]);
-            console.log("END Rotations");
         } else
         if (element[i].nodeName == "TRANSLATION") {
             Transformation.parseTranslate(element[i]);
-            console.log("END TRANSLATION");
 
         } else if (element[i].nodeName == "SCALE") {
             Transformation.parseScale(element[i]);
-            console.log("END SCALE");
-
         }
 
     }

@@ -24,12 +24,7 @@ XMLscene.prototype.init = function(application) {
 	this.materials = [];
 
 	this.axis = new CGFaxis(this);
-	this.rec = new Rectangle(this, [0, 2], [0.5, 0]);
-	this.cube = new MyCube(this);
-	this.tri = new Triangle(this, [1, 0, 0], [0, 0, 1], [0, 0, 0]);
-	this.t1 = new Triangle(this, [0, 0, 1 / 2], [0, 0, 1], [0, 1, 0]);
 	this.lightsEnable = [];
-
 };
 
 XMLscene.prototype.initLights = function() {
@@ -83,21 +78,17 @@ XMLscene.prototype.CreateMaterials = function() {
 	var parsedMaterials = this.graph.materials;
 	var materialDefault = new CGFappearance(this);
 	var defaultID = addID(null, this.graph, this.graph.materialsID, "materialDefault");
-	this.materials[defaultID] = materialDefault;
-
-	for (var i = 0; i < parsedMaterials.length; i++) {
-		var tempMaterial = new CGFappearance(this);
-
-		tempMaterial.setAmbient(parsedMaterials[i].amb[0], parsedMaterials[i].amb[1], parsedMaterials[i].amb[2], parsedMaterials[i].amb[3]);
-		tempMaterial.setDiffuse(parsedMaterials[i].diff[0], parsedMaterials[i].diff[1], parsedMaterials[i].diff[2], parsedMaterials[i].diff[3]);
-		tempMaterial.setSpecular(parsedMaterials[i].spec[0], parsedMaterials[i].spec[1], parsedMaterials[i].spec[2], parsedMaterials[i].spec[3]);
-		tempMaterial.setEmission(parsedMaterials[i].emission[0], parsedMaterials[i].emission[1], parsedMaterials[i].emission[2], parsedMaterials[i].emission[3]);
-		tempMaterial.setShininess(parsedMaterials[i].getShininess());
-
-		this.materials[parsedMaterials[i].getID()] = tempMaterial;
-
-	}
+	var defaultMaterial = new Materials();
+	defaultMaterial.setID(defaultID);
+	defaultMaterial.setAmbient(materialDefault.ambient);
+	defaultMaterial.setDiffuse(materialDefault.diffuse);
+	defaultMaterial.setEmission(materialDefault.emission);
+	defaultMaterial.setSpecular(materialDefault.specular);
+	defaultMaterial.setShininess(materialDefault.shiness);
+	defaultMaterial.setAppearence(this);
+	this.materials[defaultID] = defaultMaterial;
 };
+
 // Handler called when the graph is finally loaded. 
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function() {
@@ -107,33 +98,11 @@ XMLscene.prototype.onGraphLoaded = function() {
 
 	this.axis = new CGFaxis(this, this.graph.initials.getAxisLength(), DEFAULT_THICKNESS);
 
-	this.appearance = new CGFappearance(this);
-	this.appearance.setAmbient(1, 1, 1, 1);
-	this.appearance.setDiffuse(1, 1, 1, 1);
-	this.appearance.setEmission(1, 1, 1, 1);
-	this.appearance.setSpecular(1, 1, 1, 1);
-	this.appearance.loadTexture("textures/wall.jpg");
-
-
-	this.app = new CGFappearance(this);
-	this.app.setAmbient(1, 1, 1, 1);
-	this.app.setDiffuse(1, 1, 1, 1);
-	this.app.setEmission(1, 1, 1, 1);
-	this.app.setSpecular(1, 1, 1, 1);
-
-	this.app.loadTexture("textures/floor.png");
 	this.UpdateCamera();
 	this.CreateLights();
-	console.log("this shouldn't be null " + this.gui);
+	this.CreateMaterials();
 	this.gui.addLights();
 	this.leaves = this.graph.leaves;
-	this.wall = new Rectangle(this, [0, 1, 0], [1, 0, 0]);
-	this.wall.setAmplif(0.5, 0.5);
-	this.cli = new Cylinder(this, 1, 0.5, 1, 20, 20);
-	this.cli1 = new Cylinder(this, 1, 1, 1, 20, 20);
-	this.esf = new Sphere(this, 20, 20, 0.30);
-	this.esf1 = new Sphere(this, 20, 20, 1);
-	this.CreateMaterials();
 };
 
 XMLscene.prototype.display = function() {
@@ -145,9 +114,9 @@ XMLscene.prototype.display = function() {
 	this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
 	// Initialize Model-View matrix as identity (no transformation
-	this.updateProjectionMatrix();
+		this.updateProjectionMatrix();
 
-	this.loadIdentity();
+		this.loadIdentity();
 
 	// Apply transformations corresponding to the camera position relative to the origin
 	this.applyViewMatrix();

@@ -4,6 +4,9 @@ function Node(graph) {
 	this.texture = null;
 	this.transformation = null;
 	this.id = "";
+
+	//debug
+	this.repeat = 0;
 };
 
 Node.prototype.getID = function() {
@@ -12,24 +15,34 @@ Node.prototype.getID = function() {
 
 Node.prototype.display = function(parentElement) {
 
-	if (this.texture != null) {
-		//add
-		var texture = this.graph.textures[this.texture];
-		//console.log(texture);
-		if (texture != null)
-			this.graph.texArray.push(texture);
-		else {
+	var material;
+	var texture;
 
-		}
-	}
 	if (this.material != null) {
-		var material = this.graph.materials[this.material];
+		material = this.graph.materials[this.material];
 		if (material != null)
 			this.graph.matArray.push(material);
-		else {
-			this.graph.matArray.push(this.graph.defaultMaterial);
-		}
 	}
+
+	if(this.texture != "null"){
+		texture = this.graph.textures[this.texture];
+		if(texture != null)
+			this.graph.texArray.push(texture);
+	}
+
+	if(this.repeat == 0){
+
+	console.log("Start");
+	console.log(this.id, " ", this.graph.matArray);
+	console.log(this.texture);
+	console.log(this.graph.texArray);
+
+	for(key in this.graph.matArray)
+		console.log(this.graph.matArray[key]);
+
+	for(key in this.graph.texArray)
+		console.log(this.graph.texArray[key]);
+}
 
 	for (var i = 0; i < this.descendents.length; i++) {
 		this.graph.scene.pushMatrix();
@@ -44,13 +57,26 @@ Node.prototype.display = function(parentElement) {
 			console.error("Element does not exist");
 		this.graph.scene.popMatrix();
 	}
-	if (this.texture != null) {
+
+	if (this.texture != "null")
 		this.graph.texArray.pop();
-	}
-	if (this.material != null) {
+	
+	if (material != null)
 		this.graph.matArray.pop();
 
-	}
+if(this.repeat == 0){
+	console.log("End");
+	console.log(this.id, this.graph.matArray);
+	console.log(this.graph.texArray);
+
+		for(key in this.graph.matArray)
+		console.log(this.graph.matArray[key]);
+
+		for(key in this.graph.texArray)
+		console.log(this.graph.texArray[key]);
+
+	this.repeat++;
+}
 
 };
 

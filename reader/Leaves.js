@@ -4,6 +4,9 @@ function Leaf(graph) {
 	this.type;
 	this.graph = graph;
 	this.args = [];
+
+	//debug
+	this.repeat = 0;
 };
 
 Leaf.prototype.setID = function(newID) {
@@ -27,15 +30,22 @@ Leaf.prototype.setGraph = function(newGraph) {
 Leaf.prototype.parseLeaf = function(args, scene) {};
 
 Leaf.prototype.display = function(parentElement) {
-	//console.log("LEAF DISPLAY");
+	
+
 	var grafo = parentElement.graph;
 	var material = grafo.matArray[grafo.matArray.length - 1];
-	var textura = grafo.texArray[grafo.texArray.length - 1];
-	//console.log("MATERIAL", material, grafo.matArray);
-	//console.log(textura);
+	var texture = grafo.texArray[grafo.texArray.length - 1];
 
-	//material.setTexture(textura);
-	//material.apply();
+
+	if(this.repeat == 0){
+		this.repeat = 1;
+	console.log("LEAF DISPLAY");
+	console.log("TEXTURE: ", texture.path);
+}
+
+	if(texture.id != "clear")
+		material.appearance.loadTexture(texture.path);
+	material.appearance.apply();
 //	console.log(this.element);
 	this.element.display();
 };
@@ -48,13 +58,11 @@ function LeafRectangle() {
 }
 LeafRectangle.prototype.parseLeaf = function(args, scene) {
 	this.type = "Rectangle";
-	console.log(args);
 	var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
 	var tempIndex = tempArgs.indexOf("inf");
 	if (tempIndex != -1) {
 		console.error("Invalid paramenter in the creation of a rectangle ( " + tempArgs[tempIndex] + " ), this leaf will be ignored")
 	} else {
-		console.log(tempIndex);
 		this.element = new Rectangle(scene, [args[0], args[1], 0], [args[2], args[3], 0]);
 	}
 };

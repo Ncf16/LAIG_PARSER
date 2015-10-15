@@ -22,7 +22,6 @@ Transformation.prototype.setMatrix = function(newMatrix) {
 };
 Transformation.prototype.parseTranslate = function(currElement) {
     var translation = stringArrayToNumber(readElement([currElement], ["x", "y", "z"], 1), "translation", "inf", "inf", 1);
-    console.log("TRANSLATE: "+translation);
     mat4.translate(this.matrix, this.matrix, vec3.fromValues(translation[0], translation[1], translation[2]));
 };
 
@@ -30,7 +29,6 @@ Transformation.prototype.parseScale = function(currElement) {
 
    
     var scale = stringArrayToNumber(readElement([currElement], ["sx", "sy", "sz"], 1), "scaleFactor", "inf", "inf", 1);
-   console.log("SCALE: "+scale);
     mat4.scale(this.matrix, this.matrix, vec3.fromValues(scale[0], scale[1], scale[2]));
 };
 
@@ -43,26 +41,21 @@ function degToRad(angle) {
 Transformation.prototype.parseRotate = function(currElement) {
 
     var rot = readElement([currElement], ["axis", "angle"], 1);
-    console.log("ROTATE: "+rot);
     switch (rot[0]) {
         case "x":
             {
                 AxisX = true;
-                console.log("Angulo" ,(Math.PI * Number(rot[1])) / 180);
-               
                 mat4.rotateX(this.matrix,  this.matrix,(Math.PI * Number(rot[1])) / 180);
-                console.log("AQUI");
                 break;
             }
         case "y":
             { 
-             console.log("Angulo" ,(Math.PI * Number(rot[1])) / 180);
                 AxisY = true;
                 mat4.rotateY(this.matrix, this.matrix, (Math.PI * Number(rot[1])) / 180) ;
                 break;
             }
         case "z":
-            {  console.log("Angulo" ,(Math.PI * Number(rot[1])) / 180);
+            {  
                 AxisZ = true;
                 mat4.rotateZ(this.matrix, this.matrix, (Math.PI * Number(rot[1])) / 180);
                 break;
