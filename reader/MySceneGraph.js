@@ -76,9 +76,8 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.initials = new initials();
         this.transformation = new Transformation(this.scene);
        
-                this.parseInitials(rootElement);
-                this.parseIllumination(rootElement);
-              
+    this.parseInitials(rootElement);
+    this.parseIllumination(rootElement);
     this.parseLights(rootElement);
     this.parseTextures(rootElement);
     this.parseMaterials(rootElement);
