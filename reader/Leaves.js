@@ -84,9 +84,7 @@ LeafTriangle.prototype.parseLeaf = function(args, scene) {
 	if (tempIndex != -1) {
 		console.error("Invalid paramenter in the creation of a triangle ( " + tempArgs[tempIndex] + " ), this leaf will be ignored")
 	} else {
-
-
-		this.element = new Triangle(scene, [args[0], args[1], args[2]], [args[4], args[5], args[6]], [args[8], args[9], args[10]]);
+		this.element = new Triangle(scene, [args[0], args[1], args[2]], [args[3], args[4], args[5]], [args[6], args[7], args[8]]);
 
 	}
 };

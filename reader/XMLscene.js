@@ -64,11 +64,8 @@ XMLscene.prototype.CreateLights = function() {
 		this.lights[i].setSpecular(parsedLights[i].spec[0], parsedLights[i].spec[1], parsedLights[i].spec[2], parsedLights[i].spec[3]);
 		this.lights[i].setVisible(true);
 
-		if (parsedLights[i].isEnabled()) {
-			this.lightsEnable.push(true);
-			this.gui.lights.add(this.lightsEnable, i, this.lightsEnable[i]);
-			this.lights[i].enable();
-		}
+		this.lightsEnable.push(parsedLights[i].isEnabled() ? true : false);
+		this.gui.lights.add(this.lightsEnable, i, this.lightsEnable[i]);
 
 	}
 };
@@ -93,7 +90,8 @@ XMLscene.prototype.CreateMaterials = function() {
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function() {
 	//Temp parte do rui
-	this.gl.clearColor(0, 0, 0, 1);
+	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
+	this.setGlobalAmbientLight(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
 	this.enableTextures(true);
 
 	this.axis = new CGFaxis(this, this.graph.initials.getAxisLength(), DEFAULT_THICKNESS);
@@ -142,47 +140,7 @@ XMLscene.prototype.display = function() {
 		}
 
 		this.graph.display();
-		/*	for (key in this.leaves) {
-			if (this.graph.leaves[key].type == "Cylinder") {
-				this.pushMatrix();
-
-				this.leaves[key].getElement().display();
-				this.popMatrix();
-			}
-		}*/
+		 
 	}
 	this.shader.unbind();
 };
-/*
-
-
-		this.pushMatrix();
-		this.translate(0, 2, 0);
-		this.rotate(degToRad(90), 1, 0, 0);
-		this.pushMatrix();
-		this.translate(0, 0, -2.5);
-		this.appearance.apply();
-		this.esf.display();
-		this.popMatrix();
-
-		//alterar raio
-		this.pushMatrix();
-		this.translate(0, 0, 2);
-		this.scale(1, 1, 0.10);
-		this.app.apply();
-		this.esf1.display();
-		this.popMatrix();
-
-		this.pushMatrix();
-		this.translate(0, 0, -2);
-		this.scale(0.15, 0.15, 4);
-		this.cli1.display();
-		this.popMatrix();
-
-		this.pushMatrix();
-		this.translate(0, 0, -3);
-		this.cli.display();
-		this.popMatrix();
-		this.popMatrix();
-
-*/

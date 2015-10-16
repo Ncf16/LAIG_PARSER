@@ -29,6 +29,29 @@ function stringArrayToNumber(array, nameOfType, lowerLimit, upperLimit, converte
 	return array;
 };
 
+function degToRad(angle) {
+ 
+ var temp= Number(angle);
+ //console.log(temp+1);
+ if(!isNaN(temp))
+    return (Math.PI *temp) / 180;
+else{
+      console.warn("Value of angle is a not a valid one please check .lsx, value: "+angle);
+    return 0;
+}
+};
+
+function deleteElement(array,evaluates)
+{
+	for(var i=0;i<array.length;i++){
+
+		if(evaluates(array[i]))
+		{
+			  array.splice(i, 1);
+			  i--;
+		}}
+return array;
+};
 function getElement(array, elementID) {
 	for (var i = 0; i < array.length; i++) {
 		if (array[i].getID() == elementID)

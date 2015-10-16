@@ -5,39 +5,13 @@
  */
 function Triangle(scene, point1, point2, point3) {
 	CGFobject.call(this, scene);
+ 
+	 this.point1 = typeof point1 !== 'undefined' ? point1 : [0, 0, 1];
 
-	if (point1 == undefined)
-		this.point1 = [0, 0, 1];
+ 	this.point2 = typeof point2 !== 'undefined' ? point2 : [1, 0, 0];
 
-	if (point2 == undefined)
-		this.point2 = [1, 0, 0];
+ 	this.point3 = typeof point3 !== 'undefined' ? point3 : [0, 1, 0];
 
-	if (point3 == undefined)
-		this.point3 = [0, 1, 0];
-	this.point1 = point1;
-	this.point2 = point2;
-	this.point3 = point3
-		/*	this.point1 = getLeftPoint([point1, point2, point3]);
-			this.point3 = getHigherPoint([point1, point2, point3]);
-
-			if (this.point1 == point1) {
-				if (this.point3 == point3)
-					this.point2 = point2;
-				else
-					this.point2 = point3;
-			} else
-			if (this.point1 == point2) {
-				if (this.point3 == point1)
-					this.point2 = point3;
-				else
-					this.point2 = point1;
-			} else if (this.point1 == point3) {
-				if (this.point3 == point1)
-					this.point2 = point2;
-				else
-					this.point2 = point1;
-			}
-		*/
 
 	this.S = 1;
 	this.T = 1;
@@ -59,7 +33,7 @@ Triangle.prototype.initBuffers = function() {
 	this.P1_P2 = [this.point2[0] - this.point1[0], this.point2[1] - this.point1[1], this.point2[2] - this.point1[2]];
 	this.P2_P3 = [this.point3[0] - this.point2[0], this.point3[1] - this.point2[1], this.point3[2] - this.point2[2]];
 	this.P1_P3 = [this.point3[0] - this.point1[0], this.point3[1] - this.point1[1], this.point3[2] - this.point1[2]];
-	var normal = crossProduct(this.P1_P2, this.P2_P3);
+	var normal = crossProduct(this.P2_P3, this.P1_P2);
 	normalVector(normal);
 
 

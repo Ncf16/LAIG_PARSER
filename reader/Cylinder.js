@@ -42,8 +42,8 @@ Cylinder.prototype.initBuffers = function() {
 
 			this.vertices.push(currentX, currentY, currentZ);
 			if (this.sections_per_height != stack && this.parts_per_section != slice) {
-				this.indices.push(slice + jump)
-				this.indices.push(slice + jump + 1)
+				this.indices.push(slice + jump);
+				this.indices.push(slice + jump + 1);
 				this.indices.push(slice + jump + this.parts_per_section + 1);
 
 				this.indices.push(slice + jump + 1)

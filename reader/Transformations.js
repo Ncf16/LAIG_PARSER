@@ -33,31 +33,33 @@ Transformation.prototype.parseScale = function(currElement) {
 };
 
 
-function degToRad(angle) {
- 
-    return (Math.PI * Number(angle)) / 180;
-};
 
 Transformation.prototype.parseRotate = function(currElement) {
 
     var rot = readElement([currElement], ["axis", "angle"], 1);
+  // console.log("ROTATE: ",rot[1]  );
     switch (rot[0]) {
         case "x":
             {
-                AxisX = true;
-                mat4.rotateX(this.matrix,  this.matrix,(Math.PI * Number(rot[1])) / 180);
+ 
+                AxisX = true;  
+                mat4.rotateX(this.matrix,  this.matrix, degToRad(rot[1]) );
+              
                 break;
             }
         case "y":
             { 
+             
                 AxisY = true;
-                mat4.rotateY(this.matrix, this.matrix, (Math.PI * Number(rot[1])) / 180) ;
+ 
+                mat4.rotateY(this.matrix, this.matrix, degToRad(rot[1])) ;
                 break;
             }
         case "z":
-            {  
+            {   
                 AxisZ = true;
-                mat4.rotateZ(this.matrix, this.matrix, (Math.PI * Number(rot[1])) / 180);
+    
+                mat4.rotateZ(this.matrix, this.matrix,  degToRad(rot[1])) ;
                 break;
             }
         default:

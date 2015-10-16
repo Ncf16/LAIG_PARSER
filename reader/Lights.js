@@ -28,7 +28,7 @@ Lights.prototype.getSpecular = function() {
 Lights.prototype.setEnabled = function(newEnabled) {
 	var temp = Number(newEnabled);
 	if (validadeNumber(temp, function(x) {
-			if (x != 0 && x != 1)
+			if ((x != 0 && x != 1) || isNaN(x))
 				return false;
 			else
 				return true;
@@ -48,11 +48,11 @@ Lights.prototype.setPosition = function(newPos) {
 	this.pos = stringArrayToNumber(newPos, "Position", "inf", "inf", 1);
 };
 Lights.prototype.setAmbient = function(newAmb) {
-	this.amb = stringArrayToNumber(newAmb, "RGB", 0, 255, 255);
+	this.amb = stringArrayToNumber(newAmb, "RGB", 0, 1, 255);
 };
 Lights.prototype.setDiffuse = function(newDiff) {
-	this.diff = stringArrayToNumber(newDiff, "RGB", 0, 255, 255);
+	this.diff = stringArrayToNumber(newDiff, "RGB", 0, 1, 255);
 };
 Lights.prototype.setSpecular = function(newSpec) {
-	this.spec = stringArrayToNumber(newSpec, "RGB", 0, 255, 255);
+	this.spec = stringArrayToNumber(newSpec, "RGB", 0, 1, 255);
 };

@@ -5,7 +5,7 @@ function Frustum() {
 
 Frustum.prototype.setNear = function(newNear) {
 	var temp=Number(newNear);
-	if(temp == NaN || temp <0)
+	if(isNaN(temp) || temp <0)
 	{
 		temp=0.1;
 	}
@@ -13,9 +13,11 @@ Frustum.prototype.setNear = function(newNear) {
 };
 Frustum.prototype.setFar = function(newFar) {
 	var temp=Number(newFar);
-	if(temp == NaN || temp <0)
+	if(isNaN(temp) || temp <0)
 	{
 		temp=500;
 	}
 	this.far = temp;
 };
+
+ 

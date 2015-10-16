@@ -14,7 +14,8 @@ var AxisZ;
 var AxisY;
 var Axis;
 var FIRST_ELEMENT;
-
+var TO_ELIMINATE_CHAR=" ";
+var nonValidChar=[""];
 //ver que matrix passsar 
 //fazer get and sets para stuff the initials, perhaps change code para evitar duplicado como temos de parseLights e parseMaterials
 function MySceneGraph(filename, scene) {
@@ -154,7 +155,12 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
         this.onXMLWarn("No LIGHTS available, default light will be createrd ");
     }
     var nLight = tempList[0].children.length;
+    if(nLight==0)
+    {
+    console.warn("No LIGHT was found, please check your LIGHTS scetion of you lsx");
 
+
+    }   else{
     if (this.lights == undefined) {
         this.lights = [];
     }
@@ -190,6 +196,7 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
             }
         }
     }
+}
     console.log("End LIGHTS");
 };
 
@@ -251,7 +258,16 @@ MySceneGraph.prototype.parseLeaf = function(rootElement) {
 
 
             tempLeaf = parseLeafAux(tempLeaf, typeOfLeaf);
-            tempLeaf.parseLeaf(args.toString().split(" "), this.scene);
+               var processedArgs=deleteElement(args.toString().split(TO_ELIMINATE_CHAR), function(x){
+            
+                if(isNaN(Number(x))|| (nonValidChar.indexOf(x)!=-1))
+                    return true;
+                else
+                    return false;
+
+            });
+       
+            tempLeaf.parseLeaf(processedArgs , this.scene);
             tempLeaf.setID(tempID);
             tempLeaf.setGraph(this);
             this.nodes.push(tempLeaf);
@@ -447,7 +463,6 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
     elems = this.checkTag(elems[0], 'NODE', false, 1);
 
     for (var i = 0; i < elems.length; i++) {
-
         var node = new Node(this);
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
@@ -470,9 +485,7 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
          
         node.descendents = descendants;
         //transformations
- 
         parseNodeTransformation(node, elems[i].children, nodeTransformation);
-        
         node.transformation = nodeTransformation;
          this.nodes.push(node);
 
