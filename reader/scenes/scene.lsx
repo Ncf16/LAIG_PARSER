@@ -197,10 +197,10 @@
                 <DESCENDANT id="chair" />
                <DESCENDANT id="table" />
                <DESCENDANT id="flag" />
-               <!--<DESCENDANT id="lamp" />
+               <DESCENDANT id="lamp" />
                 <DESCENDANT id="floor" />
                <DESCENDANT id="wall1" />
-              <DESCENDANT id="wall2" />-->
+              <DESCENDANT id="wall2" />
             </DESCENDANTS>
         </NODE>
         <NODE id="floor">

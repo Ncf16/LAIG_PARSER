@@ -44,8 +44,10 @@ Leaf.prototype.display = function(parentElement) {
 }
 */
 
+ if( typeof texture !== 'undefined'){
 	if(texture.id != "clear")
 		material.setTexture(texture.cgf);
+}
 
 	material.appearance.apply();
 	this.element.display();
@@ -74,7 +76,7 @@ LeafRectangle.prototype.display = function(parentElement) {
 	var grafo = parentElement.graph;
 	var material = grafo.matArray[grafo.matArray.length - 1];
 	var texture = grafo.texArray[grafo.texArray.length - 1];
-	//this.element.setAmplif(texture.amplif_factor[0],texture.amplif_factor[1]);
+	this.element.setAmplif(texture.amplif_factor['s'],texture.amplif_factor['t']);
 
 	if(texture.id != "clear")
 		material.setTexture(texture.cgf);
@@ -92,27 +94,19 @@ function LeafTriangle() {
 	Leaf.call(this);
 }
 
-/*
 LeafTriangle.prototype.display = function(parentElement) {
 
 	var grafo = parentElement.graph;
 	var material = grafo.matArray[grafo.matArray.length - 1];
 	var texture = grafo.texArray[grafo.texArray.length - 1];
-	this.element.setAmplif(texture.amplif_factor[0],texture.amplif_factor[1]);
-
-	if(this.repeat == 0){
-		this.repeat = 1;
-		console.log("LEAF DISPLAY");
-		console.log("TEXTURE: ", texture.path);
-	}
+	this.element.setAmplif(texture.amplif_factor['s'],texture.amplif_factor['t']);
 
 	if(texture.id != "clear")
-		material.setTexture(texture.cgf);l
+		material.setTexture(texture.cgf);
 
 	material.appearance.apply();
 	this.element.display();
 }; 
-*/
 
 LeafTriangle.prototype.parseLeaf = function(args, scene) {
 	this.type = "Triangle";
