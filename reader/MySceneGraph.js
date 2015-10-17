@@ -323,13 +323,14 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
     elems = this.checkTag(elems[0], 'TEXTURE', false, 1);
 
     for (var i = 0; i < elems.length; i++) {
-        var texture = {};
+        var texture = new Texture();
         this.idIndex(this.textures, texture, elems[i], 'texture');
 
         var elems2 = this.checkTag(elems[i], 'file', false, 1, 1);
         texture.path = this.reader.getString(elems2[0], 'path');
         texture.amplif_factor = {};
         this.parseST(texture.amplif_factor, elems[i], 'amplif_factor');
+        texture.createTexture(this.scene);
 
         //this.textures.push(texture);
         this.textures[texture.id] = texture;

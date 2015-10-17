@@ -43,9 +43,9 @@ XMLscene.prototype.initCameras = function() {
 };
 
 XMLscene.prototype.setDefaultAppearance = function() {
-	this.setAmbient(0.5, 0.5, 0.5, 1.0);
-	this.setDiffuse(0.2, 0.4, 0.8, 1.0);
-	this.setSpecular(0.2, 0.4, 0.8, 1.0);
+	this.setAmbient(0.5, 0.0, 0.0, 1.0);
+	this.setDiffuse(0.5, 0.0, 0.0, 1.0);
+	this.setSpecular(0.5, 0.0, 0.0, 1.0);
 	this.setShininess(10.0);
 };
 XMLscene.prototype.UpdateCamera = function() {
@@ -90,8 +90,8 @@ XMLscene.prototype.CreateMaterials = function() {
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function() {
 	//Temp parte do rui
-	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
-	this.setGlobalAmbientLight(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
+	//this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
+	//this.setGlobalAmbientLight(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
 	this.enableTextures(true);
 
 	this.axis = new CGFaxis(this, this.graph.initials.getAxisLength(), DEFAULT_THICKNESS);
@@ -120,8 +120,9 @@ XMLscene.prototype.display = function() {
 	this.applyViewMatrix();
 
 	// Draw axis
+		this.setDefaultAppearance();
 	this.axis.display();
-	this.setDefaultAppearance();
+
 
 	// ---- END Background, camera and axis setup
 	// it is important that things depending on the proper loading of the graph

@@ -65,3 +65,8 @@ Materials.prototype.setAppearence = function(scene){
 	this.appearance.setEmission(this.emission[0], this.emission[1], this.emission[2], this.emission[3]);
 	this.appearance.setShininess(this.getShininess());
 }
+
+Materials.prototype.setTexture = function(texture){
+
+	this.appearance.setTexture(texture);
+}

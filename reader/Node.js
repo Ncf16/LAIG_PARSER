@@ -30,6 +30,7 @@ Node.prototype.display = function(parentElement) {
 			this.graph.texArray.push(texture);
 	}
 
+/*
 	if(this.repeat == 0){
 
 	console.log("Start");
@@ -43,6 +44,7 @@ Node.prototype.display = function(parentElement) {
 	for(key in this.graph.texArray)
 		console.log(this.graph.texArray[key]);
 }
+*/
 
 	for (var i = 0; i < this.descendents.length; i++) {
 		this.graph.scene.pushMatrix();
@@ -64,6 +66,7 @@ Node.prototype.display = function(parentElement) {
 	if (material != null)
 		this.graph.matArray.pop();
 
+/*
 if(this.repeat == 0){
 	console.log("End");
 	console.log(this.id, this.graph.matArray);
@@ -77,6 +80,7 @@ if(this.repeat == 0){
 
 	this.repeat++;
 }
+*/
 
 };
 
