@@ -42,16 +42,6 @@ Leaf.prototype.display = function(parentElement) {
     var material = this.graph.matArray[this.graph.matArray.length - 1];
     var texture = this.graph.texArray[this.graph.texArray.length - 1];
 
-
-    /*
-	if(this.repeat < 2){
-		this.repeat++;
-	console.log("LEAF DISPLAY");
-	console.log("TEXTURE: ", texture.path);
-	console.log("MATERIAL", material.ID, material.appearance);
-}
-*/
-
     if (typeof texture !== 'undefined') {
         if (texture.id != "clear")
             material.setTexture(texture.cgf);
@@ -81,13 +71,14 @@ LeafRectangle.prototype.parseLeaf = function(args, scene) {
 
 LeafRectangle.prototype.display = function(parentElement) {
 
-    var grafo = parentElement.graph;
-    var material = grafo.matArray[grafo.matArray.length - 1];
-    var texture = grafo.texArray[grafo.texArray.length - 1];
-    this.element.setAmplif(texture.amplif_factor['s'], texture.amplif_factor['t']);
+    var material = this.graph.matArray[this.graph.matArray.length - 1];
+    var texture = this.graph.texArray[this.graph.texArray.length - 1];
+    if(typeof texture !== 'undefined'){
+        this.element.setAmplif(texture.amplif_factor['s'], texture.amplif_factor['t']);
 
     if (texture.id != "clear")
         material.setTexture(texture.cgf);
+}
 
     material.appearance.apply();
     this.element.display();
@@ -104,13 +95,14 @@ function LeafTriangle() {
 
 LeafTriangle.prototype.display = function(parentElement) {
 
-    var grafo = parentElement.graph;
-    var material = grafo.matArray[grafo.matArray.length - 1];
-    var texture = grafo.texArray[grafo.texArray.length - 1];
-    this.element.setAmplif(texture.amplif_factor['s'], texture.amplif_factor['t']);
+    var material = this.graph.matArray[this.graph.matArray.length - 1];
+    var texture = this.graph.texArray[this.graph.texArray.length - 1];
+    if(typeof texture !== 'undefined'){
+        this.element.setAmplif(texture.amplif_factor['s'], texture.amplif_factor['t']);
 
     if (texture.id != "clear")
         material.setTexture(texture.cgf);
+}
 
     material.appearance.apply();
     this.element.display();

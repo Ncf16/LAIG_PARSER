@@ -6,5 +6,6 @@ function Texture() {
 
 Texture.prototype.createTexture = function(scene){
 
-	this.cgf = new CGFtexture(scene, this.path);
+	if(this.id != "clear")
+		this.cgf = new CGFtexture(scene, this.path);
 }

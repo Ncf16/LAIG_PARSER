@@ -313,8 +313,6 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
     this.parseRGBA(this.ambient, elems, 'ambient');
     this.parseRGBA(this.background, elems, 'background');
 
-    console.log(this.background);
-
     console.log("End ILLUMINATION");
 };
 
@@ -339,6 +337,12 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
         //this.textures.push(texture);
         this.textures[texture.id] = texture;
     }
+
+
+    //create clear Texture in array
+    var clearTexture = new Texture();
+    clearTexture.id = "clear";
+    this.textures[clearTexture.id] = clearTexture;
 
     console.log("End TEXTURES");
 

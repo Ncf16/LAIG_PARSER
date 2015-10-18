@@ -20,7 +20,8 @@ Node.prototype.display = function(parentElement) {
     var material;
     var texture;
 
-    if (this.material != null) {
+
+    if (this.material != "null") {
         material = this.graph.materials[this.material];
         if (material != null)
             this.graph.matArray.push(material);
@@ -32,12 +33,11 @@ Node.prototype.display = function(parentElement) {
             this.graph.texArray.push(texture);
     }
 
-    /*
 	if(this.repeat == 0){
 
 	console.log("Start");
 	console.log(this.id, " ", this.graph.matArray);
-	console.log(this.texture);
+	console.log(this.material);
 	console.log(this.graph.texArray);
 
 	for(key in this.graph.matArray)
@@ -46,7 +46,6 @@ Node.prototype.display = function(parentElement) {
 	for(key in this.graph.texArray)
 		console.log(this.graph.texArray[key]);
 }
-*/
 
     for (var i = 0; i < this.descendents.length; i++) {
         this.graph.scene.pushMatrix();
@@ -65,10 +64,9 @@ Node.prototype.display = function(parentElement) {
     if (this.texture != "null")
         this.graph.texArray.pop();
 
-    if (material != null)
+    if (this.material != "null")
         this.graph.matArray.pop();
 
-    /*
 if(this.repeat == 0){
 	console.log("End");
 	console.log(this.id, this.graph.matArray);
@@ -82,8 +80,6 @@ if(this.repeat == 0){
 
 	this.repeat++;
 }
-*/
-
 };
 
 Node.prototype.checkCycle = function() {
