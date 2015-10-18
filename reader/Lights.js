@@ -1,3 +1,4 @@
+var CONVERTER=1;
 function Lights() {
 	this.enabled = false;
 	this.ID = "";
@@ -48,11 +49,11 @@ Lights.prototype.setPosition = function(newPos) {
 	this.pos = stringArrayToNumber(newPos, "Position", "inf", "inf", 1);
 };
 Lights.prototype.setAmbient = function(newAmb) {
-	this.amb = stringArrayToNumber(newAmb, "RGB", 0, 1, 255);
+	this.amb = stringArrayToNumber(newAmb, "RGB", 0, 1, CONVERTER);
 };
 Lights.prototype.setDiffuse = function(newDiff) {
-	this.diff = stringArrayToNumber(newDiff, "RGB", 0, 1, 255);
+	this.diff = stringArrayToNumber(newDiff, "RGB", 0, 1, CONVERTER);
 };
 Lights.prototype.setSpecular = function(newSpec) {
-	this.spec = stringArrayToNumber(newSpec, "RGB", 0, 1, 255);
+	this.spec = stringArrayToNumber(newSpec, "RGB", 0, 1, CONVERTER);
 };
