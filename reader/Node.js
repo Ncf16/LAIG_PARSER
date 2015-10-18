@@ -4,6 +4,7 @@ function Node(graph) {
 	this.texture = null;
 	this.transformation = null;
 	this.id = "";
+	this.visited = false;
 
 	//debug
 	this.repeat = 0;
@@ -84,3 +85,32 @@ if(this.repeat == 0){
 
 };
 
+Node.prototype.checkCycle = function() {
+    this.visited = true;
+    var nodesArray = this.graph.nodes;
+    for (var key = 0; key < this.descendents.length; key++) {
+
+        var idToFind = this.descendents[key];
+
+        var nextElem = getElement(nodesArray, idToFind);
+        if (nextElem != null) {
+            if (!nextElem.getVisited()) {
+                if (nextElem.checkCycle()) {
+                    return true;
+                }
+            } else {
+                console.error( "A cycle was detected in the following Nodes: ", this.id, "  ", this.descendents[key]);
+                return true;
+            }
+     
+
+        }
+    
+ this.graph .setAllUnvisited();
+    }
+    return false;
+};
+
+Node.prototype.getVisited = function() {
+    return this.visited;
+};

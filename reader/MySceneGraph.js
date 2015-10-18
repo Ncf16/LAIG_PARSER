@@ -39,7 +39,7 @@ function MySceneGraph(filename, scene) {
     this.rootNode = null;
     this.texArray = [];
     this.matArray = [];
-
+    this.cycles = false;
     this.defaultMaterial = new CGFappearance(scene);
     this.defaultMaterial.setAmbient(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setDiffuse(0.5, 0.5, 0.5, 1.0);
@@ -56,12 +56,14 @@ function MySceneGraph(filename, scene) {
      */
     this.reader.open('scenes/' + filename, this);
 };
-MySceneGraph.prototype.display = function() {
-   if (this.rootNode != null) {
-        this.rootNode.display(this.rootNode);
+  MySceneGraph.prototype.display = function() {
+    if (this.rootNode != null) {
+        if (!this.cycles)
+            this.rootNode.display(this.rootNode);
     } else
-        this.onXMLError("Element Root missing"); 
+        this.onXMLError("Element Root missing");
 };
+
 /*
  * Callback to be executed after successful reading
  */
@@ -451,11 +453,8 @@ MySceneGraph.prototype.onXMLWarn = function(message) {
     this.message = "XML Loading Error: " + message;
     this.name = "XML Error";
  }
-
 MySceneGraph.prototype.parseNodes = function(rootElement) {
-
     console.log("Start NODES");
-    //  this.nodes = [];
 
     var elems = this.checkTag(rootElement, 'NODES', false);
     var root = this.checkTag(elems[0], 'ROOT', false);
@@ -478,39 +477,44 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         elems2 = this.checkTag(elems2[0], 'DESCENDANT', false, 1);
 
         for (var j = 0; j < elems2.length; j++) {
-           
+
             var descendant = this.reader.getString(elems2[j], 'id');
             descendants.push(descendant);
-             
+
         }
-         
+
         node.descendents = descendants;
         //transformations
         parseNodeTransformation(node, elems[i].children, nodeTransformation);
         node.transformation = nodeTransformation;
-         this.nodes.push(node);
+        this.nodes.push(node);
 
         if (node.id == rootName)
             this.rootNode = node;
-      
+
     }
-console.log("END NODES");
+    this.checkCycle();
+    console.log("END NODES");
 
 };
+MySceneGraph.prototype.setAllUnvisited = function() {
 
-function parseNodeTransformation(node, element, Transformation) {
+    for (var key = 0; key < this.nodes.length; key++) {
 
+        this.nodes[key].visited = false;
+    }
+};
+MySceneGraph.prototype.checkCycle = function() {
 
-    for (var i =0; i < element.length ; i++) {
-        if (element[i].nodeName == "ROTATION") {
-            Transformation.parseRotate(element[i]);
-        } else
-        if (element[i].nodeName == "TRANSLATION") {
-            Transformation.parseTranslate(element[i]);
-
-        } else if (element[i].nodeName == "SCALE") {
-            Transformation.parseScale(element[i]);
+    for (var key = 0; key < this.nodes.length; key++) {
+        if (!this.nodes[key].getVisited()) {
+            if (this.nodes[key].checkCycle()) {
+                this.onXMLError("Graph has Cycles");
+                this.cycles = true;
+                return;
+            }
         }
-
+       
     }
 };
+ 

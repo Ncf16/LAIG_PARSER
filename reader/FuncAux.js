@@ -183,3 +183,20 @@ function parseFrustum(initials, currElement) {
 function parseAxisLength(initials, currElement) {
 	initials.setAxisLength(readElement([currElement], ["length"], 1));
 };
+
+function parseNodeTransformation(node, element, Transformation) {
+
+
+    for (var i =0; i < element.length ; i++) {
+        if (element[i].nodeName == "ROTATION") {
+            Transformation.parseRotate(element[i]);
+        } else
+        if (element[i].nodeName == "TRANSLATION") {
+            Transformation.parseTranslate(element[i]);
+
+        } else if (element[i].nodeName == "SCALE") {
+            Transformation.parseScale(element[i]);
+        }
+
+    }
+};

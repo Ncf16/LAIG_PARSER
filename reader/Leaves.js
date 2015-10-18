@@ -29,6 +29,15 @@ Leaf.prototype.setGraph = function(newGraph) {
 }
 Leaf.prototype.parseLeaf = function(args, scene) {};
 
+Leaf.prototype.getVisited=function()
+{
+	return false;
+};
+Leaf.prototype.checkCycle = function() {
+	return false;
+};
+
+
 Leaf.prototype.display = function(parentElement) {
 	
 	var material = this.graph.matArray[this.graph.matArray.length - 1];
