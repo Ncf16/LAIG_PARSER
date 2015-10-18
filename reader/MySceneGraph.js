@@ -313,6 +313,8 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
     this.parseRGBA(this.ambient, elems, 'ambient');
     this.parseRGBA(this.background, elems, 'background');
 
+    console.log(this.background);
+
     console.log("End ILLUMINATION");
 };
 
