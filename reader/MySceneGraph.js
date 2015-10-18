@@ -14,8 +14,8 @@ var AxisZ;
 var AxisY;
 var Axis;
 var FIRST_ELEMENT;
-var TO_ELIMINATE_CHAR=" ";
-var nonValidChar=[""];
+var TO_ELIMINATE_CHAR = " ";
+var nonValidChar = [""];
 //ver que matrix passsar 
 //fazer get and sets para stuff the initials, perhaps change code para evitar duplicado como temos de parseLights e parseMaterials
 function MySceneGraph(filename, scene) {
@@ -56,10 +56,11 @@ function MySceneGraph(filename, scene) {
      */
     this.reader.open('scenes/' + filename, this);
 };
-  MySceneGraph.prototype.display = function() {
+MySceneGraph.prototype.display = function() {
     if (this.rootNode != null) {
-        if (!this.cycles)
-            this.rootNode.display(this.rootNode);
+        if (!this.cycles) {
+           this.rootNode.display(this.rootNode);
+        }
     } else
         this.onXMLError("Element Root missing");
 };
@@ -78,14 +79,14 @@ MySceneGraph.prototype.onXMLReady = function() {
 
         this.initials = new initials();
         this.transformation = new Transformation(this.scene);
-       
-    this.parseInitials(rootElement);
-    this.parseIllumination(rootElement);
-    this.parseLights(rootElement);
-    this.parseTextures(rootElement);
-    this.parseMaterials(rootElement);
-    this.parseLeaf(rootElement);
-    this.parseNodes(rootElement);
+
+        this.parseInitials(rootElement);
+        this.parseIllumination(rootElement);
+        this.parseLights(rootElement);
+        this.parseTextures(rootElement);
+        this.parseMaterials(rootElement);
+        this.parseLeaf(rootElement);
+        this.parseNodes(rootElement);
 
     } catch (err) {
         if (err instanceof XMLError) {
@@ -157,48 +158,47 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
         this.onXMLWarn("No LIGHTS available, default light will be createrd ");
     }
     var nLight = tempList[0].children.length;
-    if(nLight==0)
-    {
-    console.warn("No LIGHT was found, please check your LIGHTS scetion of you lsx");
+    if (nLight == 0) {
+        console.warn("No LIGHT was found, please check your LIGHTS scetion of you lsx");
 
 
-    }   else{
-    if (this.lights == undefined) {
-        this.lights = [];
-    }
-    for (var j = 0; j < numberLights; j++) {
+    } else {
+        if (this.lights == undefined) {
+            this.lights = [];
+        }
+        for (var j = 0; j < numberLights; j++) {
 
-        for (var i = 0; i < nLight; i++) {
-            //alterar segunda parte do if
-            if (MAX_LIGHTS <= this.LightsID.length) {
+            for (var i = 0; i < nLight; i++) {
+                //alterar segunda parte do if
+                if (MAX_LIGHTS <= this.LightsID.length) {
 
-                this.onXMLWarn("Max number of lights have been added ( " + MAX_LIGHTS + ")");
-                return;
-            }
-            var currLight = tempList[j].children[i];
-            if (currLight.nodeName == 'LIGHT') {
-                //por as classes a tratar do parsing dos objetos em si
-                var newLight = new Lights();
-                var newID = addID(currLight, this, this.LightsID);
-                var newEnable = readElement(tempList[j].children[i].getElementsByTagName("enable"), ["value"], 1);
-                var newPos = readElement(tempList[j].children[i].getElementsByTagName("position"), POSITION_VARIABLES, 1);
-                var newAmb = readElement(tempList[j].children[i].getElementsByTagName("ambient"), RGB_VARIABLES, 1);
-                var newDiff = readElement(tempList[j].children[i].getElementsByTagName("diffuse"), RGB_VARIABLES, 1);
-                var newSpec = readElement(tempList[j].children[i].getElementsByTagName("specular"), RGB_VARIABLES, 1);
+                    this.onXMLWarn("Max number of lights have been added ( " + MAX_LIGHTS + ")");
+                    return;
+                }
+                var currLight = tempList[j].children[i];
+                if (currLight.nodeName == 'LIGHT') {
+                    //por as classes a tratar do parsing dos objetos em si
+                    var newLight = new Lights();
+                    var newID = addID(currLight, this, this.LightsID);
+                    var newEnable = readElement(tempList[j].children[i].getElementsByTagName("enable"), ["value"], 1);
+                    var newPos = readElement(tempList[j].children[i].getElementsByTagName("position"), POSITION_VARIABLES, 1);
+                    var newAmb = readElement(tempList[j].children[i].getElementsByTagName("ambient"), RGB_VARIABLES, 1);
+                    var newDiff = readElement(tempList[j].children[i].getElementsByTagName("diffuse"), RGB_VARIABLES, 1);
+                    var newSpec = readElement(tempList[j].children[i].getElementsByTagName("specular"), RGB_VARIABLES, 1);
 
-                newLight.setID(newID);
-                newLight.setEnabled(newEnable);
-                newLight.setPosition(newPos);
-                newLight.setAmbient(newAmb);
-                newLight.setDiffuse(newDiff);
-                newLight.setSpecular(newSpec);
-                this.lights.push(newLight);
-            } else {
-                this.onXMLWarn("Element not LIGHT it was: " + currLight.nodeName);
+                    newLight.setID(newID);
+                    newLight.setEnabled(newEnable);
+                    newLight.setPosition(newPos);
+                    newLight.setAmbient(newAmb);
+                    newLight.setDiffuse(newDiff);
+                    newLight.setSpecular(newSpec);
+                    this.lights.push(newLight);
+                } else {
+                    this.onXMLWarn("Element not LIGHT it was: " + currLight.nodeName);
+                }
             }
         }
     }
-}
     console.log("End LIGHTS");
 };
 
@@ -220,7 +220,7 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
     var expectedElements = [FRUSTUM, TRANSLATE, ROTATE, ROTATE, ROTATE, SCALE, AXIS];
     var nNodes = tempList[0].children.length;
 
-    for (var i = 0; i <nNodes; i++){
+    for (var i = 0; i < nNodes; i++) {
         if (tempList[0].children[i].nodeName != expectedElements[i]) {
 
             this.onXMLError("Wrong element in Inititals,please check your .lsx :\n" + FRUSTUM + "\n" + TRANSLATE + "\n" + ROTATE + "\n" + ROTATE + "\n" + ROTATE + "\n" + SCALE + "\n" + AXIS);
@@ -260,16 +260,16 @@ MySceneGraph.prototype.parseLeaf = function(rootElement) {
 
 
             tempLeaf = parseLeafAux(tempLeaf, typeOfLeaf);
-               var processedArgs=deleteElement(args.toString().split(TO_ELIMINATE_CHAR), function(x){
-            
-                if(isNaN(Number(x))|| (nonValidChar.indexOf(x)!=-1))
+            var processedArgs = deleteElement(args.toString().split(TO_ELIMINATE_CHAR), function(x) {
+
+                if (isNaN(Number(x)) || (nonValidChar.indexOf(x) != -1))
                     return true;
                 else
                     return false;
 
             });
-       
-            tempLeaf.parseLeaf(processedArgs , this.scene);
+
+            tempLeaf.parseLeaf(processedArgs, this.scene);
             tempLeaf.setID(tempID);
             tempLeaf.setGraph(this);
             this.nodes.push(tempLeaf);
@@ -448,11 +448,11 @@ MySceneGraph.prototype.onXMLWarn = function(message) {
     console.warn("XML Loading Warning: " + message);
 };
 
- function XMLError(message){
+function XMLError(message) {
 
     this.message = "XML Loading Error: " + message;
     this.name = "XML Error";
- }
+}
 MySceneGraph.prototype.parseNodes = function(rootElement) {
     console.log("Start NODES");
 
@@ -497,7 +497,7 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
     console.log("END NODES");
 
 };
-MySceneGraph.prototype.setAllUnvisited = function() {
+MySceneGraph.prototype.setUnvisited = function() {
 
     for (var key = 0; key < this.nodes.length; key++) {
 
@@ -505,7 +505,7 @@ MySceneGraph.prototype.setAllUnvisited = function() {
     }
 };
 MySceneGraph.prototype.checkCycle = function() {
-
+    this.setUnvisited();
     for (var key = 0; key < this.nodes.length; key++) {
         if (!this.nodes[key].getVisited()) {
             if (this.nodes[key].checkCycle()) {
@@ -514,7 +514,5 @@ MySceneGraph.prototype.checkCycle = function() {
                 return;
             }
         }
-       
     }
 };
- 
