@@ -1,103 +1,97 @@
 function Node(graph) {
+    //scene graph
     this.graph = graph;
+    //descent from this node
     this.descendents = [];
     this.texture = null;
+    this.material = null;
     this.transformation = null;
+    //unique id from this node
     this.id = "";
     this.visited = false;
     this.stillChecking = false;
-
-    //debug
-    this.repeat = 0;
 };
 
 Node.prototype.getID = function() {
+    
     return this.id;
 }
 
+//function that use recursion to display the nodes
 Node.prototype.display = function(parentElement) {
 
+    //create the variables
     var material;
     var texture;
 
-
+    //if string Material from node is different from null is necessary to push the material to material Stack
     if (this.material != "null") {
+        //search from material with "this.material" string in Materials array
         material = this.graph.materials[this.material];
+
+        //if found push it, else didn't find it
         if (material != null)
             this.graph.matArray.push(material);
     }
 
+    //silimar to Material check
     if (this.texture != "null") {
         texture = this.graph.textures[this.texture];
         if (texture != null)
             this.graph.texArray.push(texture);
     }
 
-/*
-	if(this.repeat == 0){
-
-	console.log("Start");
-	console.log(this.id, " ", this.graph.matArray);
-	console.log(this.material);
-	console.log(this.graph.texArray);
-
-	for(key in this.graph.matArray)
-		console.log(this.graph.matArray[key]);
-
-	for(key in this.graph.texArray)
-		console.log(this.graph.texArray[key]);
-}
-*/
-
+    //iterate for each children
     for (var i = 0; i < this.descendents.length; i++) {
+
+        //set Matrix in order to transformation being applied correctly
+        //apply transformations
         this.graph.scene.pushMatrix();
         this.transformation.useTransformation();
+
+        //search if id exists in Node array
         var nodesArray = this.graph.nodes;
         var idToFind = this.descendents[i];
-
         var nextElem = getElement(nodesArray, idToFind);
+
+        //if Node exists calls recursily, else displays that Node doesn't exist
         if (nextElem != null)
             nextElem.display(this);
         else
             console.error("Element does not exist");
+
+        //unset Matrix
         this.graph.scene.popMatrix();
     }
 
-    if (this.texture != "null")
+    //remove texture and Material from stack
+    if (texture != null)
         this.graph.texArray.pop();
 
-    if (this.material != "null")
+    if (material != null)
         this.graph.matArray.pop();
-/*
-if(this.repeat == 0){
-	console.log("End");
-	console.log(this.id, this.graph.matArray);
-	console.log(this.graph.texArray);
-
-		for(key in this.graph.matArray)
-		console.log(this.graph.matArray[key]);
-
-		for(key in this.graph.texArray)
-		console.log(this.graph.texArray[key]);
-
-	this.repeat++;
-}
-*/
 };
 
+
+//look in the node if there is a cycle
 Node.prototype.checkCycle = function() {
     this.visited = true;
     this.stillChecking = true;
 
     var nodesArray = this.graph.nodes;
+
+    //iterate throught children array
     for (var key = 0; key < this.descendents.length; key++) {
 
+        //if child Node exists
         var nextElem = getElement(nodesArray, this.descendents[key]);
         if (nextElem != null) {
 
+            //child was checked and so there isn't a cycle
             if (nextElem.stillChecking)
                 return false;
             else
+                //child wasn't checked but already visited, then there is a cycle
             if (nextElem.getVisited()) {
                 console.log(nextElem.stillChecking, nextElem);
                 console.error("A cycle was detected in the following Nodes: ", this.id, "  ", this.descendents[key]);

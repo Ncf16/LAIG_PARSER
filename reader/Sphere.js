@@ -1,11 +1,8 @@
-/**
- * myLamp
- * @constructor
- *TODO SUBSTITUIT MIN
- */
 function Sphere(scene, slices, stacks, radius, minS, maxS, minT, maxT) {
-	CGFobject.call(this, scene)
+	
+	CGFobject.call(this, scene);
 
+	//set default passed as arguments or set the default Values if undefined
 	this.minS = typeof minS !== 'undefined' ? minS : 0;
 	this.maxS = typeof maxS !== 'undefined' ? maxS : 1;
 	this.minT = typeof minT !== 'undefined' ? minT : 0;
@@ -15,7 +12,6 @@ function Sphere(scene, slices, stacks, radius, minS, maxS, minT, maxT) {
 	this.stacks = typeof stacks !== 'undefined' ? stacks : 20;
 	this.radius = typeof radius !== 'undefined' ? radius : 1;
 
-
 	this.initBuffers();
 };
 
@@ -23,9 +19,12 @@ Sphere.prototype = Object.create(CGFobject.prototype);
 Sphere.prototype.constructor = Sphere;
 
 Sphere.prototype.initBuffers = function() {
+	
+	//conversion from degres to radians
 	var deg2rad = Math.PI / 180;
-	var alfa = deg2rad * 360 / this.slices;
 
+	//angle of each slice from the Spere
+	var alfa = deg2rad * 360 / this.slices;
 
 	this.vertices = [];
 	this.indices = [];
