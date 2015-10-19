@@ -1,3 +1,4 @@
+//Converter for RGB
 var CONVERTER = 1;
 
 function Lights() {

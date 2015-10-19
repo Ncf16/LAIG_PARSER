@@ -1,10 +1,11 @@
+//Default values for all leaves
 function Leaf(graph) {
     this.element = null;
     this.ID;
     this.type;
     this.graph = graph;
     this.args = [];
-    this.stillChecking = true;
+    this.stillChecking = false;
     //debug
     this.repeat = 0;
 };
@@ -51,6 +52,7 @@ Leaf.prototype.display = function(parentElement) {
     this.element.display();
 };
 
+//Leaf that represents a Rectangle
 LeafRectangle.prototype = Object.create(Leaf.prototype);
 LeafRectangle.prototype.constructor = LeafRectangle;
 
@@ -73,12 +75,12 @@ LeafRectangle.prototype.display = function(parentElement) {
 
     var material = this.graph.matArray[this.graph.matArray.length - 1];
     var texture = this.graph.texArray[this.graph.texArray.length - 1];
-    if(typeof texture !== 'undefined'){
+    if (typeof texture !== 'undefined') {
         this.element.setAmplif(texture.amplif_factor['s'], texture.amplif_factor['t']);
 
-    if (texture.id != "clear")
-        material.setTexture(texture.cgf);
-}
+        if (texture.id != "clear")
+            material.setTexture(texture.cgf);
+    }
 
     material.appearance.apply();
     this.element.display();
@@ -97,12 +99,12 @@ LeafTriangle.prototype.display = function(parentElement) {
 
     var material = this.graph.matArray[this.graph.matArray.length - 1];
     var texture = this.graph.texArray[this.graph.texArray.length - 1];
-    if(typeof texture !== 'undefined'){
+    if (typeof texture !== 'undefined') {
         this.element.setAmplif(texture.amplif_factor['s'], texture.amplif_factor['t']);
 
-    if (texture.id != "clear")
-        material.setTexture(texture.cgf);
-}
+        if (texture.id != "clear")
+            material.setTexture(texture.cgf);
+    }
 
     material.appearance.apply();
     this.element.display();
@@ -137,7 +139,6 @@ LeafCylinder.prototype.parseLeaf = function(args, scene) {
     if (tempIndex != -1) {
         console.error("Invalid paramenter in the creation of a cylinder ( " + tempArgs[tempIndex] + " ), this leaf will be ignored")
     } else {
-        //todo ver argumentos
         this.element = new Cylinder(scene, args[0], args[1], args[2], args[3], args[4]);
     }
 };
