@@ -1,4 +1,7 @@
+//
 function Materials() {
+
+    //set the default values to Material
     this.shininess = 0;
     this.ID = "";
     this.emission = [];
@@ -7,6 +10,7 @@ function Materials() {
     this.spec = [];
 };
 
+//getters and setters
 Materials.prototype.getShininess = function() {
     return this.shininess;
 };
@@ -27,16 +31,21 @@ Materials.prototype.getSpecular = function() {
 };
 Materials.prototype.setShininess = function(newShininess) {
 
+    //transform newShiness from string to number
     var temp = Number(newShininess);
+
+    //test if the transformation is valid
     if (validadeNumber(temp, function(x) {
         if (x <= 0 || x == NaN)
             return false;
         else
             return true;
     })) {
+        //value set being valid
         this.shininess = temp;
     } else {
-        console.warn("Inpute in the Shininess section of a Material was invalide, the default value will be used (50)");
+        //default value set because the value pased as argument was invalid
+        console.warn("Inpute in the Shininess section of a Material was invalid, the default value will be used (50)");
         this.shininess = 50;
     }
 };
@@ -58,6 +67,7 @@ Materials.prototype.setSpecular = function(newSpecular) {
 
 Materials.prototype.setAppearence = function(scene) {
 
+    //create the appearance with values read from the file using CGFAppearance
     this.appearance = new CGFappearance(scene);
     this.appearance.setAmbient(this.amb[0], this.amb[1], this.amb[2], this.amb[3]);
     this.appearance.setDiffuse(this.diff[0], this.diff[1], this.diff[2], this.diff[3]);
@@ -68,5 +78,6 @@ Materials.prototype.setAppearence = function(scene) {
 
 Materials.prototype.setTexture = function(texture) {
 
+    //set a texture to material that was previously loaded
     this.appearance.setTexture(texture);
 }
