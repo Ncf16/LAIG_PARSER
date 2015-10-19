@@ -13,7 +13,7 @@ function Node(graph) {
 };
 
 Node.prototype.getID = function() {
-    
+
     return this.id;
 }
 
@@ -89,18 +89,20 @@ Node.prototype.checkCycle = function() {
 
             //child was checked and so there isn't a cycle
             if (nextElem.stillChecking)
-                return false;
-            else
-                //child wasn't checked but already visited, then there is a cycle
-            if (nextElem.getVisited()) {
-                console.log(nextElem.stillChecking, nextElem);
-                console.error("A cycle was detected in the following Nodes: ", this.id, "  ", this.descendents[key]);
                 return true;
-            }
+            else
+            //child wasn't checked but already visited, then there is a cycle
+            if (!nextElem.getVisited())
+                if (nextElem.checkCycle()) {
+
+                    console.log(nextElem.stillChecking, nextElem);
+                    console.error("A cycle was detected in the following Nodes: ", this.id, "  ", this.descendents[key]);
+                    return true;
+                }
         }
-
-
     }
+
+
     this.stillChecking = false;
     return false;
 };
