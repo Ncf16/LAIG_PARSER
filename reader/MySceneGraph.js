@@ -380,22 +380,23 @@ MySceneGraph.prototype.parseRGBA = function(obj, node, tag) {
 
     //default RGBA
     if (node == null) {
-        obj.r = 1.0;
-        obj.g = 1.0;
-        obj.b = 1.0;
-        obj.a = 1.0;
+        obj.r = 0.0;
+        obj.g = 0.0;
+        obj.b = 0.0;
+        obj.a = 0.0;
     } else {
         var elems = this.checkTag(node[0], tag);
         if (elems == null) {
-            obj.r = 1.0;
-            obj.g = 1.0;
-            obj.b = 1.0;
-            obj.a = 1.0;
+            obj.r = 0.0;
+            obj.g = 0.0;
+            obj.b = 0.0;
+            obj.a = 0.0;
         } else {
-            obj.r = this.reader.getFloat(elems[0], 'r') || 1;
-            obj.g = this.reader.getFloat(elems[0], 'g') || 1;
-            obj.b = this.reader.getFloat(elems[0], 'b') || 1;
-            obj.a = this.reader.getFloat(elems[0], 'a') || 1;
+            console.log(this.reader.getFloat(elems[0], 'r'));
+            obj.r = this.reader.getFloat(elems[0], 'r') || 0;
+            obj.g = this.reader.getFloat(elems[0], 'g') || 0;
+            obj.b = this.reader.getFloat(elems[0], 'b') || 0;
+            obj.a = this.reader.getFloat(elems[0], 'a') || 0;
         }
     }
 };
