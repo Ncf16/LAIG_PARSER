@@ -16,11 +16,10 @@ serialInclude = function(a) {
     var b = console,
         c = serialInclude.l;
     if (a.length > 0) c.splice(0, 0, a);
-    else{}// b.log("Done!");
+    else {} // b.log("Done!");
     if (c.length > 0) {
         if (c[0].length > 1) {
-            var d = c[0].splice(0, 1);
-         ~//   b.log("Loading " + d + "...");
+            var d = c[0].splice(0, 1);~ //   b.log("Loading " + d + "...");
             include(d, function() {
                 serialInclude([]);
             });
@@ -44,7 +43,7 @@ function getUrlVars() {
 
 serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', 'Initials.js', 'Frustum.js', 'Lights.js',
     'Materials.js', 'Triangle.js', 'Rectangle.js', 'Transformations.js', 'FuncAux.js', 'Leaves.js', 'Sphere.js', 'Cylinder.js',
-    'Node.js', 'MyInterface.js', 'Texture.js',
+    'Node.js', 'MyInterface.js', 'Texture.js', 'Animation.js',
 
     main = function() {
         // Standard application, scene and interface setup
@@ -62,7 +61,7 @@ serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', 'Initials.js',
         // get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml 
         // or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor) 
 
-        var filename = getUrlVars()['file'] || "p1.lsx";
+        var filename = getUrlVars()['file'] || "scene.lsx";
 
         // create and load graph, and associate it to scene. 
         // Check console for loading errors

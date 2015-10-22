@@ -40,6 +40,8 @@ function MySceneGraph(filename, scene) {
     this.texArray = [];
     this.matArray = [];
     this.cycles = false;
+    this.animations = [];
+    this.animationsID = [];
     this.defaultMaterial = new CGFappearance(scene);
     this.defaultMaterial.setAmbient(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setDiffuse(0.5, 0.5, 0.5, 1.0);
@@ -59,7 +61,7 @@ function MySceneGraph(filename, scene) {
 MySceneGraph.prototype.display = function() {
     if (this.rootNode != null) {
         if (!this.cycles) {
-           this.rootNode.display(this.rootNode);
+            this.rootNode.display(this.rootNode);
         }
     } else
         this.onXMLError("Element Root missing");
@@ -86,6 +88,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseTextures(rootElement);
         this.parseMaterials(rootElement);
         this.parseLeaf(rootElement);
+        // this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
 
     } catch (err) {
@@ -117,6 +120,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
     }
 
     var nMaterials = tempList[0].children.length;
+    this.materials = typeof this.materials !== 'undefined' ? this.materials : [];
     for (var i = 0; i < nMaterials; i++) {
         var currLight = tempList[FIRST_ELEMENT].children[i];
         if (currLight.nodeName == 'MATERIAL') {
@@ -163,9 +167,7 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 
     } else {
-        if (this.lights == undefined) {
-            this.lights = [];
-        }
+        this.lights = typeof this.lights !== 'undefined' ? this.lights : [];
         for (var j = 0; j < numberLights; j++) {
 
             for (var i = 0; i < nLight; i++) {
@@ -248,6 +250,7 @@ MySceneGraph.prototype.parseLeaf = function(rootElement) {
     }
 
     var nNodes = tempList[0].children.length;
+    this.nodes = typeof this.nodes !== 'undefined' ? this.nodes : [];
     for (var i = 0; i < nNodes; i++) {
         var currLeaf = tempList[FIRST_ELEMENT].children[i];
         if (currLeaf.nodeName == 'LEAF') {
@@ -300,6 +303,59 @@ MySceneGraph.prototype.parseInitialsAux = function(DOM, typeOfElement) {
         default:
             this.onXMLWarn("unknwon type of Element: " + DOM);
     }
+};
+
+MySceneGraph.prototype.parseAnimations = function(rootElement) {
+    console.log("Start ANIMATIONS");
+
+    var tempList = rootElement.getElementsByTagName('ANIMATIONS');
+
+    console.log(tempList);
+    if (tempList == null || tempList.length == 0) {
+        this.onXMLWarn("No ANIMATIONS available ");
+
+    } else {
+        var nAnimation = tempList[FIRST_ELEMENT].children.length;
+        if (nAnimation == 0) {
+            console.warn("No ANIMATION was found, please check your ANIMATION scetion of you lsx");
+
+        } else {
+            this.animations = typeof this.animations !== 'undefined' ? this.animations : [];
+            for (var i = 0; i < nAnimation; i++) {
+                //alterar segunda parte do if
+                var currAnimation = tempList[FIRST_ELEMENT].children[i];
+                var tempAnimation;
+                if (currAnimation.nodeName == 'ANIMATION') {
+
+                    var type = readElement([currAnimation], ["type"], 1);
+                    console.log(type[0]);
+                    if (type[FIRST_ELEMENT] == "linear") {
+
+                        tempAnimation = new LinearAnimation(this.scene);
+                        this.parseAnimationLinear(currAnimation, tempAnimation);
+                    } else
+                    if (type[FIRST_ELEMENT] == "circular") {
+                        tempAnimation = new CircularAnimation(this.scene);
+                        this.parseAnimationCircular(currAnimation, tempAnimation);
+                    } else {
+                        this.onXMLWarn("ANIMATION was not valid: " + type[FIRST_ELEMENT]);
+                        break;
+                    }
+
+                } else {
+                    this.onXMLWarn("Element not ANIMATION it was: " + currAnimation.nodeName);
+                }
+            }
+        }
+    }
+    console.log("End ANIMATIONS");
+};
+
+MySceneGraph.prototype.parseAnimationLinear = function(node, animation) {
+
+};
+
+MySceneGraph.prototype.parseAnimationCircular = function(node, animation) {
 
 };
 
