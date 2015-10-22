@@ -12,7 +12,7 @@ function LinearAnimation() {
     this.controlPoints = [
         [0, 0, 0]
     ];
-};
+};	
 
 function CircularAnimation() {
     Animation.call(this);
