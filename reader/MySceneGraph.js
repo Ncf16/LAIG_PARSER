@@ -8,6 +8,7 @@ var AXIS = "reference";
 var oldMatrix;
 var MAX_LIGHTS;
 var POSITION_VARIABLES = ["x", "y", "z", "w"];
+var CONTROL_POINT = ["xx", "yy", "zz"];
 var RGB_VARIABLES = ["r", "g", "b", "a"];
 var AxisX;
 var AxisZ;
@@ -88,7 +89,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseTextures(rootElement);
         this.parseMaterials(rootElement);
         this.parseLeaf(rootElement);
-        // this.parseAnimations(rootElement);
+        this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
 
     } catch (err) {
@@ -324,7 +325,7 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
             for (var i = 0; i < nAnimation; i++) {
                 //alterar segunda parte do if
                 var currAnimation = tempList[FIRST_ELEMENT].children[i];
-                var tempAnimation;
+                var tempAnimation = null;
                 if (currAnimation.nodeName == 'ANIMATION') {
 
                     var type = readElement([currAnimation], ["type"], 1);
@@ -335,12 +336,21 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
                         this.parseAnimationLinear(currAnimation, tempAnimation);
                     } else
                     if (type[FIRST_ELEMENT] == "circular") {
+                        console.log("here");
                         tempAnimation = new CircularAnimation(this.scene);
-                        this.parseAnimationCircular(currAnimation, tempAnimation);
+                        this.parseAnimationCircular([currAnimation], tempAnimation);
                     } else {
                         this.onXMLWarn("ANIMATION was not valid: " + type[FIRST_ELEMENT]);
                         break;
                     }
+                    var deltaT = readElement([currAnimation], ["span"], 1);
+                    tempAnimation.id = addID(currAnimation, this, this.animationsID);
+
+                    // tempAnimation.setDeltaT(deltaT);
+
+                    if (tempAnimation != null)
+                        this.animations[tempAnimation.id] = tempAnimation;
+
 
                 } else {
                     this.onXMLWarn("Element not ANIMATION it was: " + currAnimation.nodeName);
@@ -352,11 +362,17 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 };
 
 MySceneGraph.prototype.parseAnimationLinear = function(node, animation) {
-
+    animation.type = "linear";
+    var controlPoints = node.getElementsByTagName("controlpoint");
+    animation.setControlPoints(readElement(controlPoints, CONTROL_POINT, controlPoints.length));
 };
 
 MySceneGraph.prototype.parseAnimationCircular = function(node, animation) {
-
+    animation.type = "circular";
+    animation.setCenter(readElement(node, ["center"], 1));
+    animation.setStartAngle(readElement(node, ["startang"], 1));
+    animation.setRotateAngle(readElement(node, ["rotang"], 1));
+    animation.setRadius(readElement(node, ["radius"], 1));
 };
 
 MySceneGraph.prototype.parseIllumination = function(rootElement) {

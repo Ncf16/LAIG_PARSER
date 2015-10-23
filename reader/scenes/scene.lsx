@@ -110,11 +110,11 @@
         </TEXTURE>
         <TEXTURE id="nepalBottom">
             <file path="textures/nepalBottom.png" />
-            <amplif_factor s="2" t="2" />
+            <amplif_factor s="0.5" t="0.5" />
         </TEXTURE>
         <TEXTURE id="nepalTop">
             <file path="textures/nepalTop.png" />
-            <amplif_factor s="2" t="1" />
+            <amplif_factor s="3" t="3" />
         </TEXTURE>
         <TEXTURE id="wallTex">
             <file path="textures/wall.jpg" />
@@ -174,11 +174,21 @@
             <emission r="1" g="1" b="1" a="1" />
         </MATERIAL>
     </MATERIALS>
+    <ANIMATIONS>
+        <ANIMATION id="ss" span="ff" type="linear">
+            <controlpoint xx="ff" yy="ff" zz="ff" />
+            <controlpoint xx="ff" yy="ff" zz="ff" />
+            <controlpoint xx="ff" yy="ff" zz="ff" />
+            <controlpoint xx="ff" yy="ff" zz="ff" />
+            <controlpoint xx="ff" yy="ff" zz="ff" />
+        </ANIMATION>
+        <ANIMATION id="ss" span="ff" type="circular" center="ff ff ff" radius="ff" startang="ff" rotang="ff" />
+    </ANIMATIONS>
     <!-- The leaves -->
     <LEAVES>
         <LEAF id="rectangle" type="rectangle" args="0 1 1 0" />
-        <LEAF id="triangle" type="triangle" args="0 0 0 2 0 0 0 2 0" />
-        <LEAF id="triangle2" type="triangle" args="0 0 0 2 0 0 0 1 0" />
+        <LEAF id="triangle" type="triangle" args="0 0 0 2 0 0 -1 2 0" />
+        <LEAF id="triangle2" type="triangle" args="0 0 0 2 0 0 3 1 0" />
         <LEAF id="cylinder" type="cylinder" args="6 0.07 0.05 10 10" />
         <LEAF id="esfera" type="sphere" args="1 20 20 " />
         <LEAF id="esfera1" type="sphere" args="0.3 20 20 " />
@@ -195,12 +205,12 @@
             <DESCENDANTS>
                 <DESCENDANT id="bed" />
                 <DESCENDANT id="chair" />
-               <DESCENDANT id="table" />
-               <DESCENDANT id="flag" />
-               <DESCENDANT id="lamp" />
+                <DESCENDANT id="table" />
+                <DESCENDANT id="flag" />
+                <DESCENDANT id="lamp" />
                 <DESCENDANT id="floor" />
-               <DESCENDANT id="wall1" />
-              <DESCENDANT id="wall2" />
+                <DESCENDANT id="wall1" />
+                <DESCENDANT id="wall2" />
             </DESCENDANTS>
         </NODE>
         <NODE id="floor">
@@ -216,8 +226,7 @@
         <NODE id="wall1">
             <MATERIAL id="null" />
             <TEXTURE id="wallTex" />
-
-             <SCALE sx="12" sy="8" sz="1" />
+            <SCALE sx="12" sy="8" sz="1" />
             <DESCENDANTS>
                 <DESCENDANT id="rectangle" />
             </DESCENDANTS>
