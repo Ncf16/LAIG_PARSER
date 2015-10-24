@@ -37,7 +37,9 @@ Leaf.prototype.checkCycle = function() {
     return false;
 };
 
-
+Leaf.prototype.processDescendents = function(){
+    
+}
 Leaf.prototype.display = function(parentElement) {
 
     var material = this.graph.matArray[this.graph.matArray.length - 1];

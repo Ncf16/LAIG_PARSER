@@ -2,6 +2,7 @@ function Node(graph) {
     //scene graph
     this.graph = graph;
     //descent from this node
+    this.descendentsID = [];
     this.descendents = [];
     this.texture = null;
     this.material = null;
@@ -50,13 +51,10 @@ Node.prototype.display = function(parentElement) {
         this.transformation.useTransformation();
 
         //search if id exists in Node array
-        var nodesArray = this.graph.nodes;
-        var idToFind = this.descendents[i];
-        var nextElem = getElement(nodesArray, idToFind);
 
         //if Node exists calls recursily, else displays that Node doesn't exist
-        if (nextElem != null)
-            nextElem.display(this);
+        if (this.descendents[i] != null)
+            this.descendents[i].display(this);
         else
             console.error("Element does not exist");
 
@@ -109,4 +107,14 @@ Node.prototype.checkCycle = function() {
 
 Node.prototype.getVisited = function() {
     return this.visited;
+};
+
+Node.prototype.processDescendents = function() {
+
+    for (var index = 0; index < this.descendentsID.length; index++) {
+        var idToFind = this.descendentsID[index];
+        var nextElem = getElement(this.graph.nodes, idToFind);
+        if (nextElem != null)
+            this.descendents.push(nextElem);
+    }
 };

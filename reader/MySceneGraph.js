@@ -364,8 +364,8 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 MySceneGraph.prototype.parseAnimationLinear = function(node, animation) {
     animation.type = "linear";
     var controlPoints = node.getElementsByTagName("controlpoint");
-    var control=readElement(controlPoints, CONTROL_POINT, controlPoints.length);
-       
+    var control = readElement(controlPoints, CONTROL_POINT, controlPoints.length);
+
     animation.setControlPoints(control);
 };
 
@@ -565,16 +565,21 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
 
         }
 
-        node.descendents = descendants;
+        node.descendentsID = descendants;
         //transformations
         parseNodeTransformation(node, elems[i].children, nodeTransformation);
         node.transformation = nodeTransformation;
         this.nodes.push(node);
-
         if (node.id == rootName)
             this.rootNode = node;
 
     }
+
+    for (var i = 0; i < this.nodes.length; i++) {
+      this.nodes[i].processDescendents();
+       
+    }
+
     this.checkCycle();
     console.log("END NODES");
 
