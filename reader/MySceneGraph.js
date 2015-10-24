@@ -364,7 +364,9 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 MySceneGraph.prototype.parseAnimationLinear = function(node, animation) {
     animation.type = "linear";
     var controlPoints = node.getElementsByTagName("controlpoint");
-    animation.setControlPoints(readElement(controlPoints, CONTROL_POINT, controlPoints.length));
+    var control=readElement(controlPoints, CONTROL_POINT, controlPoints.length);
+       
+    animation.setControlPoints(control);
 };
 
 MySceneGraph.prototype.parseAnimationCircular = function(node, animation) {
@@ -373,6 +375,7 @@ MySceneGraph.prototype.parseAnimationCircular = function(node, animation) {
     animation.setStartAngle(readElement(node, ["startang"], 1));
     animation.setRotateAngle(readElement(node, ["rotang"], 1));
     animation.setRadius(readElement(node, ["radius"], 1));
+    console.log(animation);
 };
 
 MySceneGraph.prototype.parseIllumination = function(rootElement) {
