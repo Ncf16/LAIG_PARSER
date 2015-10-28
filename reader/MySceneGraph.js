@@ -42,7 +42,6 @@ function MySceneGraph(filename, scene) {
     this.matArray = [];
     this.cycles = false;
     this.animations = [];
-    this.animationsID = [];
     this.defaultMaterial = new CGFappearance(scene);
     this.defaultMaterial.setAmbient(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setDiffuse(0.5, 0.5, 0.5, 1.0);
@@ -564,8 +563,24 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
             descendants.push(descendant);
 
         }
-
         node.descendentsID = descendants;
+
+        //get Animations
+        var tempList = elems[i].getElementsByTagName('ANIMATION');
+
+        if (tempList == null || tempList.length == 0) {
+            this.onXMLWarn("ANIMATION element is missing.");
+        } else {
+            for (var j = 0; j < tempList.length; j++) {
+                var tempID = this.reader.getString(tempList[j], 'id');
+                var tempAnimation = this.animation[tempID];
+                if (tempID == null) {
+                    this.onXMLWarn("Adding Animation with ID: " + tempID + " to Node ( " + node.id " ) failed since Animation does not exist");
+                } else
+                    node.animations.push(tempAnimation);
+            }
+        }
+
         //transformations
         parseNodeTransformation(node, elems[i].children, nodeTransformation);
         node.transformation = nodeTransformation;
@@ -576,8 +591,8 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
     }
 
     for (var i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].processDescendents();
-       
+        this.nodes[i].processDescendents();
+
     }
 
     this.checkCycle();

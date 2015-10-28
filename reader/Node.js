@@ -11,6 +11,7 @@ function Node(graph) {
     this.id = "";
     this.visited = false;
     this.stillChecking = false;
+    this.animations=[];
 };
 
 Node.prototype.getID = function() {

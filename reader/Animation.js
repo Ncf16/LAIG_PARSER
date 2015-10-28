@@ -2,8 +2,10 @@ function Animation(scene) {
     CGFobject.call(this, scene);
     this.deltaT = 0;
     this.type = "";
+    this.initialSpeed=0;
 };
 //Do getters and setters
+//Create functions to do animations, either create a general function or do necessary changes in the lsx
 Animation.prototype = Object.create(CGFobject.prototype);
 Animation.prototype.constructor = Animation;
 
