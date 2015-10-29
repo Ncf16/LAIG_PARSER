@@ -2,7 +2,9 @@ function Animation(scene) {
     CGFobject.call(this, scene);
     this.deltaT = 0;
     this.type = "";
-    this.initialSpeed=0;
+    this.initialSpeed = 0;
+    this.startingTime = 0;
+    this.totalDistance = 0;
 };
 //Do getters and setters
 //Create functions to do animations, either create a general function or do necessary changes in the lsx
@@ -26,11 +28,14 @@ LinearAnimation.prototype.setControlPoints = function(controlPoints) {
     this.controlPoints = [];
     var numberOfPoints = controlPoints.length;
     for (var index = 0; index < numberOfPoints;) {
-        var tempControlPoint = [controlPoints[index], controlPoints[index + 1], controlPoints[index + 2]];
-        index += 3;
+        var tempControlPoint = [controlPoints[index++], controlPoints[index++], controlPoints[index++]];
         var temp = stringArrayToNumber(tempControlPoint, "ControlPoint Coordinates", "inf", "inf", 1);
         this.controlPoints.push(temp);
     }
+    for (var i = 0; i <= this.controlPoints.length - 2; i++) {
+        this.totalDistance += distanceBetweenVectors(this.controlPoints[i], this.controlPoints[i + 1]);
+    }
+    console.log("Distance: "+this.totalDistance);
 };
 
 function CircularAnimation(scene) {
@@ -43,14 +48,12 @@ function CircularAnimation(scene) {
 
 CircularAnimation.prototype.setCenter = function(center) {
 
-     var processedArgs = deleteElement(center.toString().split(TO_ELIMINATE_CHAR), function(x) {
-
-                if (isNaN(Number(x)) || (nonValidChar.indexOf(x) != -1))
-                    return true;
-                else
-                    return false;
-
-            });
+    var processedArgs = deleteElement(center.toString().split(TO_ELIMINATE_CHAR), function(x) {
+        if (isNaN(Number(x)) || (nonValidChar.indexOf(x) != -1))
+            return true;
+        else
+            return false;
+    });
     this.center = stringArrayToNumber(processedArgs, "center Coordinates", "inf", "inf", 1);
 };
 CircularAnimation.prototype.setStartAngle = function(startAng) {

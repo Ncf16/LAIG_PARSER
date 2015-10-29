@@ -27,6 +27,7 @@ XMLscene.prototype.init = function(application) {
 
     this.axis = new CGFaxis(this);
     this.lightsEnable = [];
+    this.setUpdatePeriod(100);
 };
 
 

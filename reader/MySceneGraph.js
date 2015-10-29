@@ -88,7 +88,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseTextures(rootElement);
         this.parseMaterials(rootElement);
         this.parseLeaf(rootElement);
-       // this.parseAnimations(rootElement);
+        this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
 
     } catch (err) {

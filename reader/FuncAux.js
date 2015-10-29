@@ -93,6 +93,17 @@ function crossProduct(V1, V2) {
     ];
 };
 
+function distanceBetweenVectors(V1, V2) {
+    if (V1.length != V2.length)
+        return -1;
+    var dist = 0;
+
+    for (var i = 0; i < V1.length; i++) {
+        dist += Math.pow(V1[i] - V2[i], 2);
+    }
+    return Math.sqrt(dist);
+}
+
 function scalarProduct(V1, V2) {
 
     if (V1.length != V2.length) {
