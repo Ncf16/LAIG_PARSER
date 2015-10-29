@@ -88,7 +88,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseTextures(rootElement);
         this.parseMaterials(rootElement);
         this.parseLeaf(rootElement);
-        this.parseAnimations(rootElement);
+       // this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
 
     } catch (err) {
@@ -566,20 +566,19 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         node.descendentsID = descendants;
 
         //get Animations
-        var tempList = elems[i].getElementsByTagName('ANIMATION');
+      /*  var tempList = elems[i].getElementsByTagName('ANIMATION');
 
-        if (tempList == null || tempList.length == 0) {
-            this.onXMLWarn("ANIMATION element is missing.");
-        } else {
+        if (tempList != null || tempList.length != 0) 
+        {
             for (var j = 0; j < tempList.length; j++) {
                 var tempID = this.reader.getString(tempList[j], 'id');
                 var tempAnimation = this.animation[tempID];
                 if (tempID == null) {
-                    this.onXMLWarn("Adding Animation with ID: " + tempID + " to Node ( " + node.id " ) failed since Animation does not exist");
+                  console.log("Adding Animation with ID: " + tempID + " to Node ( " + node.id +" ) failed since Animation does not exist");
                 } else
                     node.animations.push(tempAnimation);
             }
-        }
+        }*/
 
         //transformations
         parseNodeTransformation(node, elems[i].children, nodeTransformation);

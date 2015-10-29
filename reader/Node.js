@@ -51,10 +51,10 @@ Node.prototype.display = function(parentElement) {
         this.graph.scene.pushMatrix();
         this.transformation.useTransformation();
 
-        if(this.animations.length>0){
+       /* if(this.animations.length>0){
         for (var i = 0; i < this.animations.length; i++) {
             //do something here
-        }}
+        }}*/
 
         //if Node exists calls recursily, else displays that Node doesn't exist
         if (this.descendents[i] != null)
