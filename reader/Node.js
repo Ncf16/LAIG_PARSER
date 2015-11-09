@@ -21,7 +21,6 @@ Node.prototype.getID = function() {
 
 //function that use recursion to display the nodes
 Node.prototype.display = function(parentElement) {
-
     //create the variables
     var material;
     var texture;
@@ -45,27 +44,24 @@ Node.prototype.display = function(parentElement) {
 
     //iterate for each children
     for (var i = 0; i < this.descendents.length; i++) {
-
         //set Matrix in order to transformation being applied correctly
         //apply transformations
         this.graph.scene.pushMatrix();
         this.transformation.useTransformation();
-
-       /* if(this.animations.length>0){
+        this.graph.scene.pushMatrix();
+        /* if(this.animations.length>0){
         for (var i = 0; i < this.animations.length; i++) {
             //do something here
         }}*/
-
+        this.graph.scene.popMatrix();
         //if Node exists calls recursily, else displays that Node doesn't exist
         if (this.descendents[i] != null)
             this.descendents[i].display(this);
         else
             console.error("Element does not exist");
-
         //unset Matrix
         this.graph.scene.popMatrix();
     }
-
     //remove texture and Material from stack
     if (texture != null)
         this.graph.texArray.pop();
@@ -73,22 +69,18 @@ Node.prototype.display = function(parentElement) {
     if (material != null)
         this.graph.matArray.pop();
 };
-
-
 //look in the node if there is a cycle
 Node.prototype.checkCycle = function() {
     this.visited = true;
     this.stillChecking = true;
 
     var nodesArray = this.graph.nodes;
-
     //iterate throught children array
     for (var key = 0; key < this.descendents.length; key++) {
 
         //if child Node exists
         var nextElem = getElement(nodesArray, this.descendents[key]);
         if (nextElem != null) {
-
             //child was checked and so there isn't a cycle
             if (nextElem.stillChecking)
                 return true;
@@ -96,15 +88,12 @@ Node.prototype.checkCycle = function() {
             //child wasn't checked but already visited, then there is a cycle
             if (!nextElem.getVisited())
                 if (nextElem.checkCycle()) {
-
                     console.log(nextElem.stillChecking, nextElem);
                     console.error("A cycle was detected in the following Nodes: ", this.id, "  ", this.descendents[key]);
                     return true;
                 }
         }
     }
-
-
     this.stillChecking = false;
     return false;
 };

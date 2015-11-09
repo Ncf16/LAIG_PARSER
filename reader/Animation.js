@@ -2,9 +2,11 @@ function Animation(scene) {
     CGFobject.call(this, scene);
     this.deltaT = 0;
     this.type = "";
+    this.speed = 0;
     this.initialSpeed = 0;
     this.startingTime = 0;
     this.totalDistance = 0;
+    this.deltaPerAnimation = [];
 };
 //Do getters and setters
 //Create functions to do animations, either create a general function or do necessary changes in the lsx
@@ -17,6 +19,13 @@ Animation.prototype.setDeltaT = function(newDeltaT) {
     else
         this.deltaT = 0;
 };
+Animation.prototype.calcSpeed = function() {
+    if (this.deltaT == 0)
+        this.speed = 0;
+    else
+        this.speed = this.totalDistance / this.deltaT;
+};
+Animation.prototype.calcTimes = function() {};
 
 function LinearAnimation(scene) {
     Animation.call(this, scene);
@@ -35,8 +44,16 @@ LinearAnimation.prototype.setControlPoints = function(controlPoints) {
     for (var i = 0; i <= this.controlPoints.length - 2; i++) {
         this.totalDistance += distanceBetweenVectors(this.controlPoints[i], this.controlPoints[i + 1]);
     }
-    console.log("Distance: "+this.totalDistance);
+    console.log("Distance: " + this.totalDistance);
 };
+LinearAnimation.prototype.calcDeltas = function() {
+    for (var i = 0; i <= this.controlPoints.length - 2; i++) {
+        var distance = distanceBetweenVectors(this.controlPoints[i], this.controlPoints[i + 1]);
+        var tempT = distance / this.speed;
+        this.deltaPerAnimation.push(tempT);
+    }
+};
+LinearAnimation.prototype.apply = function() {};
 
 function CircularAnimation(scene) {
     Animation.call(this, scene);
@@ -45,9 +62,10 @@ function CircularAnimation(scene) {
     this.rotationAngle = 0;
     this.startAngle = 0;
 };
+CircularAnimation.prototype.calcTimes = function() {
 
+};
 CircularAnimation.prototype.setCenter = function(center) {
-
     var processedArgs = deleteElement(center.toString().split(TO_ELIMINATE_CHAR), function(x) {
         if (isNaN(Number(x)) || (nonValidChar.indexOf(x) != -1))
             return true;
@@ -79,3 +97,4 @@ CircularAnimation.prototype.setRadius = function(radius) {
     else
         this.radius = 0;
 };
+CircularAnimation.prototype.apply = function() {};

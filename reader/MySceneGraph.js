@@ -50,7 +50,6 @@ function MySceneGraph(filename, scene) {
     // File reading 
     this.reader = new CGFXMLreader();
     MAX_LIGHTS = this.scene.lights.length;
-
     /*
      * Read the contents of the xml file, and refer to this class for loading and error handlers.
      * After the file is read, the reader calls onXMLReady on this object.
@@ -434,7 +433,6 @@ MySceneGraph.prototype.getMaterial = function(id) {
             return this.materials[i];
     }
     return null;
-
 };
 
 MySceneGraph.prototype.idIndex = function(arr, obj, node, tag) {
@@ -533,7 +531,7 @@ function XMLError(message) {
 
     this.message = "XML Loading Error: " + message;
     this.name = "XML Error";
-}
+};
 MySceneGraph.prototype.parseNodes = function(rootElement) {
     console.log("Start NODES");
 
@@ -596,7 +594,6 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
 
     this.checkCycle();
     console.log("END NODES");
-
 };
 MySceneGraph.prototype.setUnvisited = function() {
 
