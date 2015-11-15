@@ -103,8 +103,6 @@ MySceneGraph.prototype.onXMLReady = function() {
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
     this.scene.onGraphLoaded();
     this.loadedOk = true;
-
-
 };
 
 MySceneGraph.prototype.update = function(currTime) {
@@ -484,7 +482,6 @@ MySceneGraph.prototype.parseST = function(obj, node, tag) {
 };
 
 MySceneGraph.prototype.checkTag = function(node, tag, def, min, origin) {
-    console.log(def, min, origin);
     var various;
     if (typeof min === 'undefined') min = -1, various = 1;
     else
@@ -557,26 +554,26 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
             animated = true;
             for (var j = 0; j < tempList.length; j++) {
                 var tempID = this.reader.getString(tempList[j], 'id');
-                //  console.log("Original:", this.animations[tempID]);
-                var tempAnimation = this.animations[tempID].clone(this.scene);
+                console.log("Original:", this.animations[tempID]);
 
+                if (typeof this.animations[tempID] !== 'undefined') {
+                    var tempAnimation = this.animations[tempID].clone(this.scene);
+                    if (tempID == null) {
+                        console.log("Adding Animation with ID: " + tempID + " to Node ( " + node.id + " ) failed since Animation does not exist");
+                    } else if (tempAnimation != null && ((typeof tempAnimation) !== "undefined")) {
 
-                if (tempID == null) {
-                    console.log("Adding Animation with ID: " + tempID + " to Node ( " + node.id + " ) failed since Animation does not exist");
-                } else if (tempAnimation != null && ((typeof tempAnimation) !== "undefined")) {
-
-                    if (node.animations.length == 0) {
-                        tempAnimation.init((new Date()).getTime());
-                        node.started = true;
-                        node.currentAnimation = tempAnimation;
+                        if (node.animations.length == 0) {
+                            tempAnimation.init((new Date()).getTime());
+                            node.started = true;
+                            node.currentAnimation = tempAnimation;
+                        }
+                        console.log("Clone: ", tempAnimation);
+                        node.animations.push(tempAnimation);
+                        // console.log(node.animations);
                     }
-                    //      console.log("Clone: ", tempAnimation);
-                    node.animations.push(tempAnimation);
-                    // console.log(node.animations);
+                    tempAnimation = null;
                 }
-                tempAnimation = null;
             }
-
         } else
             animated = false;
 

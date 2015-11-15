@@ -23,9 +23,14 @@ function LinearAnimation(scene, deltaT, control, type) {
 
     }
     this.speed = this.totalDistance / deltaT;
+    console.log(this.distancePerCourse);
+    console.log(this.speed);
     this.time.push(0);
     for (var key = 1; key < control.length; key++) {
-        this.time.push(this.distancePerCourse[key - 1] / this.speed + this.time[key - 1]);
+        if (this.speed != 0)
+            this.time.push(this.distancePerCourse[key - 1] / this.speed + this.time[key - 1]);
+        else
+            this.time.push(deltaT);
     }
     for (var key = 0; key < control.length; key++) {
         this.control[key] = [];
@@ -51,6 +56,7 @@ LinearAnimation.prototype.update = function(currTime) {
     var currentPos = [];
 
     for (var i = 0; i < this.time.length - 1; i++) {
+        console.log(this.time, i, delta);
         if (this.time[i] <= delta && delta <= this.time[i + 1]) {
             currentCourse = i;
             break;
