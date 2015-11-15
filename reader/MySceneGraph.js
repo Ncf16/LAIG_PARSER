@@ -8,7 +8,6 @@ var AXIS = "reference";
 var oldMatrix;
 var MAX_LIGHTS;
 var POSITION_VARIABLES = ["x", "y", "z", "w"];
-var CONTROL_POINT = ["xx", "yy", "zz"];
 var RGB_VARIABLES = ["r", "g", "b", "a"];
 var AxisX;
 var AxisZ;
@@ -21,7 +20,7 @@ var nonValidChar = [""];
 //fazer get and sets para stuff the initials, perhaps change code para evitar duplicado como temos de parseLights e parseMaterials
 function MySceneGraph(filename, scene) {
     // alert("caller is " + arguments.callee.caller.toString());
-    this.loadedOk = null;
+    this.loadedOk = false;
     AxisX = false;
     AxisZ = false;
     AxisY = false;
@@ -42,6 +41,7 @@ function MySceneGraph(filename, scene) {
     this.matArray = [];
     this.cycles = false;
     this.animations = [];
+    this.animatedNodes = [];
     this.defaultMaterial = new CGFappearance(scene);
     this.defaultMaterial.setAmbient(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setDiffuse(0.5, 0.5, 0.5, 1.0);
@@ -57,10 +57,13 @@ function MySceneGraph(filename, scene) {
      */
     this.reader.open('scenes/' + filename, this);
 };
-MySceneGraph.prototype.display = function() {
+
+MySceneGraph.prototype.display = function(currTime) {
     if (this.rootNode != null) {
         if (!this.cycles) {
+            this.transformation.apply();
             this.rootNode.display(this.rootNode);
+
         }
     } else
         this.onXMLError("Element Root missing");
@@ -72,7 +75,7 @@ MySceneGraph.prototype.display = function() {
 MySceneGraph.prototype.onXMLReady = function() {
     console.log("XML Loading finished.");
     var rootElement = this.reader.xmlDoc.documentElement;
-
+    this.notShow = false;
     // Here should go the calls for different functions to parse the various blocks
     try {
         if (rootElement == null || rootElement.nodeName != "SCENE")
@@ -80,16 +83,15 @@ MySceneGraph.prototype.onXMLReady = function() {
 
         this.initials = new initials();
         this.transformation = new Transformation(this.scene);
-
+        this.parseTextures(rootElement);
         this.parseInitials(rootElement);
         this.parseIllumination(rootElement);
         this.parseLights(rootElement);
-        this.parseTextures(rootElement);
         this.parseMaterials(rootElement);
         this.parseLeaf(rootElement);
         this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
-
+        console.log(this.nodes);
     } catch (err) {
         if (err instanceof XMLError) {
             console.error(err.message);
@@ -98,11 +100,19 @@ MySceneGraph.prototype.onXMLReady = function() {
         } else
             console.error(err.message);
     }
-
-    this.loadedOk = true;
-
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
     this.scene.onGraphLoaded();
+    this.loadedOk = true;
+
+
+};
+
+MySceneGraph.prototype.update = function(currTime) {
+    //Sendo psedo referência os nós em this.animatedNodes serão os mesmo que os de this.nodes
+    for (key in this.animatedNodes) {
+        this.animatedNodes[key].update(currTime);
+    }
+    this.scene.Loop = false;
 };
 
 MySceneGraph.prototype.parseMaterials = function(rootElement) {
@@ -203,7 +213,6 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
     console.log("End LIGHTS");
 };
 
-
 MySceneGraph.prototype.parseInitials = function(rootElement) {
 
     console.log("Start INITIALS");
@@ -235,6 +244,7 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
 
     console.log("End INITIALS");
 };
+
 MySceneGraph.prototype.parseLeaf = function(rootElement) {
     console.log("Start LEAVES");
     var tempList = rootElement.getElementsByTagName('LEAVES');
@@ -258,20 +268,9 @@ MySceneGraph.prototype.parseLeaf = function(rootElement) {
             var tempID = addID(currLeaf, this, this.nodesID);
             var leaf = [tempList[FIRST_ELEMENT].children[i]];
             var typeOfLeaf = readElement(leaf, ["type"], 1);
-            var args = readElement(leaf, ["args"], 1);
-
-
             tempLeaf = parseLeafAux(tempLeaf, typeOfLeaf);
-            var processedArgs = deleteElement(args.toString().split(TO_ELIMINATE_CHAR), function(x) {
-
-                if (isNaN(Number(x)) || (nonValidChar.indexOf(x) != -1))
-                    return true;
-                else
-                    return false;
-
-            });
-
-            tempLeaf.parseLeaf(processedArgs, this.scene);
+            //passar para função da classe Leaf mãe e ter classes filhas patch plane e a outra a fazer em separado
+            tempLeaf.processArgs(leaf, currLeaf, this.scene);
             tempLeaf.setID(tempID);
             tempLeaf.setGraph(this);
             this.nodes.push(tempLeaf);
@@ -281,6 +280,7 @@ MySceneGraph.prototype.parseLeaf = function(rootElement) {
     }
     console.log("End LEAVES");
 };
+
 MySceneGraph.prototype.parseInitialsAux = function(DOM, typeOfElement) {
 
     switch (typeOfElement) {
@@ -309,7 +309,6 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 
     var tempList = rootElement.getElementsByTagName('ANIMATIONS');
 
-    console.log(tempList);
     if (tempList == null || tempList.length == 0) {
         this.onXMLWarn("No ANIMATIONS available ");
 
@@ -320,36 +319,46 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 
         } else {
             this.animations = typeof this.animations !== 'undefined' ? this.animations : [];
+
             for (var i = 0; i < nAnimation; i++) {
                 //alterar segunda parte do if
                 var currAnimation = tempList[FIRST_ELEMENT].children[i];
                 var tempAnimation = null;
+                var deltaT = readElement([currAnimation], ["span"], 1);
                 if (currAnimation.nodeName == 'ANIMATION') {
 
                     var type = readElement([currAnimation], ["type"], 1);
-                    console.log(type[0]);
+
                     if (type[FIRST_ELEMENT] == "linear") {
 
-                        tempAnimation = new LinearAnimation(this.scene);
-                        this.parseAnimationLinear(currAnimation, tempAnimation);
+                        var controlPoints = currAnimation.getElementsByTagName("controlpoint");
+                        var control = readElement(controlPoints, POSITION_VARIABLES, controlPoints.length);
+                        tempAnimation = new LinearAnimation(this.scene, Number(deltaT), processControlPoints(control));
+                        tempAnimation.type = "linear";
+
                     } else
                     if (type[FIRST_ELEMENT] == "circular") {
-                        console.log("here");
-                        tempAnimation = new CircularAnimation(this.scene);
-                        this.parseAnimationCircular([currAnimation], tempAnimation);
+
+                        tempAnimation = new CircularAnimation(this.scene, Number(deltaT));
+                        tempAnimation.type = "circular";
+                        tempAnimation.setCenter(readElement([currAnimation], ["center"], 1));
+                        tempAnimation.setStartAngle(readElement([currAnimation], ["startang"], 1));
+                        tempAnimation.setRotateAngle(readElement([currAnimation], ["rotang"], 1));
+                        tempAnimation.setRadius(readElement([currAnimation], ["radius"], 1));
+                        tempAnimation.calculateDelta();
+
                     } else {
                         this.onXMLWarn("ANIMATION was not valid: " + type[FIRST_ELEMENT]);
                         break;
                     }
-                    var deltaT = readElement([currAnimation], ["span"], 1);
                     tempAnimation.id = addID(currAnimation, this, this.animationsID);
 
-                    // tempAnimation.setDeltaT(deltaT);
 
-                    if (tempAnimation != null)
+                    if (tempAnimation != null) {
+                        //  console.log(tempAnimation);
                         this.animations[tempAnimation.id] = tempAnimation;
-
-
+                    }
+                    tempAnimation = null;
                 } else {
                     this.onXMLWarn("Element not ANIMATION it was: " + currAnimation.nodeName);
                 }
@@ -357,23 +366,6 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
         }
     }
     console.log("End ANIMATIONS");
-};
-
-MySceneGraph.prototype.parseAnimationLinear = function(node, animation) {
-    animation.type = "linear";
-    var controlPoints = node.getElementsByTagName("controlpoint");
-    var control = readElement(controlPoints, CONTROL_POINT, controlPoints.length);
-
-    animation.setControlPoints(control);
-};
-
-MySceneGraph.prototype.parseAnimationCircular = function(node, animation) {
-    animation.type = "circular";
-    animation.setCenter(readElement(node, ["center"], 1));
-    animation.setStartAngle(readElement(node, ["startang"], 1));
-    animation.setRotateAngle(readElement(node, ["rotang"], 1));
-    animation.setRadius(readElement(node, ["radius"], 1));
-    console.log(animation);
 };
 
 MySceneGraph.prototype.parseIllumination = function(rootElement) {
@@ -418,8 +410,8 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
     this.textures[clearTexture.id] = clearTexture;
 
     console.log("End TEXTURES");
-
 };
+
 MySceneGraph.prototype.getTexture = function(id) {
     for (var i = 0; i < this.textures.length; i++) {
         if (this.textures[i].id == id)
@@ -427,6 +419,7 @@ MySceneGraph.prototype.getTexture = function(id) {
     }
     return null;
 };
+
 MySceneGraph.prototype.getMaterial = function(id) {
     for (var i = 0; i < this.materials.length; i++) {
         if (this.materials[i].id == id)
@@ -464,7 +457,6 @@ MySceneGraph.prototype.parseRGBA = function(obj, node, tag) {
             obj.b = 0.0;
             obj.a = 0.0;
         } else {
-            console.log(this.reader.getFloat(elems[0], 'r'));
             obj.r = this.reader.getFloat(elems[0], 'r') || 0;
             obj.g = this.reader.getFloat(elems[0], 'g') || 0;
             obj.b = this.reader.getFloat(elems[0], 'b') || 0;
@@ -491,22 +483,27 @@ MySceneGraph.prototype.parseST = function(obj, node, tag) {
     }
 };
 
-MySceneGraph.prototype.checkTag = function(node, tag, def, min) {
-
+MySceneGraph.prototype.checkTag = function(node, tag, def, min, origin) {
+    console.log(def, min, origin);
     var various;
-    if (min === undefined) min = -1, various = 1;
+    if (typeof min === 'undefined') min = -1, various = 1;
     else
         various = 0;
-    if (def === undefined) def = true;
+    if (typeof def === 'undefined') def = true;
 
     var elems = node.getElementsByTagName(tag);
 
     //Number of tags smaller than needed
     if (elems == null || (elems.length < min && min != -1) || (elems.length < various && min == -1)) {
-        if (def)
-            this.onXMLWarn(tag + " not found. Using default values");
-        else
-            throw new XMLError(tag + " not found. Cannot proceed");
+
+        var tempOrigin = "";
+        if (typeof origin !== 'undefined')
+            tempOrigin = "In " + origin;
+
+        if (def) {
+            this.onXMLWarn(tag + " not found. Using default values" + tempOrigin);
+        } else
+            throw new XMLError(tag + " not found. Cannot proceed" + tempOrigin);
         return null;
     }
 
@@ -523,40 +520,30 @@ MySceneGraph.prototype.onXMLError = function(message) {
     console.error("XML Loading Error: " + message);
     this.loadedOk = false;
 };
-MySceneGraph.prototype.onXMLWarn = function(message) {
-    console.warn("XML Loading Warning: " + message);
-};
 
-function XMLError(message) {
-
-    this.message = "XML Loading Error: " + message;
-    this.name = "XML Error";
-};
 MySceneGraph.prototype.parseNodes = function(rootElement) {
     console.log("Start NODES");
-
     var elems = this.checkTag(rootElement, 'NODES', false);
+
     var root = this.checkTag(elems[0], 'ROOT', false);
     var rootName = this.reader.getString(root[0], 'id');
-
+    var animated;
     elems = this.checkTag(elems[0], 'NODE', false, 1);
-
     for (var i = 0; i < elems.length; i++) {
         var node = new Node(this);
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
         node.id = addID(elems[i], this, this.nodesID);
-        var elems2 = this.checkTag(elems[i], 'MATERIAL');
+        var elems2 = this.checkTag(elems[i], 'MATERIAL', undefined, undefined, node.id);
         node.material = this.reader.getString(elems2[0], 'id');
         elems2 = this.checkTag(elems[i], 'TEXTURE');
-        node.texture = this.reader.getString(elems2[0], 'id');
+        node.texture = this.reader.getString(elems2[0], 'id', undefined, undefined, node.id);
 
         //descendants
         elems2 = this.checkTag(elems[i], 'DESCENDANTS', false);
         elems2 = this.checkTag(elems2[0], 'DESCENDANT', false, 1);
 
         for (var j = 0; j < elems2.length; j++) {
-
             var descendant = this.reader.getString(elems2[j], 'id');
             descendants.push(descendant);
 
@@ -564,37 +551,57 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         node.descendentsID = descendants;
 
         //get Animations
-      /*  var tempList = elems[i].getElementsByTagName('ANIMATION');
+        var tempList = elems[i].getElementsByTagName('ANIMATION');
 
-        if (tempList != null || tempList.length != 0) 
-        {
+        if (tempList != null || tempList.length != 0) {
+            animated = true;
             for (var j = 0; j < tempList.length; j++) {
                 var tempID = this.reader.getString(tempList[j], 'id');
-                var tempAnimation = this.animation[tempID];
+                //  console.log("Original:", this.animations[tempID]);
+                var tempAnimation = this.animations[tempID].clone(this.scene);
+
+
                 if (tempID == null) {
-                  console.log("Adding Animation with ID: " + tempID + " to Node ( " + node.id +" ) failed since Animation does not exist");
-                } else
+                    console.log("Adding Animation with ID: " + tempID + " to Node ( " + node.id + " ) failed since Animation does not exist");
+                } else if (tempAnimation != null && ((typeof tempAnimation) !== "undefined")) {
+
+                    if (node.animations.length == 0) {
+                        tempAnimation.init((new Date()).getTime());
+                        node.started = true;
+                        node.currentAnimation = tempAnimation;
+                    }
+                    //      console.log("Clone: ", tempAnimation);
                     node.animations.push(tempAnimation);
+                    // console.log(node.animations);
+                }
+                tempAnimation = null;
             }
-        }*/
+
+        } else
+            animated = false;
 
         //transformations
         parseNodeTransformation(node, elems[i].children, nodeTransformation);
         node.transformation = nodeTransformation;
         this.nodes.push(node);
+
+        if (animated) {
+            this.animatedNodes.push(node);
+            animated = false;
+        }
+
         if (node.id == rootName)
             this.rootNode = node;
-
     }
 
     for (var i = 0; i < this.nodes.length; i++) {
         this.nodes[i].processDescendents();
-
     }
 
     this.checkCycle();
     console.log("END NODES");
 };
+
 MySceneGraph.prototype.setUnvisited = function() {
 
     for (var key = 0; key < this.nodes.length; key++) {
@@ -602,6 +609,7 @@ MySceneGraph.prototype.setUnvisited = function() {
         this.nodes[key].visited = false;
     }
 };
+
 MySceneGraph.prototype.checkCycle = function() {
     this.setUnvisited();
     for (var key = 0; key < this.nodes.length; key++) {
@@ -613,4 +621,13 @@ MySceneGraph.prototype.checkCycle = function() {
             }
         }
     }
+};
+
+MySceneGraph.prototype.onXMLWarn = function(message) {
+    console.warn("XML Loading Warning: " + message);
+};
+
+function XMLError(message) {
+    this.message = "XML Loading Error: " + message;
+    this.name = "XML Error";
 };

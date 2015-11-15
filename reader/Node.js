@@ -12,13 +12,36 @@ function Node(graph) {
     this.visited = false;
     this.stillChecking = false;
     this.animations = [];
+    this.currentAnimation = null;
+    this.index = 1;
 };
 
 Node.prototype.getID = function() {
 
     return this.id;
 }
+Node.prototype.update = function(currTime) {
+    if (this.graph.scene.Loop && this.animations.length > 0) {
+        this.index = 0;
+        this.currentAnimation = this.animations[this.index++];
+        this.currentAnimation.init(currTime);
 
+    }
+
+    if (this.currentAnimation != null) {
+        if (this.currentAnimation.validateAnimation(currTime))
+            this.currentAnimation.update(currTime);
+        else {
+
+            if (this.index < this.animations.length) {
+                console.log("Animation Init", currTime);
+                this.currentAnimation = this.animations[this.index++];
+                this.currentAnimation.init(currTime);
+            }
+        }
+    }
+
+};
 //function that use recursion to display the nodes
 Node.prototype.display = function(parentElement) {
     //create the variables
@@ -47,18 +70,20 @@ Node.prototype.display = function(parentElement) {
         //set Matrix in order to transformation being applied correctly
         //apply transformations
         this.graph.scene.pushMatrix();
-        this.transformation.useTransformation();
-        this.graph.scene.pushMatrix();
-        /* if(this.animations.length>0){
-        for (var i = 0; i < this.animations.length; i++) {
-            //do something here
-        }}*/
-        this.graph.scene.popMatrix();
+
+
+        this.transformation.apply();
+
+        if (this.currentAnimation != null)
+            this.currentAnimation.apply();
         //if Node exists calls recursily, else displays that Node doesn't exist
+
+
         if (this.descendents[i] != null)
             this.descendents[i].display(this);
         else
             console.error("Element does not exist");
+
         //unset Matrix
         this.graph.scene.popMatrix();
     }
@@ -109,5 +134,7 @@ Node.prototype.processDescendents = function() {
         var nextElem = getElement(this.graph.nodes, idToFind);
         if (nextElem != null)
             this.descendents.push(nextElem);
+        else
+            console.warn("Element with ID: " + idToFind + " does not exist");
     }
 };

@@ -1,9 +1,81 @@
 function validadeNumber(numberToBeValidated, validationFunction) {
     return validationFunction(numberToBeValidated);
+};
 
+function copyArray(A1, A2) {
+    undefinedArray(A1);
+    undefinedArray(A2);
+    for (var i = 0; i < A2.length; i++) {
+        A1.push(A2[i]);
+    }
+};
+
+function truncRadian(angle) {
+    return (angle % (2 * Math.PI));
+};
+
+function dividIntoParts(A, nParts) {
+    if (A.length < nParts)
+        return -1;
+    var divided = [];
+    var added = 0;
+    var temp = [];
+    for (var i = 0; i < A.length; i++) {
+        if (added == nParts) {
+            added = 0;
+            divided.push(temp);
+            temp = [];
+        }
+        temp.push(A[i]);
+        added++;
+    }
+    if (temp.length == nParts)
+        divided.push(temp);
+
+    return divided;
+}
+
+function createVector(V1, V2) {
+    if (V1.length != V2.length)
+        return null;
+
+    var newVec = [];
+    for (var i = 0; i < V1.length; i++) {
+        newVec.push(V2[i] - V1[i]);
+    }
+    return newVec;
+};
+
+function addElementXtimes(A, Element, nTimes) {
+    undefinedArray(A);
+
+    for (var i = 0; i < nTimes; i++)
+        A.push(Element);
+};
+
+function checkNumber(number) {
+    var tempNumber = Number(number)
+    if (isNaN(number)) {
+        return false;
+    }
+    return true;
+};
+
+function makeSurface(degree1, degree2, knots1, knots2, controlvertexes, divisionsU, divisionsV, scene) {
+
+    console.log(degree1, degree2, knots1, knots2, controlvertexes, divisionsU, divisionsV, scene);
+    var nurbsSurface = new CGFnurbsSurface(degree1, degree2, knots1, knots2, controlvertexes);
+    console.log(nurbsSurface);
+    getSurfacePoint = function(u, v) {
+        return nurbsSurface.getPoint(u, v);
+    };
+    var obj = new CGFnurbsObject(scene, getSurfacePoint, divisionsU, divisionsV);
+    console.log(obj);
+    return obj; //new CGFnurbsObject(scene, getSurfacePoint, divisionsU, divisionsV);
 };
 
 function stringArrayToNumber(array, nameOfType, lowerLimit, upperLimit, converter) {
+    undefinedArray(array);
     for (var i = 0; i < array.length; i++) {
         var temp = array[i];
         array[i] = Number(array[i]);
@@ -42,6 +114,7 @@ function degToRad(angle) {
 };
 
 function deleteElement(array, evaluates) {
+    undefinedArray(array);
     for (var i = 0; i < array.length; i++) {
 
         if (evaluates(array[i])) {
@@ -60,6 +133,20 @@ function getElement(array, elementID) {
     return null;
 };
 
+function processControlPoints(controlPoints) {
+    undefinedArray(controlPoints);
+    var temporaryContainer = [];
+
+    var numberOfPoints = controlPoints.length;
+
+    for (var index = 0; index < numberOfPoints;) {
+        var tempControlPoint = [controlPoints[index++], controlPoints[index++], controlPoints[index++]];
+        var temp = stringArrayToNumber(tempControlPoint, "ControlPoint Coordinates", "inf", "inf", 1);
+        temporaryContainer.push(temp);
+    }
+    return temporaryContainer;
+};
+
 function parseLeafAux(leave, type) {
     if (type == "rectangle") {
         return new LeafRectangle();
@@ -69,11 +156,15 @@ function parseLeafAux(leave, type) {
         return new LeafCylinder();
     } else if (type == "sphere") {
         return new LeafSphere();
+    } else if (type == "patch") {
+        return new LeafPatch();
+    } else if (type == "plane") {
+        return new LeafPlane();
+    }  else if (type == "terrain") {
+        return new LeafTerrain();
     } else {
         console.warn("Invalid type of Leaf: " + type);
     }
-
-
 };
 
 function normalVector(V) {
@@ -84,6 +175,8 @@ function normalVector(V) {
 };
 
 function crossProduct(V1, V2) {
+    if (V1.length != 3 || V2.length != 3)
+        return -1;
     return [
 
         V2[1] * V1[2] - V2[2] * V1[1],
@@ -94,6 +187,8 @@ function crossProduct(V1, V2) {
 };
 
 function distanceBetweenVectors(V1, V2) {
+    undefinedArray(V1);
+    undefinedArray(V2);
     if (V1.length != V2.length)
         return -1;
     var dist = 0;
@@ -102,10 +197,36 @@ function distanceBetweenVectors(V1, V2) {
         dist += Math.pow(V1[i] - V2[i], 2);
     }
     return Math.sqrt(dist);
-}
+};
+
+function angleBetweenVectors(V1, V2) {
+    if (V1.length != V2.length) {
+        return -1;
+    }
+    var V1length = scalarProduct(V1, V1);
+    var V2length = scalarProduct(V2, V2);
+
+    return Math.acos(scalarProduct(V1, V2) / (V1length * V2length));
+};
+
+function between(Value, lowerLimit, upperLimit) {
+    //  console.log("BETWEEN",Value-lowerLimit,upperLimit-lowerLimit);
+    return (lowerLimit <= Value && Value <= upperLimit);
+};
+
+function undefinedArray(V1) {
+
+    if (typeof V1 === 'undefined') {
+        console.log("UNDEFINED FOUND");
+        V1 = [];
+        console.log(V1);
+    }
+};
 
 function scalarProduct(V1, V2) {
 
+    undefinedArray(V1);
+    undefinedArray(V2);
     if (V1.length != V2.length) {
         console.error("Vector must have the same length, if you want to get the scalar product between them");
     }
@@ -193,7 +314,6 @@ function parseAxisLength(initials, currElement) {
 
 function parseNodeTransformation(node, element, Transformation) {
 
-
     for (var i = 0; i < element.length; i++) {
         if (element[i].nodeName == "ROTATION") {
             Transformation.parseRotate(element[i]);
@@ -204,6 +324,5 @@ function parseNodeTransformation(node, element, Transformation) {
         } else if (element[i].nodeName == "SCALE") {
             Transformation.parseScale(element[i]);
         }
-
     }
 };

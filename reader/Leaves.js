@@ -1,4 +1,6 @@
 //Default values for all leaves
+var FIRST_ELEMENT = 0;
+
 function Leaf(graph) {
     this.element = null;
     this.ID;
@@ -9,7 +11,7 @@ function Leaf(graph) {
     //debug
     this.repeat = 0;
 };
-
+Leaf.prototype.update = function(currTime) {};
 Leaf.prototype.setID = function(newID) {
     this.ID = newID;
 };
@@ -36,10 +38,21 @@ Leaf.prototype.getVisited = function() {
 Leaf.prototype.checkCycle = function() {
     return false;
 };
+Leaf.prototype.processArgs = function(leaf, currLeaf, scene) {
+    var args = readElement(leaf, ["args"], 1);
+    var processedArgs = deleteElement(args.toString().split(TO_ELIMINATE_CHAR), function(x) {
 
-Leaf.prototype.processDescendents = function(){
-    
-}
+        if (isNaN(Number(x)) || (nonValidChar.indexOf(x) != -1))
+            return true;
+        else
+            return false;
+
+    });
+
+    this.parseLeaf(processedArgs, scene);
+};
+Leaf.prototype.processDescendents = function() {};
+
 Leaf.prototype.display = function(parentElement) {
 
     var material = this.graph.matArray[this.graph.matArray.length - 1];
@@ -160,8 +173,81 @@ LeafSphere.prototype.parseLeaf = function(args, scene) {
     var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
     var tempIndex = tempArgs.indexOf("inf");
     if (tempIndex != -1) {
-        console.error("Invalid paramenter in the creation of a sphere ( " + tempArgs[tempIndex] + " ), this leaf will be ignored")
+        console.error("Invalid paramenter in the creation of a sphere ( " + tempArgs[tempIndex] + " ), this leaf will be ignored");
     } else {
         this.element = new Sphere(scene, args[2], args[1], args[0]);
     }
+};
+
+//TODO REPLACE WITH PROPER CONSTRUCTORES
+LeafPlane.prototype = Object.create(Leaf.prototype);
+LeafPlane.prototype.constructor = LeafPlane;
+
+function LeafPlane() {
+    Leaf.call(this);
+}
+
+LeafPlane.prototype.parseLeaf = function(args, scene) {
+    this.type = "plane";
+    var tempArgs = stringArrayToNumber(args, "partsS", 1, "inf", 1);
+    var tempIndex = tempArgs.indexOf("inf");
+    if (tempIndex != -1) {
+        console.error("Invalid paramenter in the creation of a plane ( " + tempArgs[tempIndex] + " ), this leaf will be ignored")
+    } else {
+
+      
+        this.element = new Plane(scene, args[0]);
+    }
+};
+LeafPlane.prototype.processArgs = function(leaf, currLeaf, scene) {
+    var args = readElement(leaf, ["parts"], 1);
+    this.parseLeaf(args, scene);
+};
+
+LeafPatch.prototype = Object.create(Leaf.prototype);
+LeafPatch.prototype.constructor = LeafPatch;
+
+function LeafPatch() {
+    Leaf.call(this);
+};
+
+LeafPatch.prototype.parseLeaf = function(control, order, partsU, partsV, scene) {
+    this.type = "patch";
+    var tempOrder = stringArrayToNumber(order, "order", 1, "inf", 1);
+    var tempPartsU = stringArrayToNumber(partsU, "partsU", 1, "inf", 1);
+    var tempPartsV = stringArrayToNumber(partsV, "partsV", 1, "inf", 1);
+    this.element = new Patch(scene, tempOrder[FIRST_ELEMENT], tempPartsV[FIRST_ELEMENT], tempPartsU[FIRST_ELEMENT], control);
+};
+LeafPatch.prototype.processArgs = function(leaf, currLeaf, scene) {
+
+    var controlPoints = currLeaf.getElementsByTagName("controlpoint");
+    var control = processControlPoints(readElement(controlPoints, POSITION_VARIABLES, controlPoints.length));
+    var order = readElement(leaf, ["order"], 1);
+    var partsU = readElement(leaf, ["partsU"], 1);
+    var partsV = readElement(leaf, ["partsV"], 1);
+    this.parseLeaf(control, order, partsU, partsV, scene);
+};
+
+LeafVehicle.prototype = Object.create(Leaf.prototype);
+LeafVehicle.prototype.constructor = LeafVehicle;
+
+function LeafVehicle() {
+    Leaf.call(this);
+};
+
+function LeafTerrain() {
+    Leaf.call(this);
+};
+LeafTerrain.prototype = Object.create(Leaf.prototype);
+LeafTerrain.prototype.constructor = LeafTerrain;
+
+LeafTerrain.prototype.parseLeaf = function(args, scene) {
+    this.type = "terrain";
+    this.element = new Terrain(scene, args[0], args[1]);
+};
+
+LeafTerrain.prototype.processArgs = function(leaf, currLeaf, scene) {
+    var texture = readElement(leaf, ["texture"], 1);
+    var heightmap = readElement(leaf, ["heightmap"], 1);
+    this.parseLeaf([texture, heightmap], scene);
 };

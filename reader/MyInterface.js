@@ -21,13 +21,7 @@ MyInterface.prototype.init = function(application) {
 
     this.gui = new dat.GUI();
     this.lights = this.gui.addFolder("Lights");
+    this.extra = this.gui.addFolder("Extra");
+   
     return true;
 };
- MyInterface.prototype.addLights = function() {
- 
-     //for (var i = 0; i < this.scene.lightsEnable.length; i++) {
-        //console.log(i);
-        //this.lights.add(this.scene.lightsEnable, i, this.scene.lightsEnable[i]);
-    // }
- 
- };

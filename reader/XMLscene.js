@@ -4,8 +4,14 @@ var DEFAULT_THICKNESS = 0.05;
 //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
 function XMLscene() {
     CGFscene.call(this);
+    this.Loop = false;
+    this.returnsToStart = false;
     this.gui = null;
-}
+    this.AnimationLoop = function() {
+        this.Loop = true;
+    };
+};
+
 
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
@@ -14,43 +20,43 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function(application) {
 
     CGFscene.prototype.init.call(this, application);
-    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(1, 1, 1), vec3.fromValues(0, 0, 0));
     this.initLights();
-
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
+    this.square = new Rectangle(this, [-0.5, 0.5, 0], [0.5, -0.5, 0]);
     this.gl.clearDepth(100.0);
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
     this.materials = [];
-
+    this.startTime = new Date(); //time value that is the number of milliseconds since 1 January, 1970 UTC.
     this.axis = new CGFaxis(this);
     this.lightsEnable = [];
-    this.setUpdatePeriod(100);
+    this.setUpdatePeriod(1);
+    this.CustomShader = new CGFshader(this.gl, "shaders/proj.vert", "shaders/proj.frag");
+    this.CustomShader.setUniformsValues({
+        uSampler2: 1
+    });
+     this.CustomShader.setUniformsValues({
+        max: 0.25
+    });
+    //enable textures
+    this.enableTextures(true);
 };
-
 
 //initialize with scene with a light that will be overwrited after the parsing of the file
 //given the is necessary at least one light
 XMLscene.prototype.initLights = function() {
 
-    this.shader.bind();
     this.lights[0].setPosition(2, 3, 3, 1);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
     this.lights[0].update();
     this.lights[0].enable();
     this.lights[0].setVisible(true);
-    this.shader.unbind();
 };
 
 //set the default Appearance that from the initial scene
-XMLscene.prototype.setDefaultAppearance = function() {
-    this.setAmbient(0.5, 0.0, 0.0, 1.0);
-    this.setDiffuse(0.5, 0.0, 0.0, 1.0);
-    this.setSpecular(0.5, 0.0, 0.0, 1.0);
-    this.setShininess(10.0);
-};
+XMLscene.prototype.setDefaultAppearance = function() {};
 
 //after the parsing, the camera will be update given the frustum from INITIALS
 XMLscene.prototype.UpdateCamera = function() {
@@ -80,6 +86,8 @@ XMLscene.prototype.CreateLights = function() {
         this.gui.lights.add(this.lightsEnable, i, this.lightsEnable[i]);
 
     }
+    this.gui.extra.add(this, 'AnimationLoop');
+    this.gui.scene = this;
 };
 
 //create the default material
@@ -105,12 +113,9 @@ XMLscene.prototype.CreateMaterials = function() {
 // Handler called when the graph is finally loaded. 
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function() {
-
     //set the backgroun and global ambient illumination parsed from the ILLUMINATION
     this.gl.clearColor(this.graph.background['r'], this.graph.background['g'], this.graph.background['b'], this.graph.background['a']);
     this.setGlobalAmbientLight(this.graph.ambient['r'], this.graph.ambient['g'], this.graph.ambient['b'], this.graph.ambient['a']);
-    //enable textures
-    this.enableTextures(true);
 
     //create the axis given the INITIAL values
     this.axis = new CGFaxis(this, this.graph.initials.getAxisLength(), DEFAULT_THICKNESS);
@@ -121,9 +126,14 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.leaves = this.graph.leaves;
 };
 
+XMLscene.prototype.update = function(currTime) {
+    if (this.graph.loadedOk) {
+        this.graph.update(currTime);
+    }
+};
+
 XMLscene.prototype.display = function() {
     // ---- BEGIN Background, camera and axis setup
-    this.shader.bind();
 
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
@@ -148,7 +158,6 @@ XMLscene.prototype.display = function() {
     // This is one possible way to do it
 
     if (this.graph.loadedOk) {
-
         //constant update from this values. Checking for each light is enabled or disable
         for (var j = 0; j < this.nLights; j++) {
             if (!this.lightsEnable[j])
@@ -160,8 +169,7 @@ XMLscene.prototype.display = function() {
         }
 
         //draw the graphScene
-        this.graph.display();
+        this.graph.display(this.currTime);
 
     }
-    this.shader.unbind();
 };

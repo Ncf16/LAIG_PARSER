@@ -5,7 +5,6 @@ function Frustum() {
 };
 
 Frustum.prototype.setNear = function(newNear) {
-    console.log("AQUI", newNear);
     if (isNaN(newNear) || newNear <= 0.1) {
         newNear = 0.1;
     } else

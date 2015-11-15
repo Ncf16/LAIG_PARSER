@@ -55,8 +55,9 @@ Cylinder.prototype.initBuffers = function() {
 			var vec1 = [x1 - currentX, y1 - currentY, z1 - currentZ];
 			var vec = [point[0] - currentX, point[1] - currentY, point[2] - currentZ];
 
+			//TODO CHECK THIS CHANGED VEC AND TEMPNORMAL ORDER
 			var tempNormal = crossProduct(vec, vec1);
-			var normal = crossProduct(tempNormal, vec);
+			var normal = crossProduct(vec,tempNormal);
 			normalVector(normal);
 			this.normals.push(normal[0], normal[1], normal[2]);
 		}
