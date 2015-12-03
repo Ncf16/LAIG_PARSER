@@ -10,9 +10,9 @@
         <!-- initial rotation 2 -->
         <rotation axis="x" angle="0.0" />
         <!-- initial rotation 1 -->
-        <scale sx="0.8" sy="0.8" sz="1.0" />
+        <scale sx="1.0" sy="1.0" sz="1.0" />
         <!-- initial scaling -->
-        <reference length="0.0" />
+        <reference length="5.0" />
         <!-- axis length; "0" means no axis-->
     </INITIALS>
     <ILLUMINATION>
@@ -22,21 +22,11 @@
         <!-- background color -->
     </ILLUMINATION>
     <LIGHTS>
-        <LIGHT id="light">
+        <LIGHT id="ligh3">
             <!-- light identifier -->
             <enable value="1" />
             <!-- enable/disable -->
-            <position x="6.1" y="6" z="6.1" w="1" />
-            <!-- light position -->
-            <ambient r="0.3" g="0.3" b="0.3" a="1" />
-            <diffuse r="1" g="1" b="1" a="1" />
-            <specular r="1" g="1" b="1" a="1" />
-        </LIGHT>
-          <LIGHT id="ligh1">
-            <!-- light identifier -->
-            <enable value="1" />
-            <!-- enable/disable -->
-            <position x="-6.1" y="6" z="-6.1" w="1" />
+            <position x="7.1" y="5" z="7.1" w="1" />
             <!-- light position -->
             <ambient r="0.3" g="0.3" b="0.3" a="1" />
             <diffuse r="1" g="1" b="1" a="1" />
@@ -56,6 +46,14 @@
             <file path="textures/WoodLogs.jpg" />
             <amplif_factor s="1" t="1" />
         </TEXTURE>
+        <TEXTURE id="lampTopTex">
+            <file path="textures/lamp.jpg" />
+            <amplif_factor s="1.0" t="1.0" />
+        </TEXTURE>
+        <TEXTURE id="lampTex">
+            <file path="textures/silver.jpg" />
+            <amplif_factor s="1.0" t="1.0" />
+        </TEXTURE>
     </TEXTURES>
     <MATERIALS>
         <MATERIAL id="defaultMaterial">
@@ -72,54 +70,46 @@
             <ambient r="0" g="0" b="0" a="1" />
             <emission r="1" g="1" b="1" a="1" />
         </MATERIAL>
-        <MATERIAL id="color0">
-            <shininess value="40.0" />
-            <specular r="0.8" g="0.0" b="0.0" a="1.0" />
-            <!-- specular reflection -->
-            <diffuse r="0.5" g="0.5" b="0.5" a="1.0" />
-            <!-- diffuse reflection -->
-            <ambient r="0.3" g="0.0" b="0.0" a="1.0" />
-            <!-- ambient reflection -->
-            <emission r="0.0" g="0.0" b="0.0" a="0.0" />
-            <!-- emission component -->
-        </MATERIAL>
-         <MATERIAL id="color1">
-            <shininess value="40.0" />
-            <specular r="0.0" g="0.8" b="0.0" a="1.0" />
-            <!-- specular reflection -->
-            <diffuse r="0.5" g="0.5" b="0.5" a="1.0" />
-            <!-- diffuse reflection -->
-            <ambient r="0.0" g="0.8" b="0.0" a="1.0" />
-            <!-- ambient reflection -->
-            <emission r="0.0" g="0.0" b="0.0" a="0.0" />
-            <!-- emission component -->
-        </MATERIAL>
     </MATERIALS>
-   <ANIMATIONS>
-    <ANIMATION id="waitLine" span="1" type="linear">
+    <ANIMATIONS>
+        <ANIMATION id="ss" span="2" type="linear">
             <controlpoint x="0" y="0" z="0" />
+            <controlpoint x="1" y="0" z="0" />
+        </ANIMATION>
+        <ANIMATION id="ss1" span="2" type="linear">
+            <controlpoint x="1" y="0" z="1" />
+            <controlpoint x="0" y="0" z="1" />
+        </ANIMATION>
+        <ANIMATION id="s" span="5" type="circular" center="1 1 -1" radius="2" startang="0" rotang="75" />
+        <ANIMATION id="ss2" span="10" type="linear">
+            <controlpoint x="0" y="0" z="0" />
+            <controlpoint x="0" y="0" z="2" />
+            <controlpoint x="0" y="5" z="2" />
+            <controlpoint x="2" y="5" z="2" />
+            <controlpoint x="0" y="5" z="0" />
+        </ANIMATION>
+        <ANIMATION id="ssa" span="15" type="linear">
+            <controlpoint x="0" y="5" z="0" />
+            <controlpoint x="0" y="0" z="-2" />
+            <controlpoint x="-4" y="0" z="-2" />
+            <controlpoint x="-1" y="0" z="1" />
+            <controlpoint x="1" y="1" z="-1" />
+        </ANIMATION>
+        <ANIMATION id="Al1" span="20" type="linear">
+            <controlpoint x="0" y="0" z="2.0" />
             <controlpoint x="0" y="0" z="0" />
         </ANIMATION>
-        <ANIMATION id="takeOff" span="15" type="linear">
-            <controlpoint x="0" y="0" z="0" />
-            <controlpoint x="0" y="4" z="0" />
-            <controlpoint x="-0.2" y="8" z="1" />
-            <controlpoint x="-0.4" y="8" z="5" />
-            <controlpoint x="-1" y="10" z="8" />
-        </ANIMATION>
-        <ANIMATION id="lakeRot" span="10" type="circular" center="-1 10 0" radius="8" startang="-90" rotang="-120" />
-        <ANIMATION id="land" span="12" type="linear">
-            <controlpoint x="-7.92" y="10" z="-4" />
-            <controlpoint x="-5" y="8" z="-3" />
-             <controlpoint x="-3" y="6" z="-1" />
-              <controlpoint x="0" y="0" z="0" />
-        </ANIMATION>
+        <ANIMATION id="Ac1" span="15" type="circular" center="0 0 0" radius="0" startang="0" rotang="2700" />
     </ANIMATIONS>
     <!-- The leaves -->
     <LEAVES>
         <LEAF id="terrain1" type="terrain" texture="textures/terrain.jpg" heightmap="textures/heightmap.jpg" />
         <LEAF id="rectangleAnimated" type="rectangle" args="-0.5 0.5 0.5 -0.5" />
-        <LEAF id="c1" type="cylinder" args="1 1 1 8 8" />
+        <LEAF id="c1" type="cylinder" args="1 1 1 20 20" />
+        <LEAF id="esfera" type="sphere" args="1 20 20 " />
+        <LEAF id="esfera1" type="sphere" args="0.3 20 20 " />
+        <LEAF id="cilindro" type="cylinder" args="1 1 1 20 20" />
+        <LEAF id="cilindro1" type="cylinder" args="1 0.5 1 20 20" />
         <LEAF id="ballonPart" type="patch" order="3" partsU="40" partsV="40">
             <controlpoint x="0" y="0" z="0.5" />
             <controlpoint x="0" y="2.2" z="2" />
@@ -148,15 +138,13 @@
             <MATERIAL id="defaultMaterial" />
             <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="Plane" />
-                <DESCENDANT id="ballon" />
+                <DESCENDANT id="lamp" />
             </DESCENDANTS>
         </NODE>
         <NODE id="Plane">
             <MATERIAL id="null" />
             <TEXTURE id="null" />
-            <ROTATION axis="x" angle="-90" />
-            <SCALE sx="20" sy="15" sz="20" />
+            <SCALE sx="10" sy="10" sz="10" />
             <DESCENDANTS>
                 <DESCENDANT id="terrain1" />
             </DESCENDANTS>
@@ -164,25 +152,23 @@
         <NODE id="ballon">
             <MATERIAL id="null" />
             <TEXTURE id="null" />
-            <TRANSLATION x="3.95" y="2.3" z="0.9" />
+            <TRANSLATION x="0" y="0" z="0" />
             <SCALE sx="0.5" sy="0.5" sz="0.5" />
-            <ANIMATION id="waitLine"/>
-            <ANIMATION id="takeOff"/>
-            <ANIMATION id="lakeRot"/>
-            <ANIMATION id="land"/>
+            <ANIMATION id="ss2" />
+            <ANIMATION id="ssa" />
+            <ANIMATION id="s" />
             <DESCENDANTS>
                 <DESCENDANT id="ballonBasket" />
                 <DESCENDANT id="ballonTop" />
             </DESCENDANTS>
         </NODE>
-
         <NODE id="ballonBasket">
             <MATERIAL id="null" />
             <TEXTURE id="clear" />
             <SCALE sx="0.45" sy="0.45" sz="0.45" />
             <DESCENDANTS>
                 <DESCENDANT id="cesto" />
-                <DESCENDANT id="suportes"/>
+                <DESCENDANT id="suportes" />
             </DESCENDANTS>
         </NODE>
         <NODE id="suportes">
@@ -400,5 +386,61 @@
                 <DESCENDANT id="rectangleAnimated" />
             </DESCENDANTS>
         </NODE>
+        <NODE id="lamp">
+            <MATERIAL id="null" />
+            <TEXTURE id="null" />
+            <ROTATION axis="x" angle="90" />
+            <TRANSLATION x="0" y="0" z="-2" />
+            <ANIMATION id="Al1" />
+            <DESCENDANTS>
+                <DESCENDANT id="lampTop" />
+                <DESCENDANT id="lampLight" />
+                <DESCENDANT id="lampBase" />
+                <DESCENDANT id="lampSupport" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="lampBase">
+            <MATERIAL id="null" />
+            <TEXTURE id="lampTex" />
+            <TRANSLATION x="0" y="0" z="2" />
+            <SCALE sx="1" sy="1" sz="0.10" />
+            <DESCENDANTS>
+                <DESCENDANT id="esfera" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="lampSupport">
+            <MATERIAL id="null" />
+            <TEXTURE id="lampTex" />
+            <TRANSLATION x="0" y="0" z="-2" />
+            <SCALE sx="0.15" sy="0.15" sz="4" />
+            <DESCENDANTS>
+                <DESCENDANT id="cilindro" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="lampLight">
+            <MATERIAL id="luzMat" />
+            <TEXTURE id="null" />
+            <TRANSLATION x="0" y="0" z="-2.5" />
+            <DESCENDANTS>
+                <DESCENDANT id="esfera1" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="lampTop">
+            <MATERIAL id="null" />
+            <TEXTURE id="lampTopTex" />
+            <ROTATION axis="x" angle="-90" />
+            <ANIMATION id="Ac1" />
+            <DESCENDANTS>
+                <DESCENDANT id="lampTopAux" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="lampTopAux">
+            <MATERIAL id="null" />
+            <TEXTURE id="null" />
+            <ROTATION axis="x" angle="90" />
+            <TRANSLATION x="0" y="0" z="-3"/>
+            <DESCENDANTS>
+                <DESCENDANT id="cilindro1" />
+            </DESCENDANTS>
     </NODES>
 </SCENE>

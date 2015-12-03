@@ -7,6 +7,7 @@ function XMLscene() {
     this.Loop = false;
     this.returnsToStart = false;
     this.gui = null;
+
     this.AnimationLoop = function() {
         this.Loop = true;
     };
@@ -20,19 +21,20 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function(application) {
 
     CGFscene.prototype.init.call(this, application);
-    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(1, 1, 1), vec3.fromValues(0, 0, 0));
+    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
     this.initLights();
+
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    this.square = new Rectangle(this, [-0.5, 0.5, 0], [0.5, -0.5, 0]);
     this.gl.clearDepth(100.0);
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
     this.materials = [];
+    
     this.startTime = new Date(); //time value that is the number of milliseconds since 1 January, 1970 UTC.
     this.axis = new CGFaxis(this);
     this.lightsEnable = [];
-    this.setUpdatePeriod(1);
+    
     this.CustomShader = new CGFshader(this.gl, "shaders/proj.vert", "shaders/proj.frag");
     this.CustomShader.setUniformsValues({
         uSampler2: 1
@@ -40,8 +42,6 @@ XMLscene.prototype.init = function(application) {
      this.CustomShader.setUniformsValues({
         max: 0.25
     });
-    //enable textures
-    this.enableTextures(true);
 };
 
 //initialize with scene with a light that will be overwrited after the parsing of the file
@@ -117,6 +117,9 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.gl.clearColor(this.graph.background['r'], this.graph.background['g'], this.graph.background['b'], this.graph.background['a']);
     this.setGlobalAmbientLight(this.graph.ambient['r'], this.graph.ambient['g'], this.graph.ambient['b'], this.graph.ambient['a']);
 
+     //enable textures
+    this.enableTextures(true);
+
     //create the axis given the INITIAL values
     this.axis = new CGFaxis(this, this.graph.initials.getAxisLength(), DEFAULT_THICKNESS);
 
@@ -124,6 +127,8 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.CreateLights();
     this.CreateMaterials();
     this.leaves = this.graph.leaves;
+
+    this.setUpdatePeriod(1000/30);
 };
 
 XMLscene.prototype.update = function(currTime) {

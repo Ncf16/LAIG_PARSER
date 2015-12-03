@@ -16,8 +16,7 @@ var Axis;
 var FIRST_ELEMENT;
 var TO_ELIMINATE_CHAR = " ";
 var nonValidChar = [""];
-//ver que matrix passsar 
-//fazer get and sets para stuff the initials, perhaps change code para evitar duplicado como temos de parseLights e parseMaterials
+
 function MySceneGraph(filename, scene) {
     // alert("caller is " + arguments.callee.caller.toString());
     this.loadedOk = false;
@@ -83,6 +82,7 @@ MySceneGraph.prototype.onXMLReady = function() {
 
         this.initials = new initials();
         this.transformation = new Transformation(this.scene);
+
         this.parseTextures(rootElement);
         this.parseInitials(rootElement);
         this.parseIllumination(rootElement);
@@ -91,7 +91,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseLeaf(rootElement);
         this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
-        console.log(this.nodes);
+        
     } catch (err) {
         if (err instanceof XMLError) {
             console.error(err.message);
@@ -100,9 +100,10 @@ MySceneGraph.prototype.onXMLReady = function() {
         } else
             console.error(err.message);
     }
+
+    this.loadedOk = true;
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
     this.scene.onGraphLoaded();
-    this.loadedOk = true;
 };
 
 MySceneGraph.prototype.update = function(currTime) {
@@ -436,7 +437,7 @@ MySceneGraph.prototype.idIndex = function(arr, obj, node, tag) {
     }).indexOf(obj.id);
     //element already exists
     if (pos > -1)
-        this.XMLWarn("a " + tag + " with same id already exists. It won't be added");
+        this.onXMLWarn("a " + tag + " with same id already exists. It won't be added");
 };
 
 MySceneGraph.prototype.parseRGBA = function(obj, node, tag) {
@@ -482,6 +483,7 @@ MySceneGraph.prototype.parseST = function(obj, node, tag) {
 };
 
 MySceneGraph.prototype.checkTag = function(node, tag, def, min, origin) {
+    
     var various;
     if (typeof min === 'undefined') min = -1, various = 1;
     else
@@ -508,7 +510,7 @@ MySceneGraph.prototype.checkTag = function(node, tag, def, min, origin) {
     //Min = -1 means that there is no min or max but specific number of tags needed
     //With min!=-1 there is no max value
     else if (elems.length > various && min == -1)
-        this.XMLWarn("multiple " + tag + " found. Using the " + various + " first(s)");
+        this.onXMLWarn("multiple " + tag + " found. Using the " + various + " first(s)");
 
     return elems;
 };
@@ -526,6 +528,7 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
     var rootName = this.reader.getString(root[0], 'id');
     var animated;
     elems = this.checkTag(elems[0], 'NODE', false, 1);
+    
     for (var i = 0; i < elems.length; i++) {
         var node = new Node(this);
         var descendants = [];
@@ -550,11 +553,10 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         //get Animations
         var tempList = elems[i].getElementsByTagName('ANIMATION');
 
-        if (tempList != null || tempList.length != 0) {
+        if (tempList != null && tempList.length != 0) {
             animated = true;
             for (var j = 0; j < tempList.length; j++) {
                 var tempID = this.reader.getString(tempList[j], 'id');
-                console.log("Original:", this.animations[tempID]);
 
                 if (typeof this.animations[tempID] !== 'undefined') {
                     var tempAnimation = this.animations[tempID].clone(this.scene);
@@ -567,9 +569,7 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
                             node.started = true;
                             node.currentAnimation = tempAnimation;
                         }
-                        console.log("Clone: ", tempAnimation);
                         node.animations.push(tempAnimation);
-                        // console.log(node.animations);
                     }
                     tempAnimation = null;
                 }
