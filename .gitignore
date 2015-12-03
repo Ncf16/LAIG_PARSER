@@ -1,0 +1,5 @@
+# Excluded to make the git repo smaller (those are present in SVN)
+ 
+*.db
+*.md
+*.exe
