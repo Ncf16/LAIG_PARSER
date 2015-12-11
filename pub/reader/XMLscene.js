@@ -7,10 +7,35 @@ function XMLscene() {
     this.Loop = false;
     this.returnsToStart = false;
     this.gui = null;
-
+    this.player1 = "black";
+    this.player2 = "white";
+    this.maxMoveTime = 5;
+    this.gameStarted = false;
+    this.moves=[];
     this.AnimationLoop = function() {
         this.Loop = true;
     };
+    this.rotateCamara = function() {
+
+    };
+    this.startGame = function() {
+        if (!this.gameStarted) {
+            this.gameStarted = true;
+            makeRequest("initStats", []);
+            makeRequest("initialize", [ this.player1, this.player2]);
+        }
+        else{
+           
+            makeRequest("retract",[]);
+            makeRequest("initStats", []);
+            makeRequest("initialize", [this.player1,this.player2]);  
+        }
+
+    };
+    this.undoMove = function() {
+        //criar Undo Move in PROLOG que é chamado?
+
+    }
 };
 
 
@@ -30,16 +55,16 @@ XMLscene.prototype.init = function(application) {
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
     this.materials = [];
-    
+
     this.startTime = new Date(); //time value that is the number of milliseconds since 1 January, 1970 UTC.
     this.axis = new CGFaxis(this);
     this.lightsEnable = [];
-    
+
     this.CustomShader = new CGFshader(this.gl, "shaders/proj.vert", "shaders/proj.frag");
     this.CustomShader.setUniformsValues({
         uSampler2: 1
     });
-     this.CustomShader.setUniformsValues({
+    this.CustomShader.setUniformsValues({
         max: 0.25
     });
 };
@@ -87,6 +112,14 @@ XMLscene.prototype.CreateLights = function() {
 
     }
     this.gui.extra.add(this, 'AnimationLoop');
+    this.gui.game.add(this, 'rotateCamara');
+    this.gui.game.add(this, 'startGame');
+    this.gui.game.add(this, 'undoMove');
+    // Choose from accepted values
+    this.gui.game.add(this, 'player1', ['black', 'white', 'random', 'greedy']);
+    this.gui.game.add(this, 'player2', ['black', 'white', 'random', 'greedy']);
+    this.gui.game.add(this, 'maxMoveTime').min(5).step(1); // Mix and match
+
     this.gui.scene = this;
 };
 
@@ -117,7 +150,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.gl.clearColor(this.graph.background['r'], this.graph.background['g'], this.graph.background['b'], this.graph.background['a']);
     this.setGlobalAmbientLight(this.graph.ambient['r'], this.graph.ambient['g'], this.graph.ambient['b'], this.graph.ambient['a']);
 
-     //enable textures
+    //enable textures
     this.enableTextures(true);
 
     //create the axis given the INITIAL values
@@ -128,7 +161,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.CreateMaterials();
     this.leaves = this.graph.leaves;
 
-    this.setUpdatePeriod(1000/30);
+    this.setUpdatePeriod(1000 / 30);
 };
 
 XMLscene.prototype.update = function(currTime) {
@@ -178,3 +211,45 @@ XMLscene.prototype.display = function() {
 
     }
 };
+
+function postGameRequest(requestString, onSuccess, onError) {
+    var request = new XMLHttpRequest();
+    request.open('POST', '../../game', true);
+
+    request.onload = onSuccess || function(data) {
+        console.log("Request successful. Reply: " + data.target.response);
+    };
+    request.onerror = onError || function() {
+        console.log("Error waiting for response");
+    };
+
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    console.log(requestString);
+    request.send('requestString=' + encodeURIComponent(requestString));
+}
+
+function makeRequest(functionName, arguments) {
+
+    // Compose Request String
+    var requestString = "[ " + functionName;
+    if (typeof arguments !== 'undefined') {
+        for (var i = 0; i < arguments.length; i++) {
+            requestString += " , " + arguments[i];
+
+            if (i == arguments.length - 1) {
+                requestString += " ]";
+            }
+        }
+    }
+    if (arguments.length == 0 && functionName != null && (typeof functionName !== 'undefined'))
+        requestString += " ]";
+    postGameRequest(requestString, handleReply);
+
+}
+
+//Handle the JSON Reply
+function handleReply(data) {
+    console.log(data.target.response);
+    response = JSON.parse(data.target.response);
+    console.log(response);
+}
