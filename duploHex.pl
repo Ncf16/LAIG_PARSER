@@ -3,7 +3,7 @@
 duploHex(Mode,Player):-initialize(Player,Mode),initStats,stats(tab,Tab),
 play(Tab,black,_).
 
-initStats(_,_,Message):-Message="OK",asserta((stats(white,[24,24]))),asserta((numberList([0,1,2,3,4,5,6]))),asserta((stats(black,[24,24])))
+initStats(_,Tab,Message):-Message="OK",asserta((stats(white,[24,24]))),asserta((numberList([0,1,2,3,4,5,6]))),asserta((stats(black,[24,24])))
 ,asserta((stats(tab,[
 			[0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0],
@@ -12,7 +12,7 @@ initStats(_,_,Message):-Message="OK",asserta((stats(white,[24,24]))),asserta((nu
 					[0,0,0,0,0,0,0],
 					  [0,0,0,0,0,0,0],
 						[0,0,0,0,0,0,0]
-						]))).
+						]))),stats(tab,Tab) .
 initStats(_,_,Message):-Message="FAIL".
 
 initialize(Player,Mode,_,_,Message):-Message="OK",playerTypes(PlayerTypes),botTypes(BotTypes),belongs(Player,PlayerTypes),belongs(Mode,BotTypes),
@@ -34,18 +34,22 @@ initialize(_,_,_,_,Message):-Message="FAIL".
 %ver como é que ele retorna as comunicações e isso para ver se coloco valores default nas posições de memória
 validatePlayer(Player):-getDisk(Player,Disk),getRing(Player,Ring),(validateNumberOfPieces(Player,Disk); validateNumberOfPieces(Player,Ring)).
 
-play(Tab,Player,Move,_,Dist,_,_):-checkEndGame(Tab,Player,Dist),Dist=:=0,!.
+%play(Tab,Player,Move,NewTab,Dist,ReturnMove):-NewTab="OK",Dist=0,ReturnMove=[0,1,2,3,4,5,6].
 
-play(Tab,Player,Move,_,Dist,_):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!.
+%play(Tab,Player,_,_,Dist,_):-checkEndGame(Tab,Player,Dist),Dist=:=0,!.
 
-play(Tab,Player,_,_,_,_):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPlayer)),!.
+%play(Tab,Player,_,_,Dist,_):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!.
+
+%play(_,Player,_,_,_,_):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPl%ayer)),!.
 
 play(Tab,Player,BotMove,NewTab,_,_):-bot(Player) ,!,playMode([BotMode,Player|[]]),playBot(BotMode,Tab,NewTab,Player,BotMove).
-play(Tab,PLayer,NewTab,Dist,Move).
+%play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
 
-play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),applyMove(Tab,NewTab,SelectedMove),append(HumanMove,[NewPiece],ReturnMove).
+play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-getMoveCol(HumanMove,PosC),getMoveLine(HumanMove,PosL),getMovePiece(HumanMove,Piece),validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),
+applyMove(Tab,NewTab,[PosC,PosL,NewPiece]),append(HumanMove,[NewPiece],ReturnMove).
 
+play(_,_,_,_,_,Message):-Message="FAIL".
 %%check play bots
 playBot(random,Tab,NewTab,Player,SelectedMove):- createRandomMove(Tab,Line,Col,NewPiece,OldPiece,Player),SelectedMove =[Line,Col,Piece,OldPiece] ,updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
 
@@ -57,7 +61,7 @@ playHuman(addPiece,Tab,NewTab,Player):-moveAddPiece(Tab,NewTab,Player).
 
 retract(_,_,Message):-Message="OK",playMode(players),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))).
 retract(_,_,Message):-Message="OK",retract((bot(_))),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))). 
-retract(_,_,Message):-Message="FAIL";
+retract(_,_,Message):-Message="MOVE FAIL".
 /*****************************************************************************************************************************************/
 %%Gets
 
@@ -173,16 +177,13 @@ validateMove(Tab,Line,Col,BoardMember,Player,Piece),!,updateStats(Player,BoardMe
 %% Validation of play
 validateMove(Tab,PosL,PosC,Piece,Player,NewPiece):-getElement(Tab,PosL,PosC,CellElement),validateMoveCell(CellElement,Piece,Player,NewPiece),validateNumberOfPieces(Player,Piece),!.
 %%the cell is empty everything is valid   
-validateMoveCell(0,NewPiece,_,NewPiece).
+%validateMoveCell(0,NewPiece,_,NewPiece).
 %%situations where it must fail
 validateMoveCell(CellElement,_,_,_):-fullCell(FC),belongs(CellElement,FC),!,fail.
 %%on the board there is a ring and we must place a disk TODO CHANGE THE GET OF PIECES TO TAKE INTO ACCOUNT THE PLAYERS
 validateMoveCell(CellElement,Piece,Player,NewPiece):-ring(Player,RP),diskPieces(DP),belongs(CellElement,DP),belongs(Piece,RP),getNewPieceValue(CellElement,Piece,NewPiece).
 %%on the board there is a disk and we must place a ring
 validateMoveCell(CellElement,Piece,Player,NewPiece):-ringPieces(RP),disk(Player,DP),belongs(CellElement,RP),belongs(Piece,DP),getNewPieceValue(CellElement,Piece,NewPiece).
-
-
-validateChange
 
 /****************************************************************************************************************************************/
 

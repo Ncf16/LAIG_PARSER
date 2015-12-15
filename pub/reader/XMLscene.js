@@ -1,6 +1,6 @@
 //axis default Thickness
 var DEFAULT_THICKNESS = 0.05;
-var CAMARA_DEFAULT_POSITION=[15,15,15];
+var CAMARA_DEFAULT_POSITION = [15, 15, 15];
 //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
 function XMLscene() {
     CGFscene.call(this);
@@ -17,6 +17,9 @@ function XMLscene() {
     this.cameraRotationAngle = degToRad(90);
     this.rotateCameraDeltaAngle = this.cameraRotationAngle / this.cameraAnimationdeltaT;
     this.moves = [];
+    this.boards = [];
+    this.currentBoard = null;
+    this.currentPlayer = null;
     this.AnimationLoop = function() {
         this.Loop = true;
     };
@@ -28,41 +31,94 @@ function XMLscene() {
         }
 
     };
-    this.startGame = function() {
+    this.startGame = (function() {
         if (!this.gameStarted) {
             this.gameStarted = true;
-            makeRequest("initStats", []);
-            makeRequest("initialize", [this.player1, this.player2]);
+
+            makeRequest("initialize", [this.player1, this.player2], (function(data) {
+
+                checkError(this, JSON.parse(data.target.response));
+
+            }).bind(this));
+
+            makeRequest("initStats", [], (function(data) {
+
+                initBoard(this, JSON.parse(data.target.response));
+
+            }).bind(this));
+
         } else {
 
-            makeRequest("retract", []);
-            makeRequest("initStats", []);
-            makeRequest("initialize", [this.player1, this.player2]);
+            makeRequest("retract", [], handleReply);
+
+            makeRequest("initialize", [this.player1, this.player2], (function(data) {
+
+                checkError(this, JSON.parse(data.target.response));
+
+            }).bind(this));
+
+            makeRequest("initStats", [], (function(data) {
+
+                initBoard(this, JSON.parse(data.target.response));
+
+            }).bind(this));
         }
 
-    };
+    }).bind(this);
     this.undoMove = function() {
         //criar Undo Move in PROLOG que é chamado?
-
+        play(this);
     }
 };
 
+function initBoard(scene, response) {
 
+    if (response['message'] === "OK") {
+        scene.currentPlayer = "black";
+        scene.moves.splice(0, scene.moves.length);
+        scene.boards.splice(0, scene.boards.length);
+        scene.currentBoard = JSON.parse(response['newBoard']);
+        console.log(scene.currentBoard);
+    }
+
+}
+
+function checkError(scene, response) {
+    if (response['message'] !== "OK") {
+        scene.gameError = true;
+    }
+
+}
+
+function play(scene) {
+
+        console.log(scene.currentBoard[0],JSON.stringify([0,0,1]));
+        makeRequest("play", [JSON.stringify(scene.currentBoard), "black", JSON.stringify([0,0,1])], (function(data) {
+
+            print2(scene, JSON.parse(data.target.response));
+
+        }).bind(scene));
+};
+
+function print2(scene,data) {
+    console.log("PRINTING DATA");
+    console.log(data);
+}
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.updateCamera = function(currTime) {
 
     var deltaT = currTime - this.camera.startTime;
     deltaT = deltaT / 1000.0;
-    var timePassed=deltaT/this.cameraAnimationdeltaT;
-    console.log("DELTA T: "+deltaT)
+    var timePassed = deltaT / this.cameraAnimationdeltaT;
+    console.log("DELTA T: " + deltaT)
     var currentAngle = (this.rotateCameraDeltaAngle * deltaT);
 
-        var currentCameraPos=[15,15,15];
+    var currentCameraPos = [15, 15, 15];
     if (deltaT <= this.cameraAnimationdeltaT) {
-        console.log(currentAngle*180/Math.PI);
+        console.log(currentAngle * 180 / Math.PI);
         this.resetCameraViewMatrix();
-       this.camera.orbit([0,1,0],currentAngle);// this.camera.translate(currentCameraPos);
+        this.camera.orbit([0, 1, 0], currentAngle); // this.camera.translate(currentCameraPos);
     } else {
         console.log("END ANIMATION");
         console.log(this.camera);
@@ -226,7 +282,6 @@ XMLscene.prototype.display = function() {
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-\
     // Initialize Model-View matrix as identity (no transformation
     this.updateProjectionMatrix();
 
@@ -274,11 +329,10 @@ function postGameRequest(requestString, onSuccess, onError) {
     };
 
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-    console.log(requestString);
     request.send('requestString=' + encodeURIComponent(requestString));
 }
 
-function makeRequest(functionName, arguments) {
+function makeRequest(functionName, arguments, handleReply) {
 
     // Compose Request String
     var requestString = "[ " + functionName;
