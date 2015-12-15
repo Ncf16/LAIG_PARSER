@@ -57,7 +57,7 @@ function MySceneGraph(filename, scene) {
     this.reader.open('scenes/' + filename, this);
 };
 
-MySceneGraph.prototype.display = function(currTime) {
+MySceneGraph.prototype.display = function() {
     if (this.rootNode != null) {
         if (!this.cycles) {
             this.transformation.apply();

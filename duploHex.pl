@@ -30,21 +30,21 @@ initialize(_,_,_,_,Message):-Message="FAIL".
 %check if piece already placed, if so move will type of move
 %mandmos para PLOG uma só lista [Tab,Player,Move] Move -> [type,Coords,Piece], FirstMove -> 0/1 só mesmo para saber se tem que chamar os initialize
 %na resposta mandamos o tabuleiro de volta, o move, a dist, e jogador [NewBoard,NewPlayer,Dist,Stats] Stats-> [Rb,Db,Rw,Dw] Dist-> valor da distancia ou a dizer draw caso seja empate
- %alterar ordem toda e isso, comunicação estabelecida
+%alterar ordem toda e isso, comunicação estabelecida
+%ver como é que ele retorna as comunicações e isso para ver se coloco valores default nas posições de memória
 validatePlayer(Player):-getDisk(Player,Disk),getRing(Player,Ring),(validateNumberOfPieces(Player,Disk); validateNumberOfPieces(Player,Ring)).
 
-play(Tab,Player,_,Dist,_):-checkEndGame(Tab,Player,Dist),Dist=:=0,!.
+play(Tab,Player,Move,_,Dist,_,_):-checkEndGame(Tab,Player,Dist),Dist=:=0,!.
 
-play(Tab,Player,_,Dist,_):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!.
+play(Tab,Player,Move,_,Dist,_):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!.
 
-play(Tab,Player,_,_,_):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPlayer)),!.
+play(Tab,Player,_,_,_,_):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPlayer)),!.
 
-play(Tab,Player,NewTab,_,BotMove):-bot(Player) ,!,playMode([BotMode,Player|[]]),playBot(BotMode,Tab,NewTab,Player,BotMove).
-
+play(Tab,Player,BotMove,NewTab,_,_):-bot(Player) ,!,playMode([BotMode,Player|[]]),playBot(BotMode,Tab,NewTab,Player,BotMove).
+play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
-play(Tab,Player,NewTab,_,[OldPos|Move]):-getMoveLine(OldPos,Line),getMoveCol(OldPos,Col),getMoveLine(Move,ColToMove),getMoveLine(Move,LineToMove),validateChange(Tab,NewTab,Player,Line,Col,LineToMove,ColToMove).
 
-play(Tab,Player,NewTab,_,HumanMove,ReturnMove):-validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),applyMove(Tab,NewTab,SelectedMove),append(HumanMove,[NewPiece],ReturnMove).
+play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),applyMove(Tab,NewTab,SelectedMove),append(HumanMove,[NewPiece],ReturnMove).
 
 %%check play bots
 playBot(random,Tab,NewTab,Player,SelectedMove):- createRandomMove(Tab,Line,Col,NewPiece,OldPiece,Player),SelectedMove =[Line,Col,Piece,OldPiece] ,updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
@@ -54,7 +54,6 @@ applyMove(Tab,NewTab,SelectedMove).
 
 playHuman(addPiece,Tab,NewTab,Player):-moveAddPiece(Tab,NewTab,Player).
 
-playHuman(movePiece,Tab,NewTab,Player):-moveChangeLocation(Tab,NewTab,Player).
 
 retract(_,_,Message):-Message="OK",playMode(players),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))).
 retract(_,_,Message):-Message="OK",retract((bot(_))),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))). 
@@ -183,11 +182,7 @@ validateMoveCell(CellElement,Piece,Player,NewPiece):-ring(Player,RP),diskPieces(
 validateMoveCell(CellElement,Piece,Player,NewPiece):-ringPieces(RP),disk(Player,DP),belongs(CellElement,RP),belongs(Piece,DP),getNewPieceValue(CellElement,Piece,NewPiece).
 
 
-validateChange(Tab,NewTab,Player,Line,Col,LineToMove,ColToMove):-adjancent(Line,Col,LineToMove,ColToMove),getElement(Tab,Line,Col,Source),getPieces(Player,ValidPieces),
-belongs(Source,ValidPieces),getElement(Tab,LineToMove,ColToMove,Dest),fullCell(FilledCells),\+(belongs(Source,FilledCells)),
-\+(belongs(Dest,FilledCells)),getNewPieceValue(Dest,Source,NewDestPiece),setElement(Tab,LineToMove,ColToMove,NewDestPiece,NewTabTemp),
-emptyCell(EmptyCellPiece),setElement(NewTabTemp,Line,Col,EmptyCellPiece,NewTab).
-
+validateChange
 
 /****************************************************************************************************************************************/
 
@@ -196,8 +191,6 @@ applyMove(Tab,NewTab,Move):-getMoveLine(Move,MoveLine),getMoveCol(Move,MoveCol),
 /****************************************************************************************************************************************/
 
 %Human
-moveChangeLocation(Tab,NewTab,Player):-write('Pick Piece to move: '),nl,readPieceLocation(Line,Col),nl,write('Move to: '),nl,readPieceLocation(LineToMove,ColToMove),
-validateChange(Tab,NewTab,Player,Line,Col,LineToMove,ColToMove),!.
 
 moveAddPiece(Tab,NewTab,Player):-validatePlayer(Player),readMove(Tab,Line,Col,Piece,Player),applyMove(Tab,NewTab,[Line,Col,Piece]).
 moveAddPiece(Tab,Tab,_).

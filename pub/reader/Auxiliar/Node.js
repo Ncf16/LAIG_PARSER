@@ -39,6 +39,8 @@ Node.prototype.update = function(currTime) {
                 this.currentAnimation.init(currTime);
                 this.currentAnimation.update(currTime);
             }
+            else
+                this.currentAnimation=null;
         }
     }
 

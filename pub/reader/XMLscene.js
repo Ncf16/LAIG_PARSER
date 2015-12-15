@@ -1,6 +1,6 @@
 //axis default Thickness
 var DEFAULT_THICKNESS = 0.05;
-
+var CAMARA_DEFAULT_POSITION=[15,15,15];
 //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
 function XMLscene() {
     CGFscene.call(this);
@@ -11,24 +11,33 @@ function XMLscene() {
     this.player2 = "white";
     this.maxMoveTime = 5;
     this.gameStarted = false;
-    this.moves=[];
+    this.rotateCameraFlag = false;
+    this.startCameraAnimation = false;
+    this.cameraAnimationdeltaT = 4;
+    this.cameraRotationAngle = degToRad(90);
+    this.rotateCameraDeltaAngle = this.cameraRotationAngle / this.cameraAnimationdeltaT;
+    this.moves = [];
     this.AnimationLoop = function() {
         this.Loop = true;
     };
-    this.rotateCamara = function() {
+    this.rotateCamera = function() {
+        if (this.graph.loadedOk) {
+            console.log(this.camera);
+            this.rotateCameraFlag = true;
+            this.startCameraAnimation = true;
+        }
 
     };
     this.startGame = function() {
         if (!this.gameStarted) {
             this.gameStarted = true;
             makeRequest("initStats", []);
-            makeRequest("initialize", [ this.player1, this.player2]);
-        }
-        else{
-           
-            makeRequest("retract",[]);
+            makeRequest("initialize", [this.player1, this.player2]);
+        } else {
+
+            makeRequest("retract", []);
             makeRequest("initStats", []);
-            makeRequest("initialize", [this.player1,this.player2]);  
+            makeRequest("initialize", [this.player1, this.player2]);
         }
 
     };
@@ -41,14 +50,43 @@ function XMLscene() {
 
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
+XMLscene.prototype.updateCamera = function(currTime) {
 
+    var deltaT = currTime - this.camera.startTime;
+    deltaT = deltaT / 1000.0;
+    var timePassed=deltaT/this.cameraAnimationdeltaT;
+    console.log("DELTA T: "+deltaT)
+    var currentAngle = (this.rotateCameraDeltaAngle * deltaT);
+
+        var currentCameraPos=[15,15,15];
+    if (deltaT <= this.cameraAnimationdeltaT) {
+        console.log(currentAngle*180/Math.PI);
+        this.resetCameraViewMatrix();
+       this.camera.orbit([0,1,0],currentAngle);// this.camera.translate(currentCameraPos);
+    } else {
+        console.log("END ANIMATION");
+        console.log(this.camera);
+        //which one do i need to change viewMatrix ou projectionMatrix?
+        //google will answer me since the teachers did not with the classes I think
+        this.rotateCameraFlag = false;
+        console.log(this.camera.getViewMatrix());
+    }
+
+
+    //console.log(this.camera);
+
+};
+
+XMLscene.prototype.resetCameraViewMatrix = function() {
+    this.camera._viewMatrix = this.oldViewMatrix;
+};
 //initialize the scene with default values while the scene has not been loaded
 XMLscene.prototype.init = function(application) {
 
     CGFscene.prototype.init.call(this, application);
-    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+    this.camera = new CGFcamera(0.4, 0.1, 500, CAMARA_DEFAULT_POSITION, vec3.fromValues(0, 0, 0));
     this.initLights();
-
+    this.camera.startTime = 0;
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
     this.gl.clearDepth(100.0);
     this.gl.enable(this.gl.DEPTH_TEST);
@@ -83,7 +121,7 @@ XMLscene.prototype.initLights = function() {
 //set the default Appearance that from the initial scene
 XMLscene.prototype.setDefaultAppearance = function() {};
 
-//after the parsing, the camera will be update given the frustum from INITIALS
+//after the parsing, the camera will be update given the frustum fromINITIALS
 XMLscene.prototype.UpdateCamera = function() {
 
     this.camera.near = this.graph.initials.getNear();
@@ -112,12 +150,12 @@ XMLscene.prototype.CreateLights = function() {
 
     }
     this.gui.extra.add(this, 'AnimationLoop');
-    this.gui.game.add(this, 'rotateCamara');
+    this.gui.game.add(this, 'rotateCamera');
     this.gui.game.add(this, 'startGame');
     this.gui.game.add(this, 'undoMove');
     // Choose from accepted values
-    this.gui.game.add(this, 'player1', ['black', 'white', 'random', 'greedy']);
-    this.gui.game.add(this, 'player2', ['black', 'white', 'random', 'greedy']);
+    this.gui.game.add(this, 'player1', ['black', 'random', 'greedy']);
+    this.gui.game.add(this, 'player2', ['white', 'random', 'greedy']);
     this.gui.game.add(this, 'maxMoveTime').min(5).step(1); // Mix and match
 
     this.gui.scene = this;
@@ -159,24 +197,36 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.UpdateCamera();
     this.CreateLights();
     this.CreateMaterials();
-    this.leaves = this.graph.leaves;
 
-    this.setUpdatePeriod(1000 / 30);
+    this.setUpdatePeriod(1);
 };
 
 XMLscene.prototype.update = function(currTime) {
     if (this.graph.loadedOk) {
         this.graph.update(currTime);
     }
-};
 
+    if (this.startCameraAnimation) {
+        this.startCameraAnimation = false;
+        this.camera.startTime = currTime;
+        this.oldViewMatrix = this.camera._viewMatrix;
+    }
+    if (this.rotateCameraFlag)
+        this.updateCamera(currTime);
+
+};
+XMLscene.prototype.cameraAnimation = function(time) {
+    console.log(this.camera);
+    this.camera.currTime = 0;
+    console.log(this.camera, this.camera.teste);
+}
 XMLscene.prototype.display = function() {
     // ---- BEGIN Background, camera and axis setup
 
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-
+\
     // Initialize Model-View matrix as identity (no transformation
     this.updateProjectionMatrix();
 
@@ -207,7 +257,7 @@ XMLscene.prototype.display = function() {
         }
 
         //draw the graphScene
-        this.graph.display(this.currTime);
+        this.graph.display();
 
     }
 };
