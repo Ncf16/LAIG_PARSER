@@ -39,7 +39,7 @@ prepReplyStringToJSON(_Request) :-								% Fallback for non-POST Requests
 
 formatAsJSON(Reply):-
 		write('{'),												% Start JSON Object
-		Fields = [newPlayer, newBoard, message],				% Response Field Names
+		Fields = [newBoard,newPlayer, message],				% Response Field Names
 		writeJSON(Fields, Reply).								% Format content as JSON 
 		
 writeJSON([Prop], [Val]):-

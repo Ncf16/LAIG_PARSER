@@ -180,10 +180,12 @@ validateMove(Tab,PosL,PosC,Piece,Player,NewPiece):-getElement(Tab,PosL,PosC,Cell
 %validateMoveCell(0,NewPiece,_,NewPiece).
 %%situations where it must fail
 validateMoveCell(CellElement,_,_,_):-fullCell(FC),belongs(CellElement,FC),!,fail.
-%%on the board there is a ring and we must place a disk TODO CHANGE THE GET OF PIECES TO TAKE INTO ACCOUNT THE PLAYERS
-validateMoveCell(CellElement,Piece,Player,NewPiece):-ring(Player,RP),diskPieces(DP),belongs(CellElement,DP),belongs(Piece,RP),getNewPieceValue(CellElement,Piece,NewPiece).
+%%on the board there is a ring and we must place a disk TODO: CHANGE THE GET OF PIECES TO TAKE INTO ACCOUNT THE PLAYERS
+validateMoveCell(CellElement,Piece,Player,NewPiece):-ring(Player,RP),diskPieces(DP),(belongs(CellElement,DP);CellElement=:=0),belongs(Piece,RP),
+getNewPieceValue(CellElement,Piece,NewPiece).
 %%on the board there is a disk and we must place a ring
-validateMoveCell(CellElement,Piece,Player,NewPiece):-ringPieces(RP),disk(Player,DP),belongs(CellElement,RP),belongs(Piece,DP),getNewPieceValue(CellElement,Piece,NewPiece).
+validateMoveCell(CellElement,Piece,Player,NewPiece):-ringPieces(RP),disk(Player,DP),(belongs(CellElement,RP);CellElement=:=0),belongs(Piece,DP),
+getNewPieceValue(CellElement,Piece,NewPiece).
 
 /****************************************************************************************************************************************/
 

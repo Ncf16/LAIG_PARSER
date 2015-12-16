@@ -1,7 +1,14 @@
 //axis default Thickness
 var DEFAULT_THICKNESS = 0.05;
 var CAMARA_DEFAULT_POSITION = [15, 15, 15];
+var FAILURE_MESSAGE = "FAIL";
 //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
+//Movimento
+//Jogadas ->Movimentos
+//Replay -> Jogadas
+//Undo -> tabuleiros || Prolog
+//SkyBox
+//Camara coordenads esféricaspp-
 function XMLscene() {
     CGFscene.call(this);
     this.Loop = false;
@@ -20,6 +27,10 @@ function XMLscene() {
     this.boards = [];
     this.currentBoard = null;
     this.currentPlayer = null;
+    this.gameOver = false;
+    this.gameError = false;
+    this.currTime=0;
+    this.playStartTime=0;//so we can limit the time
     this.AnimationLoop = function() {
         this.Loop = true;
     };
@@ -78,6 +89,7 @@ function initBoard(scene, response) {
         scene.moves.splice(0, scene.moves.length);
         scene.boards.splice(0, scene.boards.length);
         scene.currentBoard = JSON.parse(response['newBoard']);
+        scene.boards.push(scene.currentBoard);
         console.log(scene.currentBoard);
     }
 
@@ -90,24 +102,50 @@ function checkError(scene, response) {
 
 }
 
-function play(scene) {
+function play(scene, move) {
 
-        console.log(scene.currentBoard[0],JSON.stringify([0,0,1]));
-        makeRequest("play", [JSON.stringify(scene.currentBoard), "black", JSON.stringify([0,0,1])], (function(data) {
+    console.log(scene.currentBoard[0], JSON.stringify([0, 0, 3]));
+    this.currentPlayer = "black";
+    makeRequest("play", [JSON.stringify(scene.currentBoard), this.currentPlayer, JSON.stringify([0, 0, 3])], (function(data) {
 
-            print2(scene, JSON.parse(data.target.response));
+        handlePlay(scene, JSON.parse(data.target.response));
 
-        }).bind(scene));
+    }).bind(scene));
 };
 
-function print2(scene,data) {
-    console.log("PRINTING DATA");
+function handlePlay(scene, data) {
+    if (data['message'] != FAILURE_MESSAGE) {
+        if (data.nextPlayer !== 0) //DIST != 0
+        {
+            scene.boards.push(data['newBoard']);
+            scene.currentBoard = data['newBoard'];
+            scene.moves.push(data['message']);
+            scene.nextPlayer();
+
+        } else
+            scene.gameOver = true;
+
+    }
+
     console.log(data);
+}
+XMLscene.prototype.nextPlayer = function() {
+    switch (this.currentPlayer) {
+        case this.player1:
+            this.currentPlayer = this.player2;
+            break;
+        case this.player2:
+            this.currentPlayer = this.player1;
+            break;
+
+    }
+
 }
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.updateCamera = function(currTime) {
-
+//translate to center so -currentPos 
+//translate to new Pos
     var deltaT = currTime - this.camera.startTime;
     deltaT = deltaT / 1000.0;
     var timePassed = deltaT / this.cameraAnimationdeltaT;
@@ -258,6 +296,7 @@ XMLscene.prototype.onGraphLoaded = function() {
 };
 
 XMLscene.prototype.update = function(currTime) {
+    this.currTime=currTime;
     if (this.graph.loadedOk) {
         this.graph.update(currTime);
     }
