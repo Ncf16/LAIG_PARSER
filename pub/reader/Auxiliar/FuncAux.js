@@ -144,6 +144,8 @@ function parseLeafAux(leave, type) {
         return new LeafCylinder();
     } else if (type == "sphere") {
         return new LeafSphere();
+    } else if (type == "hex") {
+        return new LeafHex();
     } else if (type == "patch") {
         return new LeafPatch();
     } else if (type == "plane") {

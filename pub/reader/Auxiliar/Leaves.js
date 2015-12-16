@@ -179,6 +179,19 @@ LeafSphere.prototype.parseLeaf = function(args, scene) {
     }
 };
 
+LeafHex.prototype = Object.create(Leaf.prototype);
+LeafHex.prototype.constructor = LeafHex;
+
+function LeafHex() {
+    Leaf.call(this);
+}
+
+LeafHex.prototype.parseLeaf = function(args, scene) {
+    this.type = "Hex";
+    var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
+    this.element = new Hex(scene);
+};
+
 //TODO REPLACE WITH PROPER CONSTRUCTORES
 LeafPlane.prototype = Object.create(Leaf.prototype);
 LeafPlane.prototype.constructor = LeafPlane;

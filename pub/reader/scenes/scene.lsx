@@ -1,43 +1,28 @@
 <SCENE>
     <INITIALS>
         <frustum near="0.1" far="500.0" />
-        <!-- frustum planes-->
         <translation x="0.0" y="0.0" z="0.0" />
-        <!-- initial translate -->
         <rotation axis="y" angle="0.0" />
-        <!-- initial rotation 3 -->
         <rotation axis="z" angle="0.0" />
-        <!-- initial rotation 2 -->
         <rotation axis="x" angle="0.0" />
-        <!-- initial rotation 1 -->
         <scale sx="0.8" sy="0.8" sz="1.0" />
-        <!-- initial scaling -->
         <reference length="0.0" />
-        <!-- axis length; "0" means no axis-->
     </INITIALS>
     <ILLUMINATION>
         <ambient r="0.5" g="0.5" b="0.5" a="1.0" />
-        <!-- global ambient -->
         <background r="0" g="0" b="0" a="1" />
-        <!-- background color -->
     </ILLUMINATION>
     <LIGHTS>
         <LIGHT id="light">
-            <!-- light identifier -->
             <enable value="1" />
-            <!-- enable/disable -->
             <position x="6.1" y="6" z="6.1" w="1" />
-            <!-- light position -->
             <ambient r="0.3" g="0.3" b="0.3" a="1" />
             <diffuse r="1" g="1" b="1" a="1" />
             <specular r="1" g="1" b="1" a="1" />
         </LIGHT>
           <LIGHT id="ligh1">
-            <!-- light identifier -->
             <enable value="1" />
-            <!-- enable/disable -->
             <position x="-6.1" y="6" z="-6.1" w="1" />
-            <!-- light position -->
             <ambient r="0.3" g="0.3" b="0.3" a="1" />
             <diffuse r="1" g="1" b="1" a="1" />
             <specular r="1" g="1" b="1" a="1" />
@@ -46,14 +31,6 @@
     <TEXTURES>
         <TEXTURE id="planeTex">
             <file path="textures/texture.jpg" />
-            <amplif_factor s="1" t="1" />
-        </TEXTURE>
-        <TEXTURE id="noSignal">
-            <file path="textures/noSignal.jpg" />
-            <amplif_factor s="1" t="1" />
-        </TEXTURE>
-        <TEXTURE id="WoodLogs">
-            <file path="textures/WoodLogs.jpg" />
             <amplif_factor s="1" t="1" />
         </TEXTURE>
     </TEXTURES>
@@ -72,74 +49,32 @@
             <ambient r="0" g="0" b="0" a="1" />
             <emission r="1" g="1" b="1" a="1" />
         </MATERIAL>
-        <MATERIAL id="color0">
-            <shininess value="40.0" />
-            <specular r="0.8" g="0.0" b="0.0" a="1.0" />
-            <!-- specular reflection -->
-            <diffuse r="0.5" g="0.5" b="0.5" a="1.0" />
-            <!-- diffuse reflection -->
-            <ambient r="0.3" g="0.0" b="0.0" a="1.0" />
-            <!-- ambient reflection -->
-            <emission r="0.0" g="0.0" b="0.0" a="0.0" />
-            <!-- emission component -->
+         <MATERIAL id="blue">
+            <shininess value="30" />
+            <specular r="0" g="0" b="1" a="1" />
+            <diffuse r="0" g="0" b="1" a="1" />
+            <ambient r="0" g="0" b="0" a="1" />
+            <emission r="0" g="0" b="1" a="1" />
         </MATERIAL>
-         <MATERIAL id="color1">
-            <shininess value="40.0" />
-            <specular r="0.0" g="0.8" b="0.0" a="1.0" />
-            <!-- specular reflection -->
-            <diffuse r="0.5" g="0.5" b="0.5" a="1.0" />
-            <!-- diffuse reflection -->
-            <ambient r="0.0" g="0.8" b="0.0" a="1.0" />
-            <!-- ambient reflection -->
-            <emission r="0.0" g="0.0" b="0.0" a="0.0" />
-            <!-- emission component -->
+         <MATERIAL id="red">
+            <shininess value="30" />
+            <specular r="1" g="0" b="0" a="1" />
+            <diffuse r="1" g="0" b="0" a="1" />
+            <ambient r="0" g="0" b="0" a="1" />
+            <emission r="1" g="0" b="0" a="1" />
+        </MATERIAL>
+         <MATERIAL id="green">
+            <shininess value="30" />
+            <specular r="0" g="1" b="0" a="1" />
+            <diffuse r="0" g="1" b="0" a="1" />
+            <ambient r="0" g="0" b="0" a="1" />
+            <emission r="0" g="1" b="0" a="1" />
         </MATERIAL>
     </MATERIALS>
-   <ANIMATIONS>
-    <ANIMATION id="waitLine" span="1" type="linear">
-            <controlpoint x="0" y="0" z="0" />
-            <controlpoint x="0" y="0" z="0" />
-        </ANIMATION>
-        <ANIMATION id="takeOff" span="15" type="linear">
-            <controlpoint x="0" y="0" z="0" />
-            <controlpoint x="0" y="4" z="0" />
-            <controlpoint x="-0.2" y="8" z="1" />
-            <controlpoint x="-0.4" y="8" z="5" />
-            <controlpoint x="-1" y="10" z="8" />
-        </ANIMATION>
-        <ANIMATION id="lakeRot" span="10" type="circular" center="-1 10 0" radius="8" startang="-90" rotang="-120" />
-        <ANIMATION id="land" span="12" type="linear">
-            <controlpoint x="-7.92" y="10" z="-4" />
-            <controlpoint x="-5" y="8" z="-3" />
-             <controlpoint x="-3" y="6" z="-1" />
-              <controlpoint x="0" y="0" z="0" />
-        </ANIMATION>
-    </ANIMATIONS>
     <!-- The leaves -->
     <LEAVES>
-        <LEAF id="terrain1" type="terrain" texture="textures/terrain.jpg" heightmap="textures/heightmap.jpg" />
         <LEAF id="rectangleAnimated" type="rectangle" args="-0.5 0.5 0.5 -0.5" />
-        <LEAF id="c1" type="cylinder" args="1 1 1 8 8" />
-        <LEAF id="ballonPart" type="patch" order="3" partsU="40" partsV="40">
-            <controlpoint x="0" y="0" z="0.5" />
-            <controlpoint x="0" y="2.2" z="2" />
-            <controlpoint x="0" y="2.7" z="2.5" />
-            <controlpoint x="0" y="3" z="0" />
-            <controlpoint x="0.25" y="0" z="0.433013" />
-            <controlpoint x="1" y="2.2" z="1.73205" />
-            <controlpoint x="1.25" y="2.7" z="2.16506" />
-            <controlpoint x="0" y="3" z="0" />
-            <controlpoint x="0.433013" y="0" z="0.25" />
-            <controlpoint x="1.73205" y="2.2" z="1" />
-            <controlpoint x="2.16506" y="2.7" z="1.25" />
-            <controlpoint x="0" y="3" z="0" />
-            <controlpoint x="0.5" y="0" z="3.06152e-017" />
-            <controlpoint x="2" y="2.2" z="1.22461e-016" />
-            <controlpoint x="2.5" y="2.7" z="1.53076e-016" />
-            <controlpoint x="0" y="3" z="0" />
-        </LEAF>
-        <!--number of divisions -->
-        <!--1/2/3 -->
+        <LEAF id="hexObject" type="hex" />
     </LEAVES>
     <NODES>
         <ROOT id="root" />
@@ -148,256 +83,211 @@
             <MATERIAL id="defaultMaterial" />
             <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="Plane" />
-                <DESCENDANT id="ballon" />
+                <DESCENDANT id="board" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="Plane">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <ROTATION axis="x" angle="-90" />
-            <SCALE sx="20" sy="15" sz="20" />
-            <DESCENDANTS>
-                <DESCENDANT id="terrain1" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="ballon">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="3.95" y="2.3" z="0.9" />
-            <SCALE sx="0.5" sy="0.5" sz="0.5" />
-            <ANIMATION id="waitLine"/>
-            <ANIMATION id="takeOff"/>
-            <ANIMATION id="lakeRot"/>
-            <ANIMATION id="land"/>
-            <DESCENDANTS>
-                <DESCENDANT id="ballonBasket" />
-                <DESCENDANT id="ballonTop" />
-            </DESCENDANTS>
-        </NODE>
-
-        <NODE id="ballonBasket">
+        <NODE id="board">
             <MATERIAL id="null" />
             <TEXTURE id="clear" />
-            <SCALE sx="0.45" sy="0.45" sz="0.45" />
             <DESCENDANTS>
-                <DESCENDANT id="cesto" />
-                <DESCENDANT id="suportes"/>
+                <DESCENDANT id="line1" />
+                <DESCENDANT id="line2" />
+                <DESCENDANT id="line3" />
+                <DESCENDANT id="line4" />
+                <DESCENDANT id="line5" />
+                <DESCENDANT id="line6" />
+                <DESCENDANT id="line7" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="suportes">
+        <NODE id="line1">
             <MATERIAL id="null" />
-            <TEXTURE id="metal" />
+            <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="suporte0" />
-                <DESCENDANT id="suporte1" />
-                <DESCENDANT id="suporte2" />
-                <DESCENDANT id="suporte3" />
+                <DESCENDANT id="lineSeg1" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="suporte0">
+        <NODE id="line2">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="1" y="0" z="1" />
-            <ROTATION axis="x" angle="-90" />
-            <SCALE sx="0.1" sy="0.1" sz="5" />
+            <TRANSLATION x="-1.5" y="0" z="0.866" />
+            <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="c1" />
+                <DESCENDANT id="lineSeg2" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="suporte1">
+        <NODE id="line3">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="1" y="0" z="-1" />
-            <ROTATION axis="x" angle="-90" />
-            <SCALE sx="0.1" sy="0.1" sz="5" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="-3" y="0" z="1.732" />
             <DESCENDANTS>
-                <DESCENDANT id="c1" />
+                <DESCENDANT id="lineSeg1" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="suporte2">
+        <NODE id="line4">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="-1" y="0" z="1" />
-            <ROTATION axis="x" angle="-90" />
-            <SCALE sx="0.1" sy="0.1" sz="5" />
+            <TEXTURE id="clear" />
+             <TRANSLATION x="-4.5" y="0" z="2.598" />
             <DESCENDANTS>
-                <DESCENDANT id="c1" />
+                <DESCENDANT id="lineSeg2" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="suporte3">
+        <NODE id="line5">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="-1" y="0" z="-1" />
-            <ROTATION axis="x" angle="-90" />
-            <SCALE sx="0.1" sy="0.1" sz="5" />
+            <TEXTURE id="clear" />
+             <TRANSLATION x="-6" y="0" z="3.4641" />
             <DESCENDANTS>
-                <DESCENDANT id="c1" />
+                <DESCENDANT id="lineSeg1" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="cesto">
+        <NODE id="line6">
             <MATERIAL id="null" />
-            <TEXTURE id="WoodLogs" />
+            <TEXTURE id="clear" />
+             <TRANSLATION x="-7.5" y="0" z="4.33" />
             <DESCENDANTS>
-                <DESCENDANT id="cesto0" />
-                <DESCENDANT id="cesto1" />
-                <DESCENDANT id="cesto2" />
-                <DESCENDANT id="cesto3" />
-                <DESCENDANT id="cesto4" />
+                <DESCENDANT id="lineSeg2" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="cesto0">
+        <NODE id="line7">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="-1" y="1" z="0" />
-            <SCALE sx="0.1" sy="2" sz="2" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="-9" y="0" z="5.1961" />
             <DESCENDANTS>
-                <DESCENDANT id="cubeAnimated" />
+                <DESCENDANT id="lineSeg1" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="cesto1">
+        <NODE id="lineSeg1">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="1" y="1" z="0" />
-            <SCALE sx="0.1" sy="2" sz="2" />
+            <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="cubeAnimated" />
+                <DESCENDANT id="col1" />
+                <DESCENDANT id="col2" />
+                <DESCENDANT id="col3" />
+                <DESCENDANT id="col4" />
+                <DESCENDANT id="col5" />
+                <DESCENDANT id="col6" />
+                <DESCENDANT id="col7" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="cesto2">
+          <NODE id="lineSeg2">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="0" y="1" z="-1" />
-            <ROTATION axis="y" angle="90" />
-            <SCALE sx="0.1" sy="2" sz="2" />
+            <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="cubeAnimated" />
+                <DESCENDANT id="colV1" />
+                <DESCENDANT id="colV2" />
+                <DESCENDANT id="colV3" />
+                <DESCENDANT id="colV4" />
+                <DESCENDANT id="colV5" />
+                <DESCENDANT id="colV6" />
+                <DESCENDANT id="colV7" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="cesto3">
+        <NODE id="col1">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="0" y="1" z="1" />
-            <ROTATION axis="y" angle="90" />
-            <SCALE sx="0.1" sy="2" sz="2" />
+            <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="cubeAnimated" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="cesto4">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <ROTATION axis="z" angle="90" />
-            <SCALE sx="0.1" sy="2" sz="2" />
+         <NODE id="col2">
+            <MATERIAL id="blue" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="1.5" y="0" z="0.866" />
             <DESCENDANTS>
-                <DESCENDANT id="cubeAnimated" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="ballonTop">
+          <NODE id="col3">
             <MATERIAL id="null" />
-            <TEXTURE id="noSignal" />
-            <TRANSLATION x="0" y="1.95" z="0" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="3" y="0" z="1.732" />
             <DESCENDANTS>
-                <DESCENDANT id="ballonPart0" />
-                <DESCENDANT id="ballonPart1" />
-                <DESCENDANT id="ballonPart2" />
-                <DESCENDANT id="ballonPart3" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="ballonPart0">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
+        <NODE id="col4">
+            <MATERIAL id="blue" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="4.5" y="0" z="2.598" />
             <DESCENDANTS>
-                <DESCENDANT id="ballonPart" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="ballonPart1">
+        <NODE id="col5">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <ROTATION axis="y" angle="90" />
+            <TEXTURE id="clear" />
+             <TRANSLATION x="6" y="0" z="3.4641" />
             <DESCENDANTS>
-                <DESCENDANT id="ballonPart" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="ballonPart2">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <ROTATION axis="y" angle="180" />
+        <NODE id="col6">
+            <MATERIAL id="blue" />
+            <TEXTURE id="clear" />
+             <TRANSLATION x="7.5" y="0" z="4.33" />
             <DESCENDANTS>
-                <DESCENDANT id="ballonPart" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="ballonPart3">
+        <NODE id="col7">
             <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <ROTATION axis="y" angle="270" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="9" y="0" z="5.1961" />
             <DESCENDANTS>
-                <DESCENDANT id="ballonPart" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="cubeAnimated">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
+         <NODE id="colV1">
+            <MATERIAL id="red" />
+            <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="faceAnimated1" />
-                <DESCENDANT id="faceAnimated2" />
-                <DESCENDANT id="faceAnimated3" />
-                <DESCENDANT id="faceAnimated4" />
-                <DESCENDANT id="faceAnimated5" />
-                <DESCENDANT id="faceAnimated6" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="faceAnimated1">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="0" y="0" z="0.5" />
+         <NODE id="colV2">
+            <MATERIAL id="green" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="1.5" y="0" z="0.866" />
             <DESCENDANTS>
-                <DESCENDANT id="rectangleAnimated" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="faceAnimated2">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="0.5" y="0" z="0" />
-            <ROTATION axis="y" angle="90" />
+          <NODE id="colV3">
+            <MATERIAL id="red" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="3" y="0" z="1.732" />
             <DESCENDANTS>
-                <DESCENDANT id="rectangleAnimated" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="faceAnimated3">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="-0.5" y="0" z="0" />
-            <ROTATION axis="y" angle="-90.0" />
+        <NODE id="colV4">
+            <MATERIAL id="green" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="4.5" y="0" z="2.598" />
             <DESCENDANTS>
-                <DESCENDANT id="rectangleAnimated" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="faceAnimated4">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="0" y="-0.5" z="0" />
-            <ROTATION axis="x" angle="90.0" />
+        <NODE id="colV5">
+            <MATERIAL id="red" />
+            <TEXTURE id="clear" />
+             <TRANSLATION x="6" y="0" z="3.4641" />
             <DESCENDANTS>
-                <DESCENDANT id="rectangleAnimated" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="faceAnimated5">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="0" y="0.5" z="0" />
-            <ROTATION axis="x" angle="-90.0" />
+        <NODE id="colV6">
+            <MATERIAL id="green" />
+            <TEXTURE id="clear" />
+             <TRANSLATION x="7.5" y="0" z="4.33" />
             <DESCENDANTS>
-                <DESCENDANT id="rectangleAnimated" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
-        <NODE id="faceAnimated6">
-            <MATERIAL id="null" />
-            <TEXTURE id="null" />
-            <TRANSLATION x="0.0" y="0" z="-0.5" />
-            <ROTATION axis="x" angle="180" />
+        <NODE id="colV7">
+            <MATERIAL id="red" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="9" y="0" z="5.1961" />
             <DESCENDANTS>
-                <DESCENDANT id="rectangleAnimated" />
+                <DESCENDANT id="hexObject" />
             </DESCENDANTS>
         </NODE>
     </NODES>
