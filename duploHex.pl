@@ -13,6 +13,16 @@ initStats(_,Tab,Message):-Message="OK",asserta((stats(white,[24,24]))),asserta((
 					  [0,0,0,0,0,0,0],
 						[0,0,0,0,0,0,0]
 						]))),stats(tab,Tab) .
+
+/*tab(fim,[
+			[3,3,3,3,3,3,3],
+			  [3,3,3,3,3,3,3],
+				[3,3,3,3,3,3,3],
+				  [3,3,3,3,3,3,3],
+					[3,3,3,3,3,3,3],
+					  [3,3,3,3,3,3,3],
+						[3,3,3,3,3,3,3]
+						]).*/
 initStats(_,_,Message):-Message="FAIL".
 
 initialize(Player,Mode,_,_,Message):-Message="OK",playerTypes(PlayerTypes),botTypes(BotTypes),belongs(Player,PlayerTypes),belongs(Mode,BotTypes),
@@ -34,34 +44,34 @@ initialize(_,_,_,_,Message):-Message="FAIL".
 %ver como é que ele retorna as comunicações e isso para ver se coloco valores default nas posições de memória
 validatePlayer(Player):-getDisk(Player,Disk),getRing(Player,Ring),(validateNumberOfPieces(Player,Disk); validateNumberOfPieces(Player,Ring)).
 
-%play(Tab,Player,Move,NewTab,Dist,ReturnMove):-NewTab="OK",Dist=0,ReturnMove=[0,1,2,3,4,5,6].
+%play(Tab,Player,Move,NewTab,Dist,ReturnMove).
+/*
+play(Tab,Player,_,_,Dist,_):-checkEndGame(Tab,Player,Dist),Dist=:=0,ReturnMove="END OF GAME",!.
 
-%play(Tab,Player,_,_,Dist,_):-checkEndGame(Tab,Player,Dist),Dist=:=0,!.
+play(Tab,Player,_,_,Dist,_):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!.
 
-%play(Tab,Player,_,_,Dist,_):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!.
-
-%play(_,Player,_,_,_,_):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPl%ayer)),!.
-
-play(Tab,Player,BotMove,NewTab,_,_):-bot(Player) ,!,playMode([BotMode,Player|[]]),playBot(BotMode,Tab,NewTab,Player,BotMove).
+play(_,Player,_,_,_,_):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPlayer)),!.
+*/
+play(Tab,BotMode,_,NewTab,_,BotMove):-playMode([BotMode,Player|[]]),bot(Player),!,playBot(BotMode,Tab,NewTab,Player,BotMove),write('ENDING'),nl.
 %play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
 
 play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-getMoveCol(HumanMove,PosC),getMoveLine(HumanMove,PosL),getMovePiece(HumanMove,Piece),validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),
 applyMove(Tab,NewTab,[PosC,PosL,NewPiece]),append(HumanMove,[NewPiece],ReturnMove).
 
-play(_,_,_,_,_,Message):-Message="FAIL".
+play(_,_,_,_,_,Message):-Message="MOVE FAIL".
 %%check play bots
-playBot(random,Tab,NewTab,Player,SelectedMove):- createRandomMove(Tab,Line,Col,NewPiece,OldPiece,Player),SelectedMove =[Line,Col,Piece,OldPiece] ,updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
+playBot(random,Tab,NewTab,Player,SelectedMove):- createRandomMove(Tab,Line,Col,NewPiece,OldPiece,Player),SelectedMove =[Line,Col,OldPiece,Piece] ,updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove),write(SelectedMove),nl.
 
-playBot(greedy,Tab,NewTab,Player,SelectedMove):-numberList(NumberList),pickGreedyMove(Tab,Player,NumberList,SelectedMove),getMovePiece(SelectedMove,Piece),updateStats(Player,Piece,SelectedMove,Tab),
-applyMove(Tab,NewTab,SelectedMove).
+playBot(greedy,Tab,NewTab,Player,SelectedMove):-numberList(NumberList),pickGreedyMove(Tab,Player,NumberList,SelectedMove),write(SelectedMove),nl ,getMovePiece(SelectedMove,Piece),
+updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
 
 playHuman(addPiece,Tab,NewTab,Player):-moveAddPiece(Tab,NewTab,Player).
 
 
 retract(_,_,Message):-Message="OK",playMode(players),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))).
 retract(_,_,Message):-Message="OK",retract((bot(_))),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))). 
-retract(_,_,Message):-Message="MOVE FAIL".
+retract(_,_,Message):-Message="RETRACT FAIL".
 /*****************************************************************************************************************************************/
 %%Gets
 

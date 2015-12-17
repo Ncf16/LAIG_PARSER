@@ -42,7 +42,7 @@ function getUrlVars() {
 }
 
 serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', 'Auxiliar/Initials.js', 'Auxiliar/Frustum.js', 'Auxiliar/Lights.js',
-    'Auxiliar/Materials.js', 'T1PRim/Triangle.js', 'T1Prim/Rectangle.js', 'T1Prim/Hex.js', 'Auxiliar/Transformations.js', 'Auxiliar/FuncAux.js', 'Auxiliar/Leaves.js', 'T1Prim/Sphere.js', 'T1Prim/Cylinder.js',
+    'Auxiliar/Materials.js', 'T1PRim/Triangle.js', 'T1Prim/Rectangle.js', 'T1Prim/Hex.js','Auxiliar/MyCamera.js', 'Auxiliar/Transformations.js', 'Auxiliar/FuncAux.js', 'Auxiliar/Leaves.js', 'T1Prim/Sphere.js', 'T1Prim/Cylinder.js',
     'Auxiliar/Node.js', 'Auxiliar/MyInterface.js', 'Auxiliar/Texture.js', 'Animation/Animation.js','3D/Plane.js','3D/Patch.js','3D/Terrain.js','Animation/LinearAnimation.js','Animation/CircularAnimation.js',
 
     main = function() {
