@@ -52,6 +52,11 @@ Node.prototype.display = function(parentElement) {
     var material;
     var texture;
 
+     if(this.id == "board")
+        this.graph.scene.id = 1;
+    else if(this.id == "diskObject" || this.id == "ringObject")
+          this.graph.scene.registerForPick(this.graph.scene.id++, this);
+
     //if string Material from node is different from null is necessary to push the material to material Stack
     if (this.material != "null") {
         //search from material with "this.material" string in Materials array

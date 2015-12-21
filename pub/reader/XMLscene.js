@@ -1,6 +1,6 @@
 //axis default Thickness
 var DEFAULT_THICKNESS = 0.05;
-var CAMERA_DEFAULT_POSITION = [0, 15, 15];
+var CAMERA_DEFAULT_POSITION = [-2, 30, 7];
 var FAILURE_MESSAGE = "FAIL";
 var updateTime=1;
 //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
@@ -189,7 +189,7 @@ XMLscene.prototype.resetCameraViewMatrix = function() {
 XMLscene.prototype.init = function(application) {
 
     CGFscene.prototype.init.call(this, application);
-    this.camera = new MyCamera(0.4, 0.1, 500, CAMERA_DEFAULT_POSITION, vec3.fromValues(0, 0, 0));
+    this.camera = new MyCamera(0.4, 0.1, 500, CAMERA_DEFAULT_POSITION, vec3.fromValues(0, 0, 7));
 
     this.initLights();
     this.camera.updatePos();
@@ -330,8 +330,29 @@ XMLscene.prototype.cameraAnimation = function(time) {
     this.camera.currTime = 0;
     console.log(this.camera, this.camera.teste);
 }
+
+XMLscene.prototype.logPicking = function (){
+
+    if (this.pickMode == false) {
+        if (this.pickResults != null && this.pickResults.length > 0) {
+            for (var i=0; i< this.pickResults.length; i++) {
+                var obj = this.pickResults[i][0];
+                if (obj)
+                {
+                    var customId = this.pickResults[i][1];              
+                    console.log("Picked object: " + obj + ", with pick id " + customId);
+                }
+            }
+            this.pickResults.splice(0,this.pickResults.length);
+        }       
+    }
+}
+
 XMLscene.prototype.display = function() {
     // ---- BEGIN Background, camera and axis setup
+
+    this.logPicking();
+    this.clearPickRegistration();
 
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);

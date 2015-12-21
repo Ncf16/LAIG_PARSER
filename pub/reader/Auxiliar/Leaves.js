@@ -192,6 +192,22 @@ LeafHex.prototype.parseLeaf = function(args, scene) {
     this.element = new Hex(scene);
 };
 
+LeafHex.prototype.display = function(parentElement) {
+
+    var material = this.graph.matArray[this.graph.matArray.length - 1];
+    var texture = this.graph.texArray[this.graph.texArray.length - 1];
+
+    if (typeof texture !== 'undefined') {
+        if (texture.id != "clear")
+            material.setTexture(texture.cgf);
+    }
+
+    this.graph.scene.registerForPick(this.graph.scene.id++, this.element);
+
+    material.appearance.apply();
+    this.element.display();
+};
+
 //TODO REPLACE WITH PROPER CONSTRUCTORES
 LeafPlane.prototype = Object.create(Leaf.prototype);
 LeafPlane.prototype.constructor = LeafPlane;
