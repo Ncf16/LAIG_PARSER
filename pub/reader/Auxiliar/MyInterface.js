@@ -21,6 +21,6 @@ MyInterface.prototype.init = function(application) {
 
     this.gui = new dat.GUI();
     this.lights = this.gui.addFolder("Lights");
-    this.game=this.gui.addFolder("DuploHex");
+    this.game = this.gui.addFolder("DuploHex");
     return true;
 };

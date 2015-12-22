@@ -61,6 +61,8 @@ Leaf.prototype.display = function(parentElement) {
     if (typeof texture !== 'undefined') {
         if (texture.id != "clear")
             material.setTexture(texture.cgf);
+        else
+            material.setTexture(null);
     }
 
     material.appearance.apply();
@@ -95,6 +97,8 @@ LeafRectangle.prototype.display = function(parentElement) {
 
         if (texture.id != "clear")
             material.setTexture(texture.cgf);
+        else
+            material.setTexture(null);
     }
 
     material.appearance.apply();
@@ -119,6 +123,8 @@ LeafTriangle.prototype.display = function(parentElement) {
 
         if (texture.id != "clear")
             material.setTexture(texture.cgf);
+        else
+            material.setTexture(null);
     }
 
     material.appearance.apply();
@@ -190,6 +196,22 @@ LeafHex.prototype.parseLeaf = function(args, scene) {
     this.type = "Hex";
     var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
     this.element = new Hex(scene);
+};
+
+LeafHex.prototype.display = function(parentElement) {
+
+    var material = this.graph.matArray[this.graph.matArray.length - 1];
+    var texture = this.graph.texArray[this.graph.texArray.length - 1];
+
+    if (typeof texture !== 'undefined') {
+        if (texture.id != "clear")
+            material.setTexture(texture.cgf);
+    }
+
+    this.graph.scene.registerForPick(this.graph.scene.id++, this.element);
+
+    material.appearance.apply();
+    this.element.display();
 };
 
 //TODO REPLACE WITH PROPER CONSTRUCTORES
