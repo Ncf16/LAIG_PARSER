@@ -1,5 +1,5 @@
 function validadeNumber(numberToBeValidated, validationFunction) {
-    
+
     return validationFunction(numberToBeValidated);
 };
 
@@ -13,6 +13,22 @@ function copyArray(A1, A2) {
 
 function truncRadian(angle) {
     return (angle % (2 * Math.PI));
+};
+
+function distanceBetweenTwoSphericPoint(point1, point2) {
+    return [point1.radius - point2.radius,
+        point1.theta - point2.theta,
+        point1.phi - point2.phi
+    ];
+};
+
+function absoluteDistanceBetweenTwoSphericPoints(point1, point2) {
+
+    if (point1.length != point2.length)
+        return -1;
+    else {
+        return distanceBetweenVectors([point1[0] * Math.sin(point1[1]) * Math.sin(point1[2]), point1[0] * Math.cos(point1[2]), point1[0] * Math.cos(point1[1]) * Math.sin(point1[2])], [point2[0] * Math.sin(point2[1]) * Math.sin(point2[2]), point2[0] * Math.cos(point2[2]), point2[0] * Math.cos(point2[1]) * Math.sin(point2[2])] )
+    }
 };
 
 function dividIntoParts(A, nParts) {
@@ -150,7 +166,7 @@ function parseLeafAux(leave, type) {
         return new LeafPatch();
     } else if (type == "plane") {
         return new LeafPlane();
-    }  else if (type == "terrain") {
+    } else if (type == "terrain") {
         return new LeafTerrain();
     } else {
         console.warn("Invalid type of Leaf: " + type);

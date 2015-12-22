@@ -3,17 +3,7 @@
 :- use_module(library(http/http_path)).
 :- use_module(library(http/http_client)).
 :- use_module(library(http/http_server_files)).
-:- use_module(library(clpfd)).
-:- expects_dialect(sicstus).
-:-[duploHex],[includes].
-:-use_module(library(random)).
-:-use_module(library(lists)).
-%%Which Player is the bot
-:-dynamic bot/1.
-%% Tab,Number of Rings/Disc Player
-:-dynamic stats/2.
-%% Greedy or Random
-:-dynamic playMode/1.
+:-[duploHex]. 
 
 
 :- http_handler(root(game), prepReplyStringToJSON, []).						% Predicate to handle requests on server/game (for Prolog Game Logic)
@@ -29,6 +19,7 @@ prepReplyStringToJSON(Request) :-
 		member(method(post), Request), !,						% if POST
         http_read_data(Request, Data, []),						% Retrieve POST Data
 		processString(Data, Reply),								% Call processing predicate
+		%format('Access-Control-Allow-Origin: *~n'),				%apresnetação delete
 		format('Content-type: application/json~n~n'),			% Reply will be JSON
 		formatAsJSON(Reply).									% Send Reply as JSON
 

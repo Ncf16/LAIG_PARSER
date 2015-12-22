@@ -1,15 +1,23 @@
 //axis default Thickness
 var DEFAULT_THICKNESS = 0.05;
-var CAMERA_DEFAULT_POSITION = [0, 15, 15];
+var CAMERA_DEFAULT_POSITION = [21.025890350341797, 19.130998611450195, 26.3, 0]; //[1.0,0.0,0.0,0]; 
 var FAILURE_MESSAGE = "FAIL";
-var updateTime=1;
+var updateTime = 1;
+var whiteDiskPos = [0, 0, 0];
+var whiteRingPos = [0, 0, 0];
+
+var blackDiskPos = [0, 0, 0];
+var blackRingPos = [0, 0, 0];
+
 //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
-//Movimento
-//Jogadas ->Movimentos
-//Replay -> Jogadas
-//Undo -> tabuleiros || Prolog
-//SkyBox
-//Camara coordenads esféricaspp-
+//Movimento Rui
+//Jogadas ->Movimentos -> criar ciclo de jogo em javascript need to test it
+//Replay -> Jogadas  need to teste 
+//Undo -> tabuleiros || Prolog easy way done
+//SkyBox Not Done
+//Animations to Do, create function that creates Templates 1 for placement another to retrieve pieces
+//Camara coordenads esféricas DONE check animação da camara check 
+//Diferença entre posições e depois ter delta Radius/Phi/Theta check
 function XMLscene() {
     CGFscene.call(this);
     this.Loop = false;
@@ -21,9 +29,8 @@ function XMLscene() {
     this.gameStarted = false;
     this.rotateCameraFlag = false;
     this.startCameraAnimation = false;
-    this.cameraAnimationdeltaT = 4;
+    this.cameraAnimationdeltaT = 0;
     this.cameraRotationAngle = degToRad(90);
-    this.rotateCameraDeltaAngle = this.cameraRotationAngle / (this.cameraAnimationdeltaT);
     this.moves = [];
     this.boards = [];
     this.currentBoard = null;
@@ -31,21 +38,41 @@ function XMLscene() {
     this.gameOver = false;
     this.gameError = false;
     this.currTime = 0;
-    this.previousAngle = 0;
-    this.playStartTime = 0; //so we can limit the time
-    this.AnimationLoop = function() {
-        this.Loop = true;
-    };
+    this.playCountDown = this.maxMoveTime; //so we can limit the time
+    this.replayOfGame = false;
+    this.playingAnimation = false;
+    this.cameraPhiDelta = 0;
+    this.cameraThetaDelta = 0;
+    this.cameraRadiusDelta = 0;
+    this.cameraSpeed = 1;
+    this.cameraToMovePos = new Object();
+    this.cameraToMovePos.radius = 30.444578733791;
+    this.cameraToMovePos.phi = 2.2428771187404;
+    this.cameraToMovePos.theta = 0.6280374899026;
+    /*
+    var point1 = new Object();
+    point1.radius = 1.7320508075689;
+    point1.theta = 0.78539816339745;
+    point1.phi = 0.95531661812451;
+    var point2 = new Object();
+    point2.radius = 2;
+    point2.theta = 0;
+    point2.phi = 1.5707963267949;
+    //change distance to difference
+    console.log(distanceBetweenTwoSphericPoint(point1, point2));
+    console.log(absoluteDistanceBetweenTwoSphericPoints([1.7320508075689, 0.78539816339745, 0.95531661812451], [2.2360679774998, 0, 1.1071487177941]));*/
     this.rotateCamera = function() {
+        //change this to a dropdown e quando houver mudanças rodar
+        // console.log(this.camera);
+
         if (this.graph.loadedOk) {
-            console.log(this.camera);
             this.rotateCameraFlag = true;
             this.startCameraAnimation = true;
         }
 
     };
     this.startGame = (function() {
-        if (!this.gameStarted) {
+        if (!this.gameStarted && !this.replayOfGame) {
             this.gameStarted = true;
 
             makeRequest("initialize", [this.player1, this.player2], (function(data) {
@@ -63,13 +90,10 @@ function XMLscene() {
         }
 
     }).bind(this);
-    this.undoMove = function() {
-        //criar Undo Move in PROLOG que é chamado?
-        play(this);
-    }
+
     this.resetGame = (function() {
 
-        if (this.gameStarted) {
+        if (this.gameStarted && !this.replayOfGame) {
             makeRequest("retract", [], handleReply);
 
             makeRequest("initialize", [this.player1, this.player2], (function(data) {
@@ -85,7 +109,22 @@ function XMLscene() {
             }).bind(this));
         }
     }).bind(this)
+
+    this.undoMove = (function() {
+        //criar Undo Move in PROLOG que é chamado?
+        //criar um para stats
+        // play(this);
+       
+        //versão + simples
+        /* this.undoPlacement(this.moves[this.moves.length - 1]);
+         this.boards.splice(this.boards.length - 1, 1);
+         this.currentBoard = this.boards[this.boards.length - 1];
+         this.moves.splice(this.moves.length - 1, 1);*/
+
+    }).bind(this);
 };
+XMLscene.prototype = Object.create(CGFscene.prototype);
+XMLscene.prototype.constructor = XMLscene;
 
 function initBoard(scene, response) {
 
@@ -95,17 +134,27 @@ function initBoard(scene, response) {
         scene.boards.splice(0, scene.boards.length);
         scene.currentBoard = JSON.parse(response['newBoard']);
         scene.boards.push(scene.currentBoard);
-        console.log(scene.currentBoard);
     }
-
-}
+};
 
 function checkError(scene, response) {
     if (response['message'] !== "OK") {
         scene.gameError = true;
     }
+};
 
-}
+function getStats(scene, data) {
+    console.log(data);
+};
+
+function incStat(scene, player, move) {
+    //add player who did the move to each "move";
+    makeRequest("incStats", [player, move[2]], (function(data) {
+
+        checkError(this, JSON.parse(data.target.response));
+
+    }).bind(this));
+};
 
 function play(scene, move) {
 
@@ -128,63 +177,72 @@ function play(scene, move) {
 
 function handlePlay(scene, data) {
     if (data['message'] != FAILURE_MESSAGE) {
-        if (data.nextPlayer !== 0) //DIST != 0
+        if (data['nextPlayer'] !== 0) //DIST != 0
         {
-            scene.boards.push(data['newBoard']);
-            scene.currentBoard = data['newBoard'];
-            scene.moves.push(data['message']);
-            //scene.nextPlayer();
 
-        } else
+            console.log(data);
+            var newBoard = JSON.parse(data['newPlayer']);
+            var newMove = JSON.parse(data['message']);
+            scene.boards.push(newBoard);
+            scene.currentBoard = newBoard;
+            scene.moves.push(newMove);
+            nextPlayer(scene);
+            console.log(scene.currentPlayer, scene.currentBoard, scene.boards, scene.moves);
+            scene.updateBoard(newMove);
+            scene.placePieceInBoard(newMove);
+        } else {
             scene.gameOver = true;
-
+            //1 -> Player 1 won
+            //2 -> Player 2 won
+            //3 -> The game ended in a tie
+            scene.endStatus = 1;
+        }
     }
 
     console.log(data);
-}
-XMLscene.prototype.nextPlayer = function() {
-    switch (this.currentPlayer) {
-        case this.player1:
-            this.currentPlayer = this.player2;
+};
+
+function nextPlayer(scene) {
+    switch (scene.currentPlayer) {
+        case scene.player1:
+            scene.currentPlayer = scene.player2;
             break;
-        case this.player2:
-            this.currentPlayer = this.player1;
+        case scene.player2:
+            scene.currentPlayer = scene.player1;
             break;
 
     }
+};
 
-}
-XMLscene.prototype = Object.create(CGFscene.prototype);
-XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.updateCamera = function(currTime) {
-    //translate to center so -currentPos 
-    //translate to new Pos
-    var deltaT = currTime - this.camera.startTime;
-    deltaT = deltaT / 1000.0;
+    var deltaT = (currTime - this.camera.startTime); // / 1000.0
+
     var timePassed = deltaT / this.cameraAnimationdeltaT;
-    //  console.log("DELTA T: " + deltaT)
-    var currentAngle = (this.rotateCameraDeltaAngle * timePassed);
-    var deltaAngle = currentAngle - this.previousAngle;
-    if (deltaT <= this.cameraAnimationdeltaT) {
-        console.log(currentAngle * 180 / Math.PI);
-        console.log(deltaAngle*180/Math.PI);
-        //change angle name
-        this.camera.addTeta(this.rotateCameraDeltaAngle);
+    // var currentAngle = (this.camera.thetaZero + this.cameraRotationAngle * timePassed);
+    var currentPhi = (this.camera.phiZero + this.cameraPhiDelta * timePassed);
+    var currentTheta = (this.camera.thetaZero + this.cameraThetaDelta * timePassed);
+    var currentRadius = (this.camera.radiusZero + this.cameraRadiusDelta * timePassed);
+
+    if (deltaT < this.cameraAnimationdeltaT) {
+        this.camera.setTheta(currentTheta);
+        this.camera.setPhi(currentPhi);
+        this.camera.setRadius(currentRadius);
+
+        //console.log(this.camera.position);
         this.camera.updatePos();
-        this.previousAngle = currentAngle;
+
     } else {
         this.rotateCameraFlag = false;
-        this.previousAngle = 0;
+        this.camera.updateZeros();
+        this.camera.updatePos();
+        console.log(deltaT, timePassed);
+        console.log(this.camera);
     }
 
 
-    // console.log(this.camera);
-
+    //  console.log(this.camera);
 };
 
-XMLscene.prototype.resetCameraViewMatrix = function() {
-    this.camera._viewMatrix = this.oldViewMatrix;
-};
 //initialize the scene with default values while the scene has not been loaded
 XMLscene.prototype.init = function(application) {
 
@@ -257,17 +315,6 @@ XMLscene.prototype.CreateLights = function() {
         this.gui.lights.add(this.lightsEnable, i, this.lightsEnable[i]);
 
     }
-    this.gui.extra.add(this, 'AnimationLoop');
-    this.gui.game.add(this, 'rotateCamera');
-    this.gui.game.add(this, 'startGame');
-    this.gui.game.add(this, 'resetGame');
-    this.gui.game.add(this, 'undoMove');
-    // Choose from accepted values
-    this.gui.game.add(this, 'player1', ['black', 'random', 'greedy']);
-    this.gui.game.add(this, 'player2', ['white', 'random', 'greedy']);
-    this.gui.game.add(this, 'maxMoveTime').min(5).step(1); // Mix and match
-
-    this.gui.scene = this;
 };
 
 //create the default material
@@ -307,6 +354,16 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.CreateLights();
     this.CreateMaterials();
 
+    this.gui.game.add(this, 'rotateCamera');
+    this.gui.game.add(this, 'startGame');
+    this.gui.game.add(this, 'resetGame');
+    this.gui.game.add(this, 'undoMove');
+    // Choose from accepted values
+    this.gui.game.add(this, 'player1', ['black', 'random', 'greedy']);
+    this.gui.game.add(this, 'player2', ['white', 'random', 'greedy']);
+    this.gui.game.add(this, 'maxMoveTime').min(5).step(1); // Mix and match
+
+    this.gui.scene = this;
     this.setUpdatePeriod(updateTime);
 };
 
@@ -319,16 +376,45 @@ XMLscene.prototype.update = function(currTime) {
     if (this.startCameraAnimation) {
         this.startCameraAnimation = false;
         this.camera.startTime = currTime;
-        //this.oldViewMatrix = this.camera._viewMatrix;
+        this.camera.calcRadius();
+        this.camera.calcAngles();
+        var distance = distanceBetweenTwoSphericPoint(this.camera, this.cameraToMovePos);
+        /*console.log(this.camera, this.cameraToMovePos);
+        console.log(distance);*/
+        this.cameraPhiDelta = 0;
+        this.cameraThetaDelta = 0 * degToRad(270);
+        this.cameraRadiusDelta = 0;
+        var absoluteDistance = absoluteDistanceBetweenTwoSphericPoints([this.camera.radius, this.camera.theta, this.camera.phi], [this.cameraToMovePos.radius, this.cameraToMovePos.theta, this.cameraToMovePos.phi]);
+
+        this.cameraAnimationdeltaT = absoluteDistance / this.cameraSpeed * 100.0;
+        if (this.cameraAnimationdeltaT < 1000)
+            this.cameraAnimationdeltaT = 1000
     }
     if (this.rotateCameraFlag)
         this.updateCamera(currTime);
+};
+
+XMLscene.prototype.cameraAnimation = function(time) {
+    console.log(this.camera.position);
+    this.camera.currTime = 0;
+    console.log(this.camera.position, this.camera.teste);
+};
+
+XMLscene.prototype.stackDisplay = function(toStack, elementHeight, stackSize, elementPos) {
+
+    for (var i = 0; i < stackSize; i++) {
+        this.pushMatrix();
+        this.translate(elementPos[0], elementPos[1] + elementHeight * i, elementPos[2]);
+        toStack.display();
+        this.popMatrix();
+    }
 
 };
-XMLscene.prototype.cameraAnimation = function(time) {
-    console.log(this.camera);
-    this.camera.currTime = 0;
-    console.log(this.camera, this.camera.teste);
+XMLscene.prototype.loadGame = function() {
+
+};
+XMLscene.prototype.replayMove = function(move) {
+    play(this, move);
 }
 XMLscene.prototype.display = function() {
     // ---- BEGIN Background, camera and axis setup
@@ -347,13 +433,29 @@ XMLscene.prototype.display = function() {
     // Draw axis
     this.setDefaultAppearance();
     this.axis.display();
+    if (!this.playingAnimation) {
 
-
+        if (this.replayOfGame) {
+            var moveToReplay = this.moves[this.moves.length - 1];
+            this.moves.splice(this.moves.length - 1, 1);
+            replayMove(moveToReplay);
+        }
+        /*makeRequest("getStats", [this.player1], (function(data) {
+    
+            getStats(this, JSON.parse(data.target.response));
+    
+        }).bind(this));
+        makeRequest("getStats", [this.player2], (function(data) {
+    
+            getStats(this, JSON.parse(data.target.response));
+    
+        }).bind(this));*/
+    }
     // ---- END Background, camera and axis setup
     // it is important that things depending on the proper loading of the graph
     // only get executed after the graph has loaded correctly.
     // This is one possible way to do it
-
+    // use a prolog request to get the stats and decide the number to stack by having a look at said stats
     if (this.graph.loadedOk) {
         //constant update from this values. Checking for each light is enabled or disable
         for (var j = 0; j < this.nLights; j++) {
@@ -373,7 +475,7 @@ XMLscene.prototype.display = function() {
 
 function postGameRequest(requestString, onSuccess, onError) {
     var request = new XMLHttpRequest();
-    request.open('POST', '../../game', true);
+    request.open('POST', 'http://localhost:8081/game', true);
 
     request.onload = onSuccess || function(data) {
         console.log("Request successful. Reply: " + data.target.response);
@@ -384,7 +486,7 @@ function postGameRequest(requestString, onSuccess, onError) {
 
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     request.send('requestString=' + encodeURIComponent(requestString));
-}
+};
 
 function makeRequest(functionName, arguments, handleReply) {
 
@@ -402,12 +504,11 @@ function makeRequest(functionName, arguments, handleReply) {
     if (arguments.length == 0 && functionName != null && (typeof functionName !== 'undefined'))
         requestString += " ]";
     postGameRequest(requestString, handleReply);
-
-}
+};
 
 //Handle the JSON Reply
 function handleReply(data) {
     console.log(data.target.response);
     response = JSON.parse(data.target.response);
     console.log(response);
-}
+};

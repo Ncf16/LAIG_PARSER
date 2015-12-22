@@ -170,3 +170,4 @@ writeList([H|T]):-write(H),nl,writeList(T).
 
 getValidChangeElements(Ring,Disk):-ringPieces(RingPieces),diskPieces(DiskPieces),belongs(Ring,RingPieces),belongs(Disk,DiskPieces).
 getValidChangeElements(Disk,Ring):-ringPieces(RingPieces),diskPieces(DiskPieces),belongs(Ring,RingPieces),belongs(Disk,DiskPieces).
+

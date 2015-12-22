@@ -4191,7 +4191,6 @@ function CGFinterface() {
     this.ctrlKey = false;
 };
 CGFinterface.prototype.init = function(a) {
-    console.log("Initializing Interface");
     this.scene = a.scene;
     var b = a.gl.canvas;
     b.tabIndex = 1;
@@ -4335,7 +4334,6 @@ CGFinterface.prototype.distanceBetweenPoints = function(a, b) {
 
 function CGFscene() {}
 CGFscene.prototype.init = function(a) {
-    console.log("Initializing Scene");
     this.gl = a.gl;
     this.pMatrix = mat4.create();
     this.activeMatrix = mat4.create();

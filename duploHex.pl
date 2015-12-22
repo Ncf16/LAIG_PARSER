@@ -1,3 +1,14 @@
+:- use_module(library(clpfd)).
+:- expects_dialect(sicstus).
+:- [includes].
+:-use_module(library(random)).
+:-use_module(library(lists)).
+%%Which Player is the bot
+:-dynamic bot/1.
+%% Tab,Number of Rings/Disc Player
+:-dynamic stats/2.
+%% Greedy or Random
+:-dynamic playMode/1.
 
 %%Game Cycle/*
 duploHex(Mode,Player):-initialize(Player,Mode),initStats,stats(tab,Tab),
@@ -52,18 +63,18 @@ play(Tab,Player,_,_,Dist,_):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,N
 
 play(_,Player,_,_,_,_):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPlayer)),!.
 */
-play(Tab,BotMode,_,NewTab,_,BotMove):-playMode([BotMode,Player|[]]),bot(Player),!,playBot(BotMode,Tab,NewTab,Player,BotMove),write('ENDING'),nl.
+play(Tab,BotMode,_,NewTab,_,BotMove):-playMode([BotMode,Player|[]]),bot(Player),!,playBot(BotMode,Tab,NewTab,Player,BotMove).
 %play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
-
+/*
 play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-getMoveCol(HumanMove,PosC),getMoveLine(HumanMove,PosL),getMovePiece(HumanMove,Piece),validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),
 applyMove(Tab,NewTab,[PosC,PosL,NewPiece]),append(HumanMove,[NewPiece],ReturnMove).
-
+*/
 play(_,_,_,_,_,Message):-Message="MOVE FAIL".
 %%check play bots
 playBot(random,Tab,NewTab,Player,SelectedMove):- createRandomMove(Tab,Line,Col,NewPiece,OldPiece,Player),SelectedMove =[Line,Col,OldPiece,Piece] ,updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove),write(SelectedMove),nl.
 
-playBot(greedy,Tab,NewTab,Player,SelectedMove):-numberList(NumberList),pickGreedyMove(Tab,Player,NumberList,SelectedMove),write(SelectedMove),nl ,getMovePiece(SelectedMove,Piece),
+playBot(greedy,Tab,NewTab,Player,SelectedMove):-numberList(NumberList),pickGreedyMove(Tab,Player,NumberList,SelectedMove),getMovePiece(SelectedMove,Piece),
 updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
 
 playHuman(addPiece,Tab,NewTab,Player):-moveAddPiece(Tab,NewTab,Player).
@@ -92,10 +103,10 @@ getMovePiece(Move,MovePiece):-getCol(Move,2,MovePiece).
 getPieces(black,Pieces):-blackPieces(TempPieces),appendLists(TempPieces,Pieces).
 getPieces(white,Pieces):-whitePieces(TempPieces),appendLists(TempPieces,Pieces).
 
-getNumberOfPiece(Player,1,Number):-getNumberOfRings(Player,Number).
-getNumberOfPiece(Player,2,Number):-getNumberOfDisks(Player,Number).
-getNumberOfPiece(Player,3,Number):-getNumberOfRings(Player,Number).
-getNumberOfPiece(Player,4,Number):-getNumberOfDisks(Player,Number).
+getNumberOfPiece(white,1,Number):-getNumberOfRings(white,Number).
+getNumberOfPiece(white,2,Number):-getNumberOfDisks(white,Number).
+getNumberOfPiece(black,3,Number):-getNumberOfRings(black,Number).
+getNumberOfPiece(black,4,Number):-getNumberOfDisks(black,Number).
 
 getRandomPiece(Piece,black):-getRadomNumber(Line,2),blackPieces(BlackPieces),getCol(BlackPieces,Line,Piece).
 getRandomPiece(Piece,white):-getRadomNumber(Line,2),whitePieces(WhitePieces),getCol(WhitePieces,Line,Piece).
@@ -121,6 +132,10 @@ getStartingPoint(Player,Tab,Piece,Line1,Col1,0):- getStartingPointDown(Player,Ta
 
 getPossibleMoves(Tab,Player,NumberList,L):-findall( [PosL,PosC,NewPiece,Piece],(getSimplePieces(Player,PiecesList),member(PosL,NumberList),member(PosC,NumberList),member(Piece,PiecesList),
 	validateMove(Tab,PosL,PosC,Piece,Player,NewPiece)),L).	
+
+getStats(Player,[Player|Stats],_,Message):-stats(Player,Stats),!,Message="OK".
+getStats(Bot,[Player|Stats],_,Message):-bot(Player),!,playMode([Bot,Player]),!,stats(Player,Stats),!,Message="OK".
+getStats(_,_,_,Message):-Message="FAIL".
 /****************************************************************************************************************************************/
 %%Set
 setElement(Tab,Line,Col,Element,NewTab):-setLine(Tab,Line,Col,Element,NewTab).
@@ -175,6 +190,11 @@ updateStats(white,5,Move,OldTab):-getMoveLine(Move,Line),getMoveCol(Move,Col),ge
 updateStats(black,7,Move,OldTab):-getMoveLine(Move,Line),getMoveCol(Move,Col),getElement(OldTab,Line,Col,CellElement),updateStats(black,CellElement,_,_).
 
 
+incStats(Player,1,_,_,Message):-getNumberOfPiece(Player,1,Number),NewNumber is Number+1,setNumberOfPiece(Player,1,NewNumber),Message="OK".
+incStats(Player,2,_,_,Message):-getNumberOfPiece(Player,2,Number),NewNumber is Number+1,setNumberOfPiece(Player,2,NewNumber),Message="OK".
+incStats(Player,3,_,_,Message):-getNumberOfPiece(Player,3,Number),NewNumber is Number+1,setNumberOfPiece(Player,3,NewNumber),Message="OK".
+incStats(Player,4,_,_,Message):-getNumberOfPiece(Player,4,Number),NewNumber is Number+1,setNumberOfPiece(Player,4,NewNumber),Message="OK".
+incStats(_,_,_,_,Message):-Message="FAIL".
 %%Validate Line Col
 validateLineColRead(Input):-integer(Input),!,between(Input,0,6).
 
@@ -212,7 +232,7 @@ moveAddPiece(Tab,Tab,_).
 %%Greedy
 
 pickGreedyMove(Tab,Player,NumberList,SelectedMove):-getNextPlayer(Player,Opponent),greedyMove(Tab,Player,NumberList,UserMove,UserScore),!,
-greedyMove(Tab,Opponent,NumberList,OpponentMove,OpponentScore),!,pickMaxMove(Player,SelectedMove,UserScore,UserMove,OpponentScore,OpponentMove),write(UserMove),nl.
+greedyMove(Tab,Opponent,NumberList,OpponentMove,OpponentScore),!,pickMaxMove(Player,SelectedMove,UserScore,UserMove,OpponentScore,OpponentMove).
 
 pickMaxMove(Player,ConvertedMove,UserScore,_,OpponentScore,OpponentMove):- OpponentScore<UserScore,convertMove(Player,OpponentMove,ConvertedMove).
 pickMaxMove(_,UserMove,UserScore,UserMove,OpponentScore,_):-OpponentScore>=UserScore.
