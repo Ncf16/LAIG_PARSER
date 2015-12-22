@@ -61,6 +61,8 @@ Leaf.prototype.display = function(parentElement) {
     if (typeof texture !== 'undefined') {
         if (texture.id != "clear")
             material.setTexture(texture.cgf);
+        else
+            material.setTexture(null);
     }
 
     material.appearance.apply();
@@ -95,6 +97,8 @@ LeafRectangle.prototype.display = function(parentElement) {
 
         if (texture.id != "clear")
             material.setTexture(texture.cgf);
+        else
+            material.setTexture(null);
     }
 
     material.appearance.apply();
@@ -119,6 +123,8 @@ LeafTriangle.prototype.display = function(parentElement) {
 
         if (texture.id != "clear")
             material.setTexture(texture.cgf);
+        else
+            material.setTexture(null);
     }
 
     material.appearance.apply();
