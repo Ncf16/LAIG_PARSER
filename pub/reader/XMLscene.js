@@ -2,6 +2,8 @@
 var DEFAULT_THICKNESS = 0.05;
 var CAMERA_DEFAULT_POSITION = [21.025890350341797, 19.130998611450195, 26.3, 0]; //[1.0,0.0,0.0,0]; 
 var CAMERA_DEFAULT_POSITION = [-2, 30, 7];
+var botPlayers = [];
+var botTypes = ["random", "greedy"];
 var FAILURE_MESSAGE = "FAIL";
 var updateTime = 1;
 var whiteDiskPos = [0, 0, 0];
@@ -10,6 +12,8 @@ var whiteRingPos = [0, 0, 0];
 var blackDiskPos = [0, 0, 0];
 var blackRingPos = [0, 0, 0];
 
+var player1Color = "black";
+var player2Color = "white";
 //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
 //Movimento Rui
 //Jogadas ->Movimentos -> criar ciclo de jogo em javascript need to test it
@@ -19,19 +23,22 @@ var blackRingPos = [0, 0, 0];
 //Animations to Do, create function that creates Templates 1 for placement another to retrieve pieces
 //Camara coordenads esféricas DONE check animação da camara check 
 //Diferença entre posições e depois ter delta Radius/Phi/Theta check
+//Array de texturas e materiais em vez de lsx
 function XMLscene() {
     CGFscene.call(this);
     this.Loop = false;
+    this.nTurns = 0;
     this.returnsToStart = false;
     this.gui = null;
-    this.player1 = "black";
-    this.player2 = "white";
+    this.player1 = player1Color;
+    this.player2 = player2Color;
     this.maxMoveTime = 5;
     this.gameStarted = false;
     this.rotateCameraFlag = false;
     this.startCameraAnimation = false;
     this.cameraAnimationdeltaT = 0;
-    this.cameraRotationAngle = degToRad(90);
+    // this.cameraRotationAngle = degToRad(90);
+    this.play = false;
     this.moves = [];
     this.boards = [];
     this.currentBoard = null;
@@ -50,6 +57,8 @@ function XMLscene() {
     this.cameraToMovePos.radius = 30.444578733791;
     this.cameraToMovePos.phi = 2.2428771187404;
     this.cameraToMovePos.theta = 0.6280374899026;
+    this.animationPlaying = false;
+    this.moveSelected = false;
     /*
     var point1 = new Object();
     point1.radius = 1.7320508075689;
@@ -62,19 +71,20 @@ function XMLscene() {
     //change distance to difference
     console.log(distanceBetweenTwoSphericPoint(point1, point2));
     console.log(absoluteDistanceBetweenTwoSphericPoints([1.7320508075689, 0.78539816339745, 0.95531661812451], [2.2360679774998, 0, 1.1071487177941]));*/
-    this.rotateCamera = function() {
-        //change this to a dropdown e quando houver mudanças rodar
-        // console.log(this.camera);
+    this.rotateCamera = [];
+    /* = function() {
+            //change this to a dropdown e quando houver mudanças rodar
+            // console.log(this.camera);
 
-        if (this.graph.loadedOk) {
-            this.rotateCameraFlag = true;
-            this.startCameraAnimation = true;
-        }
+            if (this.graph.loadedOk) {
+                this.rotateCameraFlag = true;
+                this.startCameraAnimation = true;
+            }
 
-    };
+        };*/
     this.startGame = (function() {
         if (!this.gameStarted && !this.replayOfGame) {
-            this.gameStarted = true;
+
 
             makeRequest("initialize", [this.player1, this.player2], (function(data) {
 
@@ -87,7 +97,7 @@ function XMLscene() {
                 initBoard(this, JSON.parse(data.target.response));
 
             }).bind(this));
-
+            this.parsePlayers();
         }
 
     }).bind(this);
@@ -112,10 +122,11 @@ function XMLscene() {
     }).bind(this)
 
     this.undoMove = (function() {
+
         //criar Undo Move in PROLOG que é chamado?
         //criar um para stats
         // play(this);
-       
+
         //versão + simples
         /* this.undoPlacement(this.moves[this.moves.length - 1]);
          this.boards.splice(this.boards.length - 1, 1);
@@ -127,14 +138,26 @@ function XMLscene() {
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
 
+XMLscene.prototype.parsePlayers = function() {
+    if (botTypes.indexOf(this.player1))
+        botPlayers.push(player1Color);
+
+    if (botTypes.indexOf(this.player2))
+        botPlayers.push(player2Color);
+
+}
+
 function initBoard(scene, response) {
 
+
     if (response['message'] === "OK") {
-        scene.currentPlayer = "black";
+
         scene.moves.splice(0, scene.moves.length);
         scene.boards.splice(0, scene.boards.length);
         scene.currentBoard = JSON.parse(response['newBoard']);
         scene.boards.push(scene.currentBoard);
+        scene.gameStarted = true;
+        scene.currentPlayer = player1Color;
     }
 };
 
@@ -158,28 +181,31 @@ function incStat(scene, player, move) {
 };
 
 function play(scene, move) {
-
-    //    console.log(scene.currentBoard[0], JSON.stringify([0, 0, 3]));
-    /*  scene.currentBoard=[
-                         [3,0,0,0,0,0],
-                           [3,3,3,3,3,3],
-                            [3,3,3,3,3,3],
-                              [3,3,3,3,3,3],
+    if (!scene.animationPlaying && scene.gameStarted && !scene.play && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected)) { //    console.log(scene.currentBoard[0], JSON.stringify([0, 0, 3]));
+        /*  scene.currentBoard=[
+                             [3,0,0,0,0,0],
+                               [3,3,3,3,3,3],
                                 [3,3,3,3,3,3],
                                   [3,3,3,3,3,3],
-                                    [3,3,3,3,3,3]]*/
-    this.currentPlayer = "greedy";
-    makeRequest("play", [JSON.stringify(scene.currentBoard), this.currentPlayer, JSON.stringify([])], (function(data) {
+                                    [3,3,3,3,3,3],
+                                      [3,3,3,3,3,3],
+                                        [3,3,3,3,3,3]]*/
+        scene.play = true;
+        scene.nTurns++;
+        console.log("currentPlayer", scene.currentPlayer);
+        makeRequest("play", [JSON.stringify(scene.currentBoard), scene.currentPlayer, JSON.stringify(move)], (function(data) {
 
-        handlePlay(scene, JSON.parse(data.target.response));
+            handlePlay(scene, JSON.parse(data.target.response));
 
-    }).bind(scene));
+        }).bind(scene));
+    }
+
+
 };
 
 function handlePlay(scene, data) {
-    if (data['message'] != FAILURE_MESSAGE) {
-        if (data['nextPlayer'] !== 0) //DIST != 0
-        {
+    if (data['message'].indexOf(FAILURE_MESSAGE) == -1) {
+        if (data['nextPlayer'] !== 0) { //DIST != 0
 
             console.log(data);
             var newBoard = JSON.parse(data['newPlayer']);
@@ -188,30 +214,29 @@ function handlePlay(scene, data) {
             scene.currentBoard = newBoard;
             scene.moves.push(newMove);
             nextPlayer(scene);
-            console.log(scene.currentPlayer, scene.currentBoard, scene.boards, scene.moves);
-            scene.updateBoard(newMove);
-            scene.placePieceInBoard(newMove);
+            console.log(scene.boards, scene.moves);
+            scene.play = false;
+            //scene.updateBoard(newMove);
+            //  scene.placePieceInBoard(newMove);
         } else {
             scene.gameOver = true;
-            //1 -> Player 1 won
-            //2 -> Player 2 won
-            //3 -> The game ended in a tie
-            scene.endStatus = 1;
-        }
-    }
 
-    console.log(data);
+            scene.endStatus = data['message'];
+        }
+    } else
+        scene.gameError = true;
+
 };
 
 function nextPlayer(scene) {
-    switch (scene.currentPlayer) {
-        case scene.player1:
-            scene.currentPlayer = scene.player2;
-            break;
-        case scene.player2:
-            scene.currentPlayer = scene.player1;
-            break;
 
+    switch (scene.currentPlayer) {
+        case player1Color:
+            scene.currentPlayer = player2Color;
+            break;
+        case player2Color:
+            scene.currentPlayer = player1Color;
+            break;
     }
 };
 
@@ -355,7 +380,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.CreateLights();
     this.CreateMaterials();
 
-    this.gui.game.add(this, 'rotateCamera');
+    //  this.gui.game.add(this, 'rotateCamera');
     this.gui.game.add(this, 'startGame');
     this.gui.game.add(this, 'resetGame');
     this.gui.game.add(this, 'undoMove');
@@ -418,20 +443,19 @@ XMLscene.prototype.replayMove = function(move) {
     play(this, move);
 }
 
-XMLscene.prototype.logPicking = function (){
+XMLscene.prototype.logPicking = function() {
 
     if (this.pickMode == false) {
         if (this.pickResults != null && this.pickResults.length > 0) {
-            for (var i=0; i< this.pickResults.length; i++) {
+            for (var i = 0; i < this.pickResults.length; i++) {
                 var obj = this.pickResults[i][0];
-                if (obj)
-                {
-                    var customId = this.pickResults[i][1];              
+                if (obj) {
+                    var customId = this.pickResults[i][1];
                     console.log("Picked object: " + obj + ", with pick id " + customId);
                 }
             }
-            this.pickResults.splice(0,this.pickResults.length);
-        }       
+            this.pickResults.splice(0, this.pickResults.length);
+        }
     }
 }
 
@@ -456,23 +480,17 @@ XMLscene.prototype.display = function() {
     this.setDefaultAppearance();
     this.axis.display();
     if (!this.playingAnimation) {
-
+        /*if (this.nTurns < 2) {
+            play(this, []);
+        }*/
         if (this.replayOfGame) {
             var moveToReplay = this.moves[this.moves.length - 1];
             this.moves.splice(this.moves.length - 1, 1);
             replayMove(moveToReplay);
         }
-        /*makeRequest("getStats", [this.player1], (function(data) {
-    
-            getStats(this, JSON.parse(data.target.response));
-    
-        }).bind(this));
-        makeRequest("getStats", [this.player2], (function(data) {
-    
-            getStats(this, JSON.parse(data.target.response));
-    
-        }).bind(this));*/
+
     }
+
     // ---- END Background, camera and axis setup
     // it is important that things depending on the proper loading of the graph
     // only get executed after the graph has loaded correctly.

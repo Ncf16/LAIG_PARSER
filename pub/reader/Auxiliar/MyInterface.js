@@ -20,7 +20,8 @@ MyInterface.prototype.init = function(application) {
     //  http://workshop.chromeexperiments.com/examples/gui
 
     this.gui = new dat.GUI();
-    this.lights = this.gui.addFolder("Lights");
     this.game = this.gui.addFolder("DuploHex");
+    this.lights = this.gui.addFolder("Lights");
+
     return true;
 };
