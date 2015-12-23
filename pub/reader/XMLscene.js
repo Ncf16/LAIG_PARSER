@@ -443,6 +443,7 @@ XMLscene.prototype.replayMove = function(move) {
     play(this, move);
 }
 
+<<<<<<< HEAD
 XMLscene.prototype.logPicking = function() {
 
     if (this.pickMode == false) {
@@ -459,10 +460,11 @@ XMLscene.prototype.logPicking = function() {
     }
 }
 
+=======
+>>>>>>> d26eeb1c867ecd544185d52ffe154839ad5870b7
 XMLscene.prototype.display = function() {
-    // ---- BEGIN Background, camera and axis setup
 
-    this.logPicking();
+    this.graph.movTrack.listen();
     this.clearPickRegistration();
 
     // Clear image and depth buffer everytime we update the scene
