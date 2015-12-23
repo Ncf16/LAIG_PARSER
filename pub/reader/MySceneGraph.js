@@ -46,6 +46,8 @@ function MySceneGraph(filename, scene) {
     this.defaultMaterial.setDiffuse(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setShininess(10.0);
+
+    this.movTrack = new MovTrack(this.scene);
     // File reading 
     this.reader = new CGFXMLreader();
     MAX_LIGHTS = this.scene.lights.length;
@@ -530,10 +532,19 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
     elems = this.checkTag(elems[0], 'NODE', false, 1);
     
     for (var i = 0; i < elems.length; i++) {
-        var node = new Node(this);
+        var id = addID(elems[i], this, this.nodesID);
+         var node;
+        if(id == "board")
+            node = new Board(this);
+        else if(id == "hexObject")
+            node = new BoardCell(this);
+        else if (id == "diskObject" || id == "ringObject")
+            node = new Piece(this);
+        else
+            node = new Node(this);
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
-        node.id = addID(elems[i], this, this.nodesID);
+        node.id = id;
         var elems2 = this.checkTag(elems[i], 'MATERIAL', undefined, undefined, node.id);
         node.material = this.reader.getString(elems2[0], 'id');
         elems2 = this.checkTag(elems[i], 'TEXTURE');
