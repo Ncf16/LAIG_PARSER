@@ -5,7 +5,7 @@
         <rotation axis="y" angle="0.0" />
         <rotation axis="z" angle="0.0" />
         <rotation axis="x" angle="0.0" />
-        <scale sx="0.8" sy="0.8" sz="1.0" />
+        <scale sx="1.0" sy="1.0" sz="1.0" />
         <reference length="0.0" />
     </INITIALS>
     <ILLUMINATION>
@@ -134,7 +134,7 @@
         <NODE id="blackPieces">
             <MATERIAL id="black" />
             <TEXTURE id="clear" />
-            <TRANSLATION x="0" y="0" z="6.5" />
+            <TRANSLATION x="0" y="0" z="-2" />
             <DESCENDANTS>
                 <DESCENDANT id="disks" />
                 <DESCENDANT id="rings" />
@@ -367,7 +367,7 @@
         <NODE id="ringObject">
              <MATERIAL id="null" />
             <TEXTURE id="clear" />
-            <TRANSLATION x="-10.65" y="0" z="0.5" />
+            <TRANSLATION x="5" y="0" z="14" />
             <SCALE sx="1" sy="0.3" sz="1" />
             <DESCENDANTS>
                 <DESCENDANT id="sphere" />

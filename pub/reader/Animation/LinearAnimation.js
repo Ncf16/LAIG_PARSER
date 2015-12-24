@@ -1,4 +1,5 @@
 function LinearAnimation(scene, deltaT, control, type) {
+    
     Animation.call(this, scene, deltaT, type);
     this.control = [];
     this.time = [];

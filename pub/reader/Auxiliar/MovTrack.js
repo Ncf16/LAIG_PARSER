@@ -4,6 +4,7 @@ function Info(){
 	this.info1;
 	this.info2;
 	this.coord;
+	this.id;
 }
 
 function MovTrack(scene){
@@ -11,8 +12,12 @@ function MovTrack(scene){
 	this.totalSize = this.sides * this.sides;
 	this.pieceCnt = 12;
 	this.scene = scene;
+	this.animation = null;
 	this.lastPick = new Info();
 	this.newPick = new Info();
+	this.animationElements = new Array();
+	this.animationElements['piece'] = new Info();
+	this.animationElements['cell'] = new Info();
 	this.id = 1;
 }
 
@@ -20,18 +25,28 @@ MovTrack.prototype.resetId = function(){
 	this.id = 1;
 };
 
+MovTrack.prototype.update = function(currTime){
+
+	if(this.animation != null){
+		if (this.animation.validateAnimation(currTime))
+			this.animation.update(currTime);
+		else
+			this.animation=null;
+	}
+};
+
 MovTrack.prototype.listen = function(){
 
 	this.copy(this.lastPick, this.newPick);
 
 	if (this.scene.pickMode == false) {
-        if (this.scene.pickResults != null && this.scene.pickResults.length > 0) {
-            for (var i=0; i< this.scene.pickResults.length; i++) {
-                var obj = this.scene.pickResults[i][0];
-                if (obj)
-                {
-                    var customId = this.scene.pickResults[i][1];              
-                    this.translateId(obj,customId);
+		if (this.scene.pickResults != null && this.scene.pickResults.length > 0) {
+			for (var i=0; i< this.scene.pickResults.length; i++) {
+				var obj = this.scene.pickResults[i][0];
+				if (obj)
+				{
+					var customId = this.scene.pickResults[i][1];              
+					this.translateId(obj,customId);
                     //if(this.validMove())
                     //	console.log("move " + this.lastPick.info1 + " " + this.lastPick.info2, " to column: ", this.newPick.info1, " line: ", this.newPick.info2);
                 }
@@ -47,6 +62,7 @@ MovTrack.prototype.copy = function(dest, orig){
 	dest.info1 = orig.info1;
 	dest.info2 = orig.info2;
 	dest.coord = orig.coord;
+	dest.id = orig.id;
 };
 
 MovTrack.prototype.translateId = function(obj,id){
@@ -80,8 +96,15 @@ MovTrack.prototype.translateId = function(obj,id){
 		this.newPick.info2 = "ring";
 	}
 	
+	this.newPick.id = id;
 	this.newPick.node = obj;
 	this.newPick.coord = this.newPick.node.getCoords(this.newPick.info1,this.newPick.info2);
+
+	if(this.validMove()){
+		this.lastPick.node.move(this.lastPick.coord, this.newPick.coord);
+		this.copy(this.animationElements['piece'],this.lastPick);
+		this.copy(this.animationElements['cell'],this.newPick);
+	}
 };
 
 MovTrack.prototype.validMove = function(){
@@ -92,15 +115,9 @@ MovTrack.prototype.validMove = function(){
 };
 
 MovTrack.prototype.getPiece = function(){
-	if(this.validMove())
-		return this.lastPick;
-	else
-		return null;
+	return this.animationElements['piece'];
 };
 
 MovTrack.prototype.getCell = function(){
-	if(this.validMove())
-		return this.newPick;
-	else
-		return null;
+	return this.animationElements['cell'];
 };

@@ -1,6 +1,6 @@
 //axis default Thickness
 var DEFAULT_THICKNESS = 0.05;
-var CAMERA_DEFAULT_POSITION = [21.025890350341797, 19.130998611450195, 26.3, 0]; //[1.0,0.0,0.0,0]; 
+var CAMERA_DEFAULT_POSITION = [21.025890350341797, 30, 26.3, 0]; //[1.0,0.0,0.0,0]; 
 var CAMERA_DEFAULT_POSITION = [-2, 30, 7];
 var botPlayers = [];
 var botTypes = ["random", "greedy"];
@@ -443,25 +443,6 @@ XMLscene.prototype.replayMove = function(move) {
     play(this, move);
 }
 
-<<<<<<< HEAD
-XMLscene.prototype.logPicking = function() {
-
-    if (this.pickMode == false) {
-        if (this.pickResults != null && this.pickResults.length > 0) {
-            for (var i = 0; i < this.pickResults.length; i++) {
-                var obj = this.pickResults[i][0];
-                if (obj) {
-                    var customId = this.pickResults[i][1];
-                    console.log("Picked object: " + obj + ", with pick id " + customId);
-                }
-            }
-            this.pickResults.splice(0, this.pickResults.length);
-        }
-    }
-}
-
-=======
->>>>>>> d26eeb1c867ecd544185d52ffe154839ad5870b7
 XMLscene.prototype.display = function() {
 
     this.graph.movTrack.listen();

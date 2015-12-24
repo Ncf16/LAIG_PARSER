@@ -22,6 +22,7 @@ Node.prototype.getID = function() {
     return this.id;
 }
 Node.prototype.update = function(currTime) {
+
     if (this.graph.scene.Loop && this.animations.length > 0) {
         this.index = 0;
         this.currentAnimation = this.animations[this.index++];

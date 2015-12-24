@@ -113,6 +113,7 @@ MySceneGraph.prototype.update = function(currTime) {
     for (key in this.animatedNodes) {
         this.animatedNodes[key].update(currTime);
     }
+    this.movTrack.update(currTime);
     this.scene.Loop = false;
 };
 
