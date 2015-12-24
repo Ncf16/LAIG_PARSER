@@ -535,8 +535,10 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
     for (var i = 0; i < elems.length; i++) {
         var id = addID(elems[i], this, this.nodesID);
          var node;
-        if(id == "board")
+        if(id == "board"){
             node = new Board(this);
+            this.movTrack.board = node;
+        }
         else if(id == "hexObject")
             node = new BoardCell(this);
         else if (id == "diskObject" || id == "ringObject")

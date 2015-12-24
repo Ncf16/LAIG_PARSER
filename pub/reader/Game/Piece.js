@@ -21,7 +21,8 @@ Piece.prototype.display = function(parentElement){
 		pieceId = piece.id;
 	id = this.graph.movTrack.id;
 
-	//console.log(id);
+    console.log(this.graph.movTrack.board.getMatrix(id));
+
 	this.graph.scene.registerForPick(this.graph.movTrack.id++, this);
 	
 	var material;
