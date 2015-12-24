@@ -225,10 +225,9 @@ function handlePlay(scene, data) {
         // console.log(scene.graph.movTrack);
         // console.log(scene.graph);
         // console.log(scene);
-        scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], scene.graph.movTrack.lastPick);
-        scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], scene.graph.movTrack.newPick);
-        scene.graph.movTrack.lastPick.node.move(scene.graph.movTrack.lastPick.coord, scene.graph.movTrack.newPick.coord);
-
+        console.log(scene.graph.movTrack.lastPick);
+        console.log(scene.graph.movTrack.newPick);
+        scene.graph.movTrack.animate();
         if (data['nextPlayer'] === 0) {
             scene.gameOver = true;
 

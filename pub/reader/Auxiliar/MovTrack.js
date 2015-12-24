@@ -98,6 +98,17 @@ MovTrack.prototype.translateId = function(obj, id) {
     this.validateMove();
 };
 
+MovTrack.prototype.animate = function() {
+    if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
+        return false;
+    else {
+        this.copy(this.animationElements['piece'], this.lastPick);
+        this.copy(this.animationElements['cell'], this.newPick);
+        this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
+        return true;
+    }
+}
+
 MovTrack.prototype.validateMove = function() {
     //chamar a função da scene que valida os movimentos
     convertToProlog(this.lastPick.info1, this.lastPick.info2);

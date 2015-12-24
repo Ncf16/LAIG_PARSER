@@ -69,7 +69,7 @@ play(Tab,Player,_,NewTab,_,BotMove):-bot(Player),!,playMode([BotMode,Player|[]])
 %play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
 play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-getMoveCol(HumanMove,PosC),getMoveLine(HumanMove,PosL),getMovePiece(HumanMove,Piece),validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),
-applyMove(Tab,NewTab,[PosC,PosL,NewPiece]),createHumanMove(HumanMove,NewPiece,ReturnMove).
+applyMove(Tab,NewTab,[PosC,PosL,NewPiece]),createHumanMove(HumanMove,NewPiece,ReturnMove),write('Line '),write(PosL),write(' Col '),write(PosC),write('   '),write(ReturnMove),nl.
 
 play(_,_,_,_,_,Message):-Message="MOVE FAIL".
 %%check play bots
