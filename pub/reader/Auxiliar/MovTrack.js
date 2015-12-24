@@ -1,10 +1,10 @@
-function Info(){
-	this.node = null;
-	this.obj;
-	this.info1;
-	this.info2;
-	this.coord;
-	this.id;
+function Info() {
+    this.node = null;
+    this.obj;
+    this.info1;
+    this.info2;
+    this.coord;
+    this.id;
 }
 
 function MovTrack(scene){
@@ -22,108 +22,129 @@ function MovTrack(scene){
 	this.board = null;
 }
 
-MovTrack.prototype.resetId = function(){
-	this.id = 1;
+MovTrack.prototype.resetId = function() {
+    this.id = 1;
 };
 
-MovTrack.prototype.update = function(currTime){
+MovTrack.prototype.update = function(currTime) {
 
-	if(this.animation != null){
-		if (this.animation.validateAnimation(currTime))
-			this.animation.update(currTime);
-		else
-			this.animation=null;
-	}
-};
-
-MovTrack.prototype.listen = function(){
-
-	this.copy(this.lastPick, this.newPick);
-
-	if (this.scene.pickMode == false) {
-		if (this.scene.pickResults != null && this.scene.pickResults.length > 0) {
-			for (var i=0; i< this.scene.pickResults.length; i++) {
-				var obj = this.scene.pickResults[i][0];
-				if (obj)
-				{
-					var customId = this.scene.pickResults[i][1];              
-					this.translateId(obj,customId);
-                    //if(this.validMove())
-                    //	console.log("move " + this.lastPick.info1 + " " + this.lastPick.info2, " to column: ", this.newPick.info1, " line: ", this.newPick.info2);
-                }
-            }
-            this.scene.pickResults.splice(0,this.scene.pickResults.length);
-        }       
+    if (this.animation != null) {
+        if (this.animation.validateAnimation(currTime))
+            this.animation.update(currTime);
+        else{
+            var orig = this.animationElements['piece'].coord;
+            var dest = this.animationElements['cell'].coord;
+            this.board.newPos(this.animationElements['piece'].id,[dest[0]-orig[0],dest[1]-orig[1],dest[2]-orig[2]]);
+            this.animation = null;
+        }
     }
 };
 
-MovTrack.prototype.copy = function(dest, orig){
-	dest.node = orig.node;
-	dest.obj = orig.obj;
-	dest.info1 = orig.info1;
-	dest.info2 = orig.info2;
-	dest.coord = orig.coord;
-	dest.id = orig.id;
+MovTrack.prototype.listen = function() {
+
+    this.copy(this.lastPick, this.newPick);
+
+    if (this.scene.pickMode == false) {
+        if (this.scene.pickResults != null && this.scene.pickResults.length > 0) {
+            for (var i = 0; i < this.scene.pickResults.length; i++) {
+                var obj = this.scene.pickResults[i][0];
+                if (obj) {
+                    var customId = this.scene.pickResults[i][1];
+                    this.translateId(obj, customId);
+                    //if(this.validateMove())
+                    // console.log(customId, "move " + this.lastPick.info1 + " " + this.lastPick.info2, " to column: ", this.newPick.info1, " line: ", this.newPick.info2);
+                }
+            }
+            this.scene.pickResults.splice(0, this.scene.pickResults.length);
+        }
+    }
 };
 
-MovTrack.prototype.translateId = function(obj,id){
-
-	
-	if(id > 0 && id < this.totalSize + 1){
-		var col = (id -1) % this.sides;
-		var lin = Math.floor((id-1)/this.sides);
-		this.newPick.obj = "cell";
-		this.newPick.info1 = col;
-		this.newPick.info2 = lin;
-	}
-	else if(id > this.totalSize && id < this.totalSize + 1 + this.pieceCnt){
-		this.newPick.obj = "piece";
-		this.newPick.info1 = "white";
-		this.newPick.info2 = "disk";
-	}
-	else if (id > this.totalSize + this.pieceCnt && id < this.totalSize + 1 + 2*this.pieceCnt){
-		this.newPick.obj = "piece";
-		this.newPick.info1 = "white";
-		this.newPick.info2 = "ring";
-	}
-	else if (id > this.totalSize + 2*this.pieceCnt && id < this.totalSize + 1 + 3*this.pieceCnt){
-		this.newPick.obj = "piece";
-		this.newPick.info1 = "black";
-		this.newPick.info2 = "disk";
-	}
-	else if (id > this.totalSize + 3*this.pieceCnt && id < this.totalSize + 1 + 4*this.pieceCnt){
-		this.newPick.obj = "piece";
-		this.newPick.info1 = "black";
-		this.newPick.info2 = "ring";
-	}
-	
-	this.newPick.id = id;
-	this.newPick.node = obj;
-	this.newPick.coord = this.newPick.node.getCoords(this.newPick.info1,this.newPick.info2);
-
-	if(this.validMove()){
-		this.copy(this.animationElements['piece'],this.lastPick);
-		this.copy(this.animationElements['cell'],this.newPick);
-		this.animate();
-	}
+MovTrack.prototype.copy = function(dest, orig) {
+    dest.node = orig.node;
+    dest.obj = orig.obj;
+    dest.info1 = orig.info1;
+    dest.info2 = orig.info2;
+    dest.coord = orig.coord;
+    dest.id = orig.id;
 };
 
-MovTrack.prototype.animate = function(){
-	if(this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
-		return false;
-	
-	this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
-	return true;
+MovTrack.prototype.translateId = function(obj, id) {
+
+
+    if (id > 0 && id < this.totalSize + 1) {
+        var col = (id - 1) % this.sides;
+        var lin = Math.floor((id - 1) / this.sides);
+        this.newPick.obj = "cell";
+        this.newPick.info1 = col;
+        this.newPick.info2 = lin;
+    } else if (id > this.totalSize && id < this.totalSize + 1 + this.pieceCnt) {
+        this.newPick.obj = "piece";
+        this.newPick.info1 = "white";
+        this.newPick.info2 = "disk";
+    } else if (id > this.totalSize + this.pieceCnt && id < this.totalSize + 1 + 2 * this.pieceCnt) {
+        this.newPick.obj = "piece";
+        this.newPick.info1 = "white";
+        this.newPick.info2 = "ring";
+    } else if (id > this.totalSize + 2 * this.pieceCnt && id < this.totalSize + 1 + 3 * this.pieceCnt) {
+        this.newPick.obj = "piece";
+        this.newPick.info1 = "black";
+        this.newPick.info2 = "disk";
+    } else if (id > this.totalSize + 3 * this.pieceCnt && id < this.totalSize + 1 + 4 * this.pieceCnt) {
+        this.newPick.obj = "piece";
+        this.newPick.info1 = "black";
+        this.newPick.info2 = "ring";
+    }
+
+    this.newPick.id = id;
+    this.newPick.node = obj;
+    this.newPick.coord = this.newPick.node.getCoords(this.newPick.info1, this.newPick.info2);
+
+    this.validateMove();
+};
+
+MovTrack.prototype.animate = function() {
+    if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
+        return false;
+
+    this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
+    return true;
 }
 
-MovTrack.prototype.validMove = function(){
-	return (this.lastPick.node!= null && this.newPick.node != null && this.lastPick.obj == "piece" && this.newPick.obj == "cell");
+MovTrack.prototype.validateMove = function() {
+
+    if (this.lastPick.node != null && this.newPick.node != null && this.lastPick.obj == "piece" && this.newPick.obj == "cell") {
+        this.scene.moveSelected = true;
+        this.copy(this.animationElements['piece'], this.lastPick);
+        this.copy(this.animationElements['cell'], this.newPick);
+        play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
+        this.animate();
+    }
 };
 
-MovTrack.prototype.getPiece = function(){
-	return this.animationElements['piece'];
+function convertToProlog(colour, pieceType) {
+   
+    switch (colour) {
+        case "black":
+            if (pieceType == "ring")
+                return 3;
+            else
+                return 4;
+            break;
+        case "white":
+            if (pieceType == "ring")
+                return 1;
+            else
+                return 2;
+
+            break;
+    }
 };
 
-MovTrack.prototype.getCell = function(){
-	return this.animationElements['cell'];
+MovTrack.prototype.getPiece = function() {
+    return this.animationElements['piece'];
+};
+
+MovTrack.prototype.getCell = function() {
+    return this.animationElements['cell'];
 };

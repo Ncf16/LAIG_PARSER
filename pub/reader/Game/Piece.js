@@ -8,6 +8,8 @@ function Piece(graph){
     this.origin = [0,0,0];
     this.deltaY = 3;
     this.deltaT = 1.2;
+
+    this.debug = 0;
 }
 
 Piece.prototype = Object.create(Node.prototype);
@@ -20,9 +22,6 @@ Piece.prototype.display = function(parentElement){
 	if(piece != null)
 		pieceId = piece.id;
 	id = this.graph.movTrack.id;
-
-    console.log(this.graph.movTrack.board.getMatrix(id));
-
 	this.graph.scene.registerForPick(this.graph.movTrack.id++, this);
 	
 	var material;
@@ -55,6 +54,8 @@ Piece.prototype.display = function(parentElement){
 
         if (this.graph.movTrack.animation != null && id == pieceId)
             this.graph.movTrack.animation.apply();
+        else
+            this.graph.movTrack.board.apply(id);
         
         //if Node exists calls recursily, else displays that Node doesn't exist
         if (this.descendents[i] != null)

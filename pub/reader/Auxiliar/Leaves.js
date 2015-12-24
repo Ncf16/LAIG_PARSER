@@ -8,8 +8,6 @@ function Leaf(graph) {
     this.graph = graph;
     this.args = [];
     this.stillChecking = false;
-    //debug
-    this.repeat = 0;
 };
 Leaf.prototype.update = function(currTime) {};
 Leaf.prototype.setID = function(newID) {
