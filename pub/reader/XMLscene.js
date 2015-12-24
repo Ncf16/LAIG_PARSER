@@ -27,7 +27,6 @@ var player2Color = "white";
 function XMLscene() {
     CGFscene.call(this);
     this.Loop = false;
-    this.nTurns = 0;
     this.returnsToStart = false;
     this.gui = null;
     this.player1 = player1Color;
@@ -58,7 +57,8 @@ function XMLscene() {
     this.cameraToMovePos.phi = 2.2428771187404;
     this.cameraToMovePos.theta = 0.6280374899026;
     this.animationPlaying = false;
-    this.moveSelected = false;
+    this.answer = false;
+    this.valid = false;
     /*
     var point1 = new Object();
     point1.radius = 1.7320508075689;
@@ -181,6 +181,7 @@ function incStat(scene, player, move) {
 };
 
 function play(scene, move) {
+    console.log("HERE");
     if (!scene.animationPlaying && scene.gameStarted && !scene.play && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected)) { //    console.log(scene.currentBoard[0], JSON.stringify([0, 0, 3]));
         /*  scene.currentBoard=[
                              [3,0,0,0,0,0],
@@ -191,7 +192,6 @@ function play(scene, move) {
                                       [3,3,3,3,3,3],
                                         [3,3,3,3,3,3]]*/
         scene.play = true;
-        scene.nTurns++;
         console.log("currentPlayer", scene.currentPlayer);
         makeRequest("play", [JSON.stringify(scene.currentBoard), scene.currentPlayer, JSON.stringify(move)], (function(data) {
 
@@ -204,27 +204,44 @@ function play(scene, move) {
 };
 
 function handlePlay(scene, data) {
+    scene.moveSelected = false;
     if (data['message'].indexOf(FAILURE_MESSAGE) == -1) {
-        if (data['nextPlayer'] !== 0) { //DIST != 0
+        this.valid = true;
 
-            console.log(data);
-            var newBoard = JSON.parse(data['newPlayer']);
-            var newMove = JSON.parse(data['message']);
-            scene.boards.push(newBoard);
-            scene.currentBoard = newBoard;
-            scene.moves.push(newMove);
-            nextPlayer(scene);
-            console.log(scene.boards, scene.moves);
-            scene.play = false;
-            //scene.updateBoard(newMove);
-            //  scene.placePieceInBoard(newMove);
-        } else {
+
+        console.log(data);
+        var newBoard = JSON.parse(data['newPlayer']);
+        var newMove = JSON.parse(data['message']);
+        scene.boards.push(newBoard);
+        scene.currentBoard = newBoard;
+        scene.moves.push(newMove);
+        nextPlayer(scene);
+        console.log(scene.boards, scene.moves);
+        scene.play = false;
+        //scene.updateBoard(newMove);
+        //  scene.placePieceInBoard(newMove);
+        console.log(scene.graph.movTrack.lastPick.node);
+        // console.log(scene.graph.movTrack.lastPick);
+        // console.log(scene.graph.movTrack);
+        // console.log(scene.graph);
+        // console.log(scene);
+        scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], scene.graph.movTrack.lastPick);
+        scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], scene.graph.movTrack.newPick);
+        scene.graph.movTrack.lastPick.node.move(scene.graph.movTrack.lastPick.coord, scene.graph.movTrack.newPick.coord);
+
+        if (data['nextPlayer'] === 0) {
             scene.gameOver = true;
 
             scene.endStatus = data['message'];
         }
-    } else
+    } else {
         scene.gameError = true;
+        this.valid = false;
+        console.log("ERROR", data);
+
+    }
+    console.log("HAVE ASNWERS");
+    this.answer = true;
 
 };
 
@@ -463,9 +480,7 @@ XMLscene.prototype.display = function() {
     this.setDefaultAppearance();
     this.axis.display();
     if (!this.playingAnimation) {
-        /*if (this.nTurns < 2) {
-            play(this, []);
-        }*/
+        //add play if bot
         if (this.replayOfGame) {
             var moveToReplay = this.moves[this.moves.length - 1];
             this.moves.splice(this.moves.length - 1, 1);

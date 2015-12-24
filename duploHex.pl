@@ -57,14 +57,14 @@ initialize(_,_,_,_,Message):-Message="FAIL".
 
 % MOVE :[PosL,PosC,NewPiece,Piece]
 validatePlayer(Player):-getDisk(Player,Disk),getRing(Player,Ring),(validateNumberOfPieces(Player,Disk); validateNumberOfPieces(Player,Ring)).
-/*
+
 %play(Tab,Player,Move,NewTab,Dist,ReturnMove).
 play(Tab,Player,_,_,Dist,Message):-checkEndGame(Tab,Player,Dist),Dist=:=0,Message="CURRENT PLAYER WON",!.
 
 play(Tab,Player,_,_,Dist,Message):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!,Message="OTHER PLAYER WON".
 
 play(_,Player,_,_,_,Message):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPlayer)),!,Message="DRAW".
-*/
+
 play(Tab,Player,_,NewTab,_,BotMove):-bot(Player),!,playMode([BotMode,Player|[]]),playBot(BotMode,Tab,NewTab,Player,BotMove).
 %play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
@@ -85,6 +85,8 @@ playHuman(addPiece,Tab,NewTab,Player):-moveAddPiece(Tab,NewTab,Player).
 retract(_,_,Message):-Message="OK",playMode(players),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))).
 retract(_,_,Message):-Message="OK",retract((bot(_))),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))). 
 retract(_,_,Message):-Message="RETRACT FAIL".
+
+createHumanMove(HumanMove,NewPiece,[Line,Col,NewPiece,Piece]):-getMoveLine(HumanMove,Line),getMoveCol(HumanMove,Col),getMovePiece(HumanMove,Piece).
 /*****************************************************************************************************************************************/
 %%Gets
 
