@@ -2,8 +2,7 @@ function Piece(graph){
     Node.call(this,graph);
 
     this.xStackPos = 5;
-    this.yStackPosW = 12;
-    this.yStackPosB = 10;
+    this.yStackPos = 14;
     this.deltaObj = 2;
     this.origin = [0,0,0];
     this.deltaY = 3;
@@ -76,19 +75,19 @@ Piece.prototype.display = function(parentElement){
 
 Piece.prototype.getCoords = function(color,type){
 	if(color == "white" && type=="disk"){
-		var coords = [this.xStackPos,0,this.yStackPosW];
+		var coords = [this.xStackPos-this.deltaObj,0,this.yStackPos];
 		return coords;
 	}
 	else if(color == "white" && type=="ring"){
-		var coords = [this.xStackPos,0,this.yStackPosW+this.deltaObj];
+		var coords = [this.xStackPos,0,this.yStackPos];
 		return coords;
 	}
 	else if(color == "black" && type=="disk"){
-		var coords = [this.xStackPos,0,this.yStackPosB];
+		var coords = [this.xStackPos-this.deltaObj,0,this.yStackPos-this.deltaObj];
 		return coords;
 	}
 	else if(color == "black" && type=="ring"){
-		var coords = [this.xStackPos,0,this.yStackPosB+this.deltaObj];
+		var coords = [this.xStackPos,0,this.yStackPos-this.deltaObj];
 		return coords;
 	}
 }

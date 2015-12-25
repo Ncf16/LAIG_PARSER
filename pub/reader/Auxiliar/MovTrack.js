@@ -51,8 +51,6 @@ MovTrack.prototype.listen = function() {
                 if (obj) {
                     var customId = this.scene.pickResults[i][1];
                     this.translateId(obj, customId);
-                    //if(this.validateMove())
-                    // console.log(customId, "move " + this.lastPick.info1 + " " + this.lastPick.info2, " to column: ", this.newPick.info1, " line: ", this.newPick.info2);
                 }
             }
             this.scene.pickResults.splice(0, this.scene.pickResults.length);
