@@ -1,6 +1,6 @@
 :- use_module(library(clpfd)).
 :- expects_dialect(sicstus).
-:- [includes],[printBoard],[utilities].
+:- [includes].
 :-use_module(library(random)).
 :-use_module(library(lists)).
 %%Which Player is the bot

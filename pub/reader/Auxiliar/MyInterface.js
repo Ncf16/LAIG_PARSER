@@ -25,3 +25,11 @@ MyInterface.prototype.init = function(application) {
 
     return true;
 };
+
+MyInterface.prototype.addCameraDropdown = function(scene,array) {
+
+    this.scene = scene;
+    this.game.add(this.scene, 'rotateCamera',array).onChange((function() {
+    	this.scene.teste();
+    }).bind(this));
+};

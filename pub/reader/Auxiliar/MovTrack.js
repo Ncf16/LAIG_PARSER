@@ -109,7 +109,7 @@ MovTrack.prototype.animate = function() {
     this.scene.animationPlaying = true;
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
     return true;
-}
+};
 
 MovTrack.prototype.validateMove = function() {
 

@@ -4,21 +4,11 @@ function MyCamera(fov, near, far, position, target) {
     this.calcRadius();
     this.calcAngles();
     this.updateZeros();
-    console.log(position);
-    console.log(this.radius,
-        this.phi,
-        this.theta, 0
-    );
+
 };
 MyCamera.prototype = Object.create(CGFcamera.prototype);
 MyCamera.prototype.constructor = MyCamera;
-MyCamera.prototype.setTheta = function(angle) {
-    this.theta = truncRadian(angle);
-};
-MyCamera.prototype.addTheta = function(angle) {
-    this.theta += angle;
-    this.theta = truncRadian(this.theta);
-};
+
 MyCamera.prototype.setTheta = function(angle) {
     this.theta = angle;
 };
@@ -33,15 +23,7 @@ MyCamera.prototype.updateZeros = function() {
     this.phiZero = this.phi;
     this.radiusZero = this.radius;
 };
-MyCamera.prototype.addPhi = function(angle) {
-    this.phi += angle;
-    theta
-    if (this.phi >= Math.PI)
-        this.phi = Math.PI;
-    else
-    if (this.phi <= 0)
-        this.phi = 0;
-};
+
 MyCamera.prototype.orbit = function(a, b) {
     //prevent changing 2 Q (isto é não pode haver mudanças de sinal em + que 1 das coordenadas)
     var c = vec4.sub(vec4.create(), this.position, this.target);
