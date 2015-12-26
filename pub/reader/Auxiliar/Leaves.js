@@ -196,6 +196,24 @@ LeafHex.prototype.parseLeaf = function(args, scene) {
     this.element = new Hex(scene);
 };
 
+LeafTorus.prototype = Object.create(Leaf.prototype);
+LeafTorus.prototype.constructor = LeafTorus;
+
+function LeafTorus() {
+    Leaf.call(this);
+}
+
+LeafTorus.prototype.parseLeaf = function(args, scene) {
+    this.type = "Torus";
+    var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
+    var tempIndex = tempArgs.indexOf("inf");
+    if (tempIndex != -1) {
+        console.error("Invalid paramenter in the creation of a sphere ( " + tempArgs[tempIndex] + " ), this leaf will be ignored");
+    } else {
+        this.element = new Torus(scene, tempArgs[0], tempArgs[1], tempArgs[2], tempArgs[3]);
+    }
+};
+
 //TODO REPLACE WITH PROPER CONSTRUCTORES
 LeafPlane.prototype = Object.create(Leaf.prototype);
 LeafPlane.prototype.constructor = LeafPlane;

@@ -33,6 +33,10 @@
             <file path="textures/hexCell.png" />
             <amplif_factor s="1" t="1" />
         </TEXTURE>
+        <TEXTURE id="transparency">
+            <file path="textures/transparent.png" />
+            <amplif_factor s="1" t="1" />
+        </TEXTURE>
     </TEXTURES>
     <MATERIALS>
         <MATERIAL id="defaultMaterial">
@@ -90,6 +94,7 @@
         <LEAF id="rectangleAnimated" type="rectangle" args="-0.5 0.5 0.5 -0.5" />
         <LEAF id="sphere" type="sphere" args="0.65 20 20" />
         <LEAF id="hex" type="hex" />
+        <LEAF id="torus" type="torus" args="0.7 0.1 20 20"/>
     </LEAVES>
     <NODES>
         <ROOT id="root" />
@@ -355,11 +360,11 @@
         </NODE>
         <NODE id="ringObject">
             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
+            <TEXTURE id="transparency" />
             <TRANSLATION x="5" y="0" z="14" />
             <SCALE sx="1" sy="0.3" sz="1" />
             <DESCENDANTS>
-                <DESCENDANT id="sphere" />
+                <DESCENDANT id="torus" />
             </DESCENDANTS>
         </NODE>
         <NODE id="line1">
