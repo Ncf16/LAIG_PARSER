@@ -19,6 +19,7 @@ MyCamera.prototype.setRadius = function(radius) {
     this.radius = radius;
 };
 MyCamera.prototype.updateZeros = function() {
+    console.log("updateZeros");
     this.thetaZero = this.theta;
     this.phiZero = this.phi;
     this.radiusZero = this.radius;
@@ -43,7 +44,8 @@ MyCamera.prototype.orbit = function(a, b) {
     };
     vec4.add(this.position, this.target, e);
     this.direction = this.calculateDirection();
-}
+};
+
 MyCamera.prototype.updatePos = function() {
     var newPos = [this.radius * Math.sin(this.theta) * Math.sin(this.phi),
         this.radius * Math.cos(this.phi),

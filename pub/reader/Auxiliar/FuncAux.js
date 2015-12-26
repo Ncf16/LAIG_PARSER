@@ -20,10 +20,27 @@ function cartesianToSphericCoords(cartesianCoords) {
     return [radius, Math.atan2(cartesianCoords[0], cartesianCoords[1]), Math.acos(cartesianCoords[1] / radius)];
 };
 
+function mod(number1, number2) {
+    return number1 - Math.floor(number1 / number2) * number2
+};
+/*
+Beware in many languages the modulo operation returns a value with the same sign as the dividend 
+(like C, C++, C#, JavaScript, full list here). This requires a custom mod function like so:
+*/
+function differenceBetweenAngles(sourceA, targetA) {
+
+    var temp;
+    temp = targetA - sourceA
+    temp = mod((temp + Math.PI), 2 * Math.PI) - Math.PI;
+    return temp;
+};
+
 function distanceBetweenTwoSphericPoint(point1, point2) {
+    console.log(point1.radius, point1.theta, point1.phi);
+    console.log(point2.radius, point2.theta, point2.phi);
     return [point1.radius - point2.radius,
-        point1.theta - point2.theta,
-        point1.phi - point2.phi
+        differenceBetweenAngles(point1.theta, point2.theta),
+        differenceBetweenAngles(point1.phi, point2.phi)
     ];
 };
 
