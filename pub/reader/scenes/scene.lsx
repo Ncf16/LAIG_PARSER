@@ -33,10 +33,6 @@
             <file path="textures/hexCell.png" />
             <amplif_factor s="1" t="1" />
         </TEXTURE>
-        <TEXTURE id="transparency">
-            <file path="textures/transparent.png" />
-            <amplif_factor s="1" t="1" />
-        </TEXTURE>
     </TEXTURES>
     <MATERIALS>
         <MATERIAL id="defaultMaterial">
