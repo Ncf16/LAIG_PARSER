@@ -356,7 +356,7 @@
         </NODE>
         <NODE id="ringObject">
             <MATERIAL id="null" />
-            <TEXTURE id="transparency" />
+            <TEXTURE id="clear" />
             <TRANSLATION x="5" y="0" z="14" />
             <SCALE sx="1" sy="0.3" sz="1" />
             <DESCENDANTS>
