@@ -7,19 +7,19 @@ function Info() {
     this.id;
 }
 
-function MovTrack(scene){
-	this.sides = 7;
-	this.totalSize = this.sides * this.sides;
-	this.pieceCnt = 12;
-	this.scene = scene;
-	this.animation = null;
-	this.lastPick = new Info();
-	this.newPick = new Info();
-	this.animationElements = new Array();
-	this.animationElements['piece'] = new Info();
-	this.animationElements['cell'] = new Info();
-	this.id = 1;
-	this.board = null;
+function MovTrack(scene) {
+    this.sides = 7;
+    this.totalSize = this.sides * this.sides;
+    this.pieceCnt = 12;
+    this.scene = scene;
+    this.animation = null;
+    this.lastPick = new Info();
+    this.newPick = new Info();
+    this.animationElements = new Array();
+    this.animationElements['piece'] = new Info();
+    this.animationElements['cell'] = new Info();
+    this.id = 1;
+    this.board = null;
 }
 
 MovTrack.prototype.resetId = function() {
@@ -31,11 +31,12 @@ MovTrack.prototype.update = function(currTime) {
     if (this.animation != null) {
         if (this.animation.validateAnimation(currTime))
             this.animation.update(currTime);
-        else{
+        else {
             var orig = this.animationElements['piece'].coord;
             var dest = this.animationElements['cell'].coord;
-            this.board.newPos(this.animationElements['piece'].id,[dest[0]-orig[0],dest[1]-orig[1],dest[2]-orig[2]]);
+            this.board.newPos(this.animationElements['piece'].id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]]);
             this.animation = null;
+            this.scene.animationPlaying = false;
         }
     }
 };
@@ -105,6 +106,7 @@ MovTrack.prototype.animate = function() {
     if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
         return false;
 
+    this.scene.animationPlaying = true;
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
     return true;
 }
@@ -116,12 +118,12 @@ MovTrack.prototype.validateMove = function() {
         this.copy(this.animationElements['piece'], this.lastPick);
         this.copy(this.animationElements['cell'], this.newPick);
         play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
-        this.animate();
+        // this.animate();
     }
 };
 
 function convertToProlog(colour, pieceType) {
-   
+
     switch (colour) {
         case "black":
             if (pieceType == "ring")

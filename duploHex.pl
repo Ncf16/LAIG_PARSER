@@ -1,6 +1,6 @@
 :- use_module(library(clpfd)).
 :- expects_dialect(sicstus).
-:- [includes].
+:- [includes],[printBoard],[utilities].
 :-use_module(library(random)).
 :-use_module(library(lists)).
 %%Which Player is the bot
@@ -35,16 +35,17 @@ initStats(_,Tab,Message):-Message="OK",asserta((stats(white,[24,24]))),asserta((
 						[3,3,3,3,3,3,3]
 						]).*/
 initStats(_,_,Message):-Message="FAIL".
+tab(t,[[2,4,0,0,0,0,0],[2,4,0,0,0,0,0],[0,4,2,0,0,0,0],[0,2,4,0,0,0,0],[0,0,4,2,0,0,0],[0,0,0,4,2,0,0],[0,0,0,0,4,0,0]] ).
 
-initialize(Player,Mode,_,_,Message):-Message="OK",playerTypes(PlayerTypes),botTypes(BotTypes),belongs(Player,PlayerTypes),belongs(Mode,BotTypes),
+initialize(Player,Mode,_,_,Message):-Message="OK 1 H Player",playerTypes(PlayerTypes),botTypes(BotTypes),belongs(Player,PlayerTypes),belongs(Mode,BotTypes),
 getNextPlayer(Player,Playerbot),asserta((bot(Playerbot))),asserta((playMode([Mode,Playerbot]))).
 
-initialize(Mode,Player,_,_,Message):-Message="OK",playerTypes(PlayerTypes),botTypes(BotTypes),belongs(Player,PlayerTypes),belongs(Mode,BotTypes),
+initialize(Mode,Player,_,_,Message):-Message="OK 1 H Player",playerTypes(PlayerTypes),botTypes(BotTypes),belongs(Player,PlayerTypes),belongs(Mode,BotTypes),
 getNextPlayer(Player,Playerbot),asserta((bot(Playerbot))),asserta((playMode([Mode,Playerbot]))) .
 
-initialize(Player1,Player2,_,_,Message):-Message="OK",playerTypes(PlayerTypes),belongs(Player1,PlayerTypes),belongs(Player2,PlayerTypes),asserta((playMode(players))).
+initialize(Player1,Player2,_,_,Message):-Message="OK 2 H Players",playerTypes(PlayerTypes),belongs(Player1,PlayerTypes),belongs(Player2,PlayerTypes),asserta((playMode(players))).
 
-initialize(Bot,Bot1,_,_,Message):-Message="OK", botTypes(BotTypes),belongs(Bot,BotTypes),belongs(Bot1,BotTypes),
+initialize(Bot,Bot1,_,_,Message):-Message="OK 0 H Players", botTypes(BotTypes),belongs(Bot,BotTypes),belongs(Bot1,BotTypes),
 asserta((bot(white))),asserta((bot(black))),asserta((playMode([Bot,black]))),asserta((playMode([Bot1,white]))).
 
 initialize(_,_,_,_,Message):-Message="FAIL".
@@ -59,9 +60,9 @@ initialize(_,_,_,_,Message):-Message="FAIL".
 validatePlayer(Player):-getDisk(Player,Disk),getRing(Player,Ring),(validateNumberOfPieces(Player,Disk); validateNumberOfPieces(Player,Ring)).
 
 %play(Tab,Player,Move,NewTab,Dist,ReturnMove).
-play(Tab,Player,_,_,Dist,Message):-checkEndGame(Tab,Player,Dist),Dist=:=0,Message="CURRENT PLAYER WON",!.
+play(Tab,Player,_,_,Dist,Message):-checkEndGame(Tab,Player,Dist),Dist=:=0,!,string_concat(Player," PLAYER WON",Message).
 
-play(Tab,Player,_,_,Dist,Message):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!,Message="OTHER PLAYER WON".
+play(Tab,Player,_,_,Dist,Message):-getNextPlayer(Player,NextPlayer),checkEndGame(Tab,NextPlayer,Dist),Dist=:=0,!,string_concat(NextPlayer,"  PLAYER WON",Message).
 
 play(_,Player,_,_,_,Message):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPlayer)),!,Message="DRAW".
 
@@ -69,7 +70,8 @@ play(Tab,Player,_,NewTab,_,BotMove):-bot(Player),!,playMode([BotMode,Player|[]])
 %play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
 play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-getMoveCol(HumanMove,PosC),getMoveLine(HumanMove,PosL),getMovePiece(HumanMove,Piece),validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),
-applyMove(Tab,NewTab,[PosC,PosL,NewPiece]),createHumanMove(HumanMove,NewPiece,ReturnMove),write('Line '),write(PosL),write(' Col '),write(PosC),write('   '),write(ReturnMove),nl.
+applyMove(Tab,NewTab,[PosL,PosC,NewPiece]),createHumanMove(HumanMove,NewPiece,ReturnMove).
+%,write('Line '),write(PosL),write(' Col '),write(PosC),write('   '),write(ReturnMove),nl.
 
 play(_,_,_,_,_,Message):-Message="MOVE FAIL".
 %%check play bots
@@ -77,7 +79,7 @@ playBot(random,Tab,NewTab,Player,SelectedMove):- createRandomMove(Tab,Line,Col,N
 updateStats(Player,NewPiece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
 
 playBot(greedy,Tab,NewTab,Player,SelectedMove):-numberList(NumberList),pickGreedyMove(Tab,Player,NumberList,SelectedMove),getMovePiece(SelectedMove,Piece),
-updateStats(Player,Piece,SelectedMove,Tab),write(SelectedMove),nl,applyMove(Tab,NewTab,SelectedMove).
+updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
 
 playHuman(addPiece,Tab,NewTab,Player):-moveAddPiece(Tab,NewTab,Player).
 
@@ -222,8 +224,8 @@ moveAddPiece(Tab,Tab,_).
 %%Greedy
 
 pickGreedyMove(Tab,Player,NumberList,SelectedMove):-getNextPlayer(Player,Opponent),greedyMove(Tab,Player,NumberList,UserMove,UserScore),!,
-greedyMove(Tab,Opponent,NumberList,OpponentMove,OpponentScore),!,pickMaxMove(Player,SelectedMove,UserScore,UserMove,OpponentScore,OpponentMove),write('PICK GREEDY MOVE'),nl,
-write(SelectedMove),nl.
+greedyMove(Tab,Opponent,NumberList,OpponentMove,OpponentScore),!,pickMaxMove(Player,SelectedMove,UserScore,UserMove,OpponentScore,OpponentMove).
+%,write('PICK GREEDY MOVE'),nl,write(SelectedMove),nl.
 
 pickMaxMove(Player,ConvertedMove,UserScore,_,OpponentScore,OpponentMove):- OpponentScore<UserScore,convertMove(Player,OpponentMove,ConvertedMove).
 pickMaxMove(_,UserMove,UserScore,UserMove,OpponentScore,_):-OpponentScore>=UserScore.
@@ -241,7 +243,8 @@ getValuesWithSameScore([H|T],Value,Lista,Contador):-Contador1 is Contador+1,H=\=
 
 convertMove(Player,OpponentMove,ConvertedMove):-getNextPlayer(Player,Opponent),getMovePiece(OpponentMove,OpponentPiece),equivalent(Opponent,OpponentPiece,EquivalentPiece),
 setCol(EquivalentPiece,2,OpponentMove,ConvertedMoveTemp,0),getOldPiece(OpponentMove,OpponentOldPiece),equivalent(Opponent,OpponentOldPiece,EquivalentOldPiece),
-setCol(EquivalentOldPiece,3,ConvertedMoveTemp,ConvertedMove,0),write(OpponentOldPiece+EquivalentOldPiece+ConvertedMove),nl.
+setCol(EquivalentOldPiece,3,ConvertedMoveTemp,ConvertedMove,0).
+%,write(OpponentOldPiece+EquivalentOldPiece+ConvertedMove),nl.
  
 scoreMoves(_,_,[],[],_,_).
 

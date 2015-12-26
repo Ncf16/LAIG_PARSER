@@ -45,7 +45,6 @@ function XMLscene() {
     this.gameOver = false;
     this.gameError = false;
     this.currTime = 0;
-    this.playCountDown = this.maxMoveTime; //so we can limit the time
     this.replayOfGame = false;
     this.playingAnimation = false;
     this.cameraPhiDelta = 0;
@@ -59,6 +58,9 @@ function XMLscene() {
     this.animationPlaying = false;
     this.answer = false;
     this.valid = false;
+    this.changePlayer = false;
+    this.moveTime = 0;
+    this.startPlay = 0;
     /*
     var point1 = new Object();
     point1.radius = 1.7320508075689;
@@ -98,6 +100,7 @@ function XMLscene() {
 
             }).bind(this));
             this.parsePlayers();
+            this.changePlayer = true;
         }
 
     }).bind(this);
@@ -118,6 +121,8 @@ function XMLscene() {
                 initBoard(this, JSON.parse(data.target.response));
 
             }).bind(this));
+            this.parsePlayers();
+            this.changePlayer = true;
         }
     }).bind(this)
 
@@ -128,10 +133,10 @@ function XMLscene() {
         // play(this);
 
         //versão + simples
-        /* this.undoPlacement(this.moves[this.moves.length - 1]);
+       // this.undoPlacement(this.moves[this.moves.length - 1]);
          this.boards.splice(this.boards.length - 1, 1);
          this.currentBoard = this.boards[this.boards.length - 1];
-         this.moves.splice(this.moves.length - 1, 1);*/
+         this.moves.splice(this.moves.length - 1, 1);
 
     }).bind(this);
 };
@@ -139,13 +144,12 @@ XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
 
 XMLscene.prototype.parsePlayers = function() {
-    if (botTypes.indexOf(this.player1))
+    if (botTypes.indexOf(this.player1) >= 0)
         botPlayers.push(player1Color);
 
-    if (botTypes.indexOf(this.player2))
+    if (botTypes.indexOf(this.player2) >= 0)
         botPlayers.push(player2Color);
-
-}
+};
 
 function initBoard(scene, response) {
 
@@ -199,8 +203,6 @@ function play(scene, move) {
 
         }).bind(scene));
     }
-
-
 };
 
 function handlePlay(scene, data) {
@@ -216,17 +218,12 @@ function handlePlay(scene, data) {
         scene.currentBoard = newBoard;
         scene.moves.push(newMove);
         nextPlayer(scene);
-        console.log(scene.boards, scene.moves);
+        // console.log(scene.boards, scene.moves);
         scene.play = false;
-        //scene.updateBoard(newMove);
-        //  scene.placePieceInBoard(newMove);
-        console.log(scene.graph.movTrack.lastPick.node);
-        // console.log(scene.graph.movTrack.lastPick);
-        // console.log(scene.graph.movTrack);
-        // console.log(scene.graph);
-        // console.log(scene);
+        /*console.log(scene.graph.movTrack.lastPick.node);
         console.log(scene.graph.movTrack.lastPick);
         console.log(scene.graph.movTrack.newPick);
+        */
         scene.graph.movTrack.animate();
         if (data['nextPlayer'] === 0) {
             scene.gameOver = true;
@@ -241,11 +238,10 @@ function handlePlay(scene, data) {
     }
     console.log("HAVE ASNWERS");
     this.answer = true;
-
 };
 
 function nextPlayer(scene) {
-
+    scene.changePlayer = true;
     switch (scene.currentPlayer) {
         case player1Color:
             scene.currentPlayer = player2Color;
@@ -411,6 +407,23 @@ XMLscene.prototype.onGraphLoaded = function() {
 
 XMLscene.prototype.update = function(currTime) {
     this.currTime = currTime;
+
+    if (this.gameStarted) {
+       /* if (this.changePlayer) {
+            this.moveTime = 0;
+            this.startPlay = currTime;
+            this.changePlayer = false;
+            console.log("updatePlayTime");
+        } else {
+            this.moveTime = (this.currTime - this.startPlay) / 1000.0;
+            console.log(this.moveTime);
+            if (this.moveTime >= this.maxMoveTime) {
+                this.moveTime = 0;
+                console.log("changePlayers");
+                nextPlayer(this);
+            }
+        }*/
+    }
     if (this.graph.loadedOk) {
         this.graph.update(currTime);
     }
@@ -436,28 +449,9 @@ XMLscene.prototype.update = function(currTime) {
         this.updateCamera(currTime);
 };
 
-XMLscene.prototype.cameraAnimation = function(time) {
-    console.log(this.camera.position);
-    this.camera.currTime = 0;
-    console.log(this.camera.position, this.camera.teste);
-};
-
-XMLscene.prototype.stackDisplay = function(toStack, elementHeight, stackSize, elementPos) {
-
-    for (var i = 0; i < stackSize; i++) {
-        this.pushMatrix();
-        this.translate(elementPos[0], elementPos[1] + elementHeight * i, elementPos[2]);
-        toStack.display();
-        this.popMatrix();
-    }
-
-};
-XMLscene.prototype.loadGame = function() {
-
-};
 XMLscene.prototype.replayMove = function(move) {
     play(this, move);
-}
+};
 
 XMLscene.prototype.display = function() {
 
@@ -479,6 +473,10 @@ XMLscene.prototype.display = function() {
     this.setDefaultAppearance();
     this.axis.display();
     if (!this.playingAnimation) {
+
+        if (botPlayers.indexOf(this.currentPlayer) >= 0) {
+            play(this, []);
+        }
         //add play if bot
         if (this.replayOfGame) {
             var moveToReplay = this.moves[this.moves.length - 1];
