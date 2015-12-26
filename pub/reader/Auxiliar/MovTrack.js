@@ -10,7 +10,7 @@ function Info() {
 function MovTrack(scene) {
     this.sides = 7;
     this.totalSize = this.sides * this.sides;
-    this.pieceCnt = 12;
+    this.pieceCnt = 24;
     this.scene = scene;
     this.animation = null;
     this.lastPick = new Info();
@@ -117,8 +117,8 @@ MovTrack.prototype.validateMove = function() {
         this.scene.moveSelected = true;
         this.copy(this.animationElements['piece'], this.lastPick);
         this.copy(this.animationElements['cell'], this.newPick);
-        play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
-        // this.animate();
+        //play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
+         this.animate();
     }
 };
 

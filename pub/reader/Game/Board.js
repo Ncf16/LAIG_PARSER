@@ -1,8 +1,11 @@
 function Board(graph){
     this.scene = graph.scene;
     Node.call(this,graph);
+    this.min = 50;
+    this.max = this.min + 4 * 24 + 1;
+
     this.pieceLocation = new Array();
-    for(var id=50; id < 98; id++){
+    for(var id=this.min; id < this.max; id++){
     	var matrix = mat4.create();
     	mat4.identity(matrix);
     	this.pieceLocation[id] = matrix;

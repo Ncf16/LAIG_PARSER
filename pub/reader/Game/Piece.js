@@ -15,6 +15,8 @@ Piece.prototype = Object.create(Node.prototype);
 Piece.prototype.constructor = Piece;
 
 Piece.prototype.display = function(parentElement){
+
+    console.log(this.id);
 	
 	var piece = this.graph.movTrack.getPiece();
 	var pieceId;

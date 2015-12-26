@@ -20,7 +20,7 @@
             <diffuse r="1" g="1" b="1" a="1" />
             <specular r="1" g="1" b="1" a="1" />
         </LIGHT>
-          <LIGHT id="ligh1">
+        <LIGHT id="ligh1">
             <enable value="1" />
             <position x="-6.1" y="6" z="-6.1" w="1" />
             <ambient r="0.3" g="0.3" b="0.3" a="1" />
@@ -49,21 +49,21 @@
             <ambient r="0" g="0" b="0" a="1" />
             <emission r="1" g="1" b="1" a="1" />
         </MATERIAL>
-         <MATERIAL id="blue">
+        <MATERIAL id="blue">
             <shininess value="30" />
             <specular r="0" g="0" b="1" a="1" />
             <diffuse r="0" g="0" b="1" a="1" />
             <ambient r="0" g="0" b="0" a="1" />
             <emission r="0" g="0" b="1" a="1" />
         </MATERIAL>
-         <MATERIAL id="red">
+        <MATERIAL id="red">
             <shininess value="30" />
             <specular r="1" g="0" b="0" a="1" />
             <diffuse r="1" g="0" b="0" a="1" />
             <ambient r="0" g="0" b="0" a="1" />
             <emission r="1" g="0" b="0" a="1" />
         </MATERIAL>
-         <MATERIAL id="green">
+        <MATERIAL id="green">
             <shininess value="30" />
             <specular r="0" g="1" b="0" a="1" />
             <diffuse r="0" g="1" b="0" a="1" />
@@ -77,7 +77,7 @@
             <ambient r="0" g="0" b="0" a="1" />
             <emission r="0" g="0" b="0" a="1" />
         </MATERIAL>
-         <MATERIAL id="white">
+        <MATERIAL id="white">
             <shininess value="10" />
             <specular r="1" g="1" b="1" a="1" />
             <diffuse r="1" g="1" b="1" a="1" />
@@ -142,356 +142,212 @@
             </DESCENDANTS>
         </NODE>
         <NODE id="disks">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="disk1" />
-                <DESCENDANT id="disk2" />
-                <DESCENDANT id="disk3" />
-                <DESCENDANT id="disk4" />
-                <DESCENDANT id="disk5" />
-                <DESCENDANT id="disk6" />
-                <DESCENDANT id="disk7" />
-                <DESCENDANT id="disk8" />
-                <DESCENDANT id="disk9" />
-                <DESCENDANT id="disk10" />
-                <DESCENDANT id="disk11" />
-                <DESCENDANT id="disk12" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="rings">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ring1" />
-                <DESCENDANT id="ring2" />
-                <DESCENDANT id="ring3" />
-                <DESCENDANT id="ring4" />
-                <DESCENDANT id="ring5" />
-                <DESCENDANT id="ring6" />
-                <DESCENDANT id="ring7" />
-                <DESCENDANT id="ring8" />
-                <DESCENDANT id="ring9" />
-                <DESCENDANT id="ring10" />
-                <DESCENDANT id="ring11" />
-                <DESCENDANT id="ring12" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk1">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk2">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk3">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk4">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="disk5">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk6">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk7">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk8">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk9">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="disk10">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="disk11">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="disk12">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="diskObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring1">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring2">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring3">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring4">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="ring5">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring6">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring7">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring8">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring9">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="ring10">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="ring11">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="ring12">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="ringObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="diskObject">
-             <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <TRANSLATION x="3" y="0" z="14" />
-            <SCALE sx="1" sy="0.3" sz="1" />
-            <DESCENDANTS>
-                <DESCENDANT id="sphere" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="ringObject">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <TRANSLATION x="5" y="0" z="14" />
-            <SCALE sx="1" sy="0.3" sz="1" />
-            <DESCENDANTS>
-                <DESCENDANT id="torus" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="line1">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="line" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="line2">
-            <MATERIAL id="null" />
-            <TRANSLATION x="-1.5" y="0" z="0.866" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="line" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="line3">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <TRANSLATION x="-3" y="0" z="1.732" />
-            <DESCENDANTS>
-                <DESCENDANT id="line" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="line4">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-             <TRANSLATION x="-4.5" y="0" z="2.598" />
-            <DESCENDANTS>
-                <DESCENDANT id="line" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="line5">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-             <TRANSLATION x="-6" y="0" z="3.4641" />
-            <DESCENDANTS>
-                <DESCENDANT id="line" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="line6">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-             <TRANSLATION x="-7.5" y="0" z="4.33" />
-            <DESCENDANTS>
-                <DESCENDANT id="line" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="line7">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <TRANSLATION x="-9" y="0" z="5.1961" />
-            <DESCENDANTS>
-                <DESCENDANT id="line" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="line">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="col1" />
-                <DESCENDANT id="col2" />
-                <DESCENDANT id="col3" />
-                <DESCENDANT id="col4" />
-                <DESCENDANT id="col5" />
-                <DESCENDANT id="col6" />
-                <DESCENDANT id="col7" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="col1">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <DESCENDANTS>
-                <DESCENDANT id="hexObject" />
-            </DESCENDANTS>
-        </NODE>
-         <NODE id="col2">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <TRANSLATION x="1.5" y="0" z="0.866" />
-            <DESCENDANTS>
-                <DESCENDANT id="hexObject" />
-            </DESCENDANTS>
-        </NODE>
-          <NODE id="col3">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <TRANSLATION x="3" y="0" z="1.732" />
-            <DESCENDANTS>
-                <DESCENDANT id="hexObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="col4">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <TRANSLATION x="4.5" y="0" z="2.598" />
-            <DESCENDANTS>
-                <DESCENDANT id="hexObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="col5">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-             <TRANSLATION x="6" y="0" z="3.4641" />
-            <DESCENDANTS>
-                <DESCENDANT id="hexObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="col6">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-             <TRANSLATION x="7.5" y="0" z="4.33" />
-            <DESCENDANTS>
-                <DESCENDANT id="hexObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="col7">
-            <MATERIAL id="null" />
-            <TEXTURE id="clear" />
-            <TRANSLATION x="9" y="0" z="5.1961" />
-            <DESCENDANTS>
-                <DESCENDANT id="hexObject" />
-            </DESCENDANTS>
-        </NODE>
-        <NODE id="hexObject">
-            <MATERIAL id="white" />
-            <TEXTURE id="hexCellTex" />
-            <DESCENDANTS>
-                <DESCENDANT id="hex" />
-            </DESCENDANTS>
-        </NODE>
-    </NODES>
+           <MATERIAL id="null" />
+           <TEXTURE id="clear" />
+           <DESCENDANTS>
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+               <DESCENDANT id="diskObject" />
+           </DESCENDANTS>
+       </NODE>
+       <NODE id="rings">
+        <MATERIAL id="null" />
+        <TEXTURE id="clear" />
+        <DESCENDANTS>
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+            <DESCENDANT id="ringObject" />
+        </DESCENDANTS>
+    </NODE>
+    <NODE id="diskObject">
+     <MATERIAL id="null" />
+     <TEXTURE id="clear" />
+     <TRANSLATION x="3" y="0" z="14" />
+     <SCALE sx="1" sy="0.3" sz="1" />
+     <DESCENDANTS>
+        <DESCENDANT id="sphere" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="ringObject">
+    <MATERIAL id="null" />
+    <TEXTURE id="transparency" />
+    <TRANSLATION x="5" y="0" z="14" />
+    <SCALE sx="1" sy="0.3" sz="1" />
+    <DESCENDANTS>
+        <DESCENDANT id="torus" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="line1">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <DESCENDANTS>
+        <DESCENDANT id="line" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="line2">
+    <MATERIAL id="null" />
+    <TRANSLATION x="-1.5" y="0" z="0.866" />
+    <TEXTURE id="clear" />
+    <DESCENDANTS>
+        <DESCENDANT id="line" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="line3">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="-3" y="0" z="1.732" />
+    <DESCENDANTS>
+        <DESCENDANT id="line" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="line4">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="-4.5" y="0" z="2.598" />
+    <DESCENDANTS>
+        <DESCENDANT id="line" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="line5">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="-6" y="0" z="3.4641" />
+    <DESCENDANTS>
+        <DESCENDANT id="line" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="line6">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="-7.5" y="0" z="4.33" />
+    <DESCENDANTS>
+        <DESCENDANT id="line" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="line7">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="-9" y="0" z="5.1961" />
+    <DESCENDANTS>
+        <DESCENDANT id="line" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="line">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <DESCENDANTS>
+        <DESCENDANT id="col1" />
+        <DESCENDANT id="col2" />
+        <DESCENDANT id="col3" />
+        <DESCENDANT id="col4" />
+        <DESCENDANT id="col5" />
+        <DESCENDANT id="col6" />
+        <DESCENDANT id="col7" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="col1">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <DESCENDANTS>
+        <DESCENDANT id="hexObject" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="col2">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="1.5" y="0" z="0.866" />
+    <DESCENDANTS>
+        <DESCENDANT id="hexObject" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="col3">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="3" y="0" z="1.732" />
+    <DESCENDANTS>
+        <DESCENDANT id="hexObject" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="col4">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="4.5" y="0" z="2.598" />
+    <DESCENDANTS>
+        <DESCENDANT id="hexObject" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="col5">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="6" y="0" z="3.4641" />
+    <DESCENDANTS>
+        <DESCENDANT id="hexObject" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="col6">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="7.5" y="0" z="4.33" />
+    <DESCENDANTS>
+        <DESCENDANT id="hexObject" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="col7">
+    <MATERIAL id="null" />
+    <TEXTURE id="clear" />
+    <TRANSLATION x="9" y="0" z="5.1961" />
+    <DESCENDANTS>
+        <DESCENDANT id="hexObject" />
+    </DESCENDANTS>
+</NODE>
+<NODE id="hexObject">
+    <MATERIAL id="white" />
+    <TEXTURE id="hexCellTex" />
+    <DESCENDANTS>
+        <DESCENDANT id="hex" />
+    </DESCENDANTS>
+</NODE>
+</NODES>
 </SCENE>
