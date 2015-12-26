@@ -15,6 +15,11 @@ function truncRadian(angle) {
     return (angle % (2 * Math.PI));
 };
 
+function cartesianToSphericCoords(cartesianCoords) {
+    var radius = distanceBetweenVectors(cartesianCoords, [0, 0, 0, 0]);
+    return [radius, Math.atan2(cartesianCoords[0], cartesianCoords[1]), Math.acos(cartesianCoords[1] / radius)];
+};
+
 function distanceBetweenTwoSphericPoint(point1, point2) {
     return [point1.radius - point2.radius,
         point1.theta - point2.theta,
@@ -22,12 +27,26 @@ function distanceBetweenTwoSphericPoint(point1, point2) {
     ];
 };
 
+function equal(Element1, Element2) {
+    return Element1 == Element2;
+}
+
+function getIndex(array, element, process) {
+    var j = array.length;
+    do {
+        if (process(array[--j], element))
+            return j;
+    } while (j);
+
+    return -1;
+}
+
 function absoluteDistanceBetweenTwoSphericPoints(point1, point2) {
 
     if (point1.length != point2.length)
         return -1;
     else {
-        return distanceBetweenVectors([point1[0] * Math.sin(point1[1]) * Math.sin(point1[2]), point1[0] * Math.cos(point1[2]), point1[0] * Math.cos(point1[1]) * Math.sin(point1[2])], [point2[0] * Math.sin(point2[1]) * Math.sin(point2[2]), point2[0] * Math.cos(point2[2]), point2[0] * Math.cos(point2[1]) * Math.sin(point2[2])] )
+        return distanceBetweenVectors([point1[0] * Math.sin(point1[1]) * Math.sin(point1[2]), point1[0] * Math.cos(point1[2]), point1[0] * Math.cos(point1[1]) * Math.sin(point1[2])], [point2[0] * Math.sin(point2[1]) * Math.sin(point2[2]), point2[0] * Math.cos(point2[2]), point2[0] * Math.cos(point2[1]) * Math.sin(point2[2])])
     }
 };
 
@@ -168,10 +187,9 @@ function parseLeafAux(leave, type) {
         return new LeafPlane();
     } else if (type == "terrain") {
         return new LeafTerrain();
-    } else if(type == "torus") {
+    } else if (type == "torus") {
         return new LeafTorus();
-    }
-     else {
+    } else {
         console.warn("Invalid type of Leaf: " + type);
     }
 };
