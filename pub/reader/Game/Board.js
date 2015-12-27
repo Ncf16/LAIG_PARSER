@@ -61,9 +61,7 @@ Board.prototype.apply = function(id) {
 Board.prototype.newPos = function(id, translate, node, newPos) {
     mat4.translate(this.pieces[id].location, this.pieces[id].location, translate);
     this.pieces[id].transformation = translate;
-    this.pieces[id].node = node;
     this.pieces[id].cell = newPos;
-    console.log(id, this.pieces[id]);
 }
 
 Board.prototype.getStackByPieceType = function(pieceType) {
@@ -97,6 +95,10 @@ Board.prototype.getPieceCell = function(id) {
 
 Board.prototype.getPieceNode = function(id) {
     return this.pieces[id].node;
+};
+Board.prototype.setPieceNode = function(id, node) {
+    this.pieces[id].node = node;
+    console.log(node);
 };
 Board.prototype.getPiece = function(id) {
     return this.pieces[id];

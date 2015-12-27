@@ -12,6 +12,19 @@ function Piece(graph) {
 Piece.prototype = Object.create(Node.prototype);
 Piece.prototype.constructor = Piece;
 
+Piece.prototype.setObjects = function(idObject){
+    var id = 0;
+    if(idObject == "ringObject")
+        id = 24;
+
+    for(var i=0; i < 48; i++){
+        if(i < 24)
+            this.graph.movTrack.board.setPieceNode(50+i+id,this);
+        else
+            this.graph.movTrack.board.setPieceNode(74+i+id,this);
+    }
+}
+
 Piece.prototype.display = function(parentElement){
 	
 	var piece = this.graph.movTrack.getPiece();
