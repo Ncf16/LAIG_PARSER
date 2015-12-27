@@ -61,6 +61,7 @@
      this.moveTime = 0;
      this.startPlay = 0;
      this.rotateCamera = new Object();
+     this.piecesInfo = [];
      this.initCameraPos();
      this.initHandlers();
  };
@@ -145,19 +146,25 @@
      }).bind(this)
 
      this.undoMove = (function() {
-
-         //criar Undo Move in PROLOG que é chamado?
-         //criar um para stats
-         // play(this);
-
-         //versão + simples
-         // this.undoPlacement(this.moves[this.moves.length - 1]);
-         this.boards.splice(this.boards.length - 1, 1);
-         this.currentBoard = this.boards[this.boards.length - 1];
-         var moveToUndo = this.moves[this.moves.length - 1];
-         this.moves.splice(this.moves.length - 1, 1);
+         if (this.gameStarted && !this.replayOfGame && this.moves.length > 0) {
+             this.undoPlacement(this.moves[this.moves.length - 1]);
+             this.boards.splice(this.boards.length - 1, 1);
+             this.currentBoard = this.boards[this.boards.length - 1];
+             var moveToUndo = this.moves[this.moves.length - 1];
+             this.moves.splice(this.moves.length - 1, 1);
+         }
 
      }).bind(this);
+ };
+
+ XMLscene.prototype.undoPlacement = function(move) {
+     var worldCoords = boardCoordsToWolrd(move[0], move[1]);
+     var index = getIndex(this.piecesInfo,worldCoords, equalCoords);
+     if (index >= 0)
+         this.graph.movTrack.undo(this.piecesInfo[index]);
+     else {
+         console.log("index not found");
+     }
  };
 
  function initBoard(scene, response) {
@@ -413,6 +420,7 @@
 
      this.gui.scene = this;
      this.setUpdatePeriod(updateTime);
+     console.log(this.graph.pieces);
  };
 
  XMLscene.prototype.update = function(currTime) {

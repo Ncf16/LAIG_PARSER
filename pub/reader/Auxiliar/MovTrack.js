@@ -7,6 +7,12 @@ function Info() {
     this.id;
 }
 
+function pieceInfo(pos, id, piece) {
+    this.position = pos;
+    this.id = id;
+    this.piece = piece;
+};
+
 function MovTrack(scene) {
     this.sides = 7;
     this.totalSize = this.sides * this.sides;
@@ -25,6 +31,21 @@ function MovTrack(scene) {
 MovTrack.prototype.resetId = function() {
     this.id = 1;
 };
+MovTrack.prototype.undo = function(pieceInfo) {
+    var origem = new Object();
+    origem.obj = "cell";
+    origem.coord = [0, 0, 0];
+    origem.node = null;
+    origem.info1 = null;
+    origem.info2 = null;
+    origem.id = null;
+    pieceInfo.piece.coord = pieceInfo.position;
+    //console.log(pieceInfo.piece.coord);
+    this.copy(this.animationElements['piece'], pieceInfo.piece);
+    this.copy(this.animationElements['cell'], origem);
+    this.scene.animationPlaying = true;
+    this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
+};
 
 MovTrack.prototype.update = function(currTime) {
 
@@ -34,9 +55,12 @@ MovTrack.prototype.update = function(currTime) {
         else {
             var orig = this.animationElements['piece'].coord;
             var dest = this.animationElements['cell'].coord;
+            console.log(orig);
+            console.log(dest);
             this.board.newPos(this.animationElements['piece'].id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]]);
             this.animation = null;
             this.scene.animationPlaying = false;
+            this.scene.piecesInfo.push(new pieceInfo(dest, this.animationElements['piece'].id, this.animationElements['piece']));
         }
     }
 };
@@ -105,9 +129,9 @@ MovTrack.prototype.translateId = function(obj, id) {
 MovTrack.prototype.animate = function() {
     if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
         return false;
-
     this.scene.animationPlaying = true;
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
+    console.log(this.animation);
     return true;
 };
 
@@ -117,8 +141,8 @@ MovTrack.prototype.validateMove = function() {
         this.scene.moveSelected = true;
         this.copy(this.animationElements['piece'], this.lastPick);
         this.copy(this.animationElements['cell'], this.newPick);
-        //play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
-         this.animate();
+        play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
+        // this.animate();
     }
 };
 

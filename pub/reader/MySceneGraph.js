@@ -560,7 +560,6 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         for (var j = 0; j < elems2.length; j++) {
             var descendant = this.reader.getString(elems2[j], 'id');
             descendants.push(descendant);
-
         }
         node.descendentsID = descendants;
 
