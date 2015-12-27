@@ -232,25 +232,31 @@
          */
          //4th position is the placed piece
          if (botPlayers.indexOf(scene.currentPlayer) >= 0) {
+
+             //Aqui é para fazer o move do bot mas ele está a borkar //where exactly
              var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
              var worldCoords = boardCoordsToWorld(newMove[0], newMove[1]);
-             var pieceToMove = scene.graph.movTrack.board.getPieceNode(pieceToAnimateId);
+             var pieceToMove = new Info(); //got it? will it work?
              prologToInfo(newMove[3], pieceToMove);
+             pieceToMove.node = scene.graph.movTrack.board.getPieceNode(pieceToAnimateId);
+             pieceToMove.coord = pieceToMove.node.getCoords(pieceToMove.info1,pieceToMove.info2); //sabes color e type da p já acrescentei//? nao é isto? oh merda troquei
              pieceToMove.obj = "piece";
+             pieceToMove.id = pieceToAnimateId; // ->acrescentei esta linha 
              var cellToMove = new Object();
              cellToMove.info1 = newMove[0];
              cellToMove.info2 = newMove[1];
              cellToMove.coord = worldCoords;
              cellToMove.obj = "cell";
-        
+
              scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], pieceToMove);
-             scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'],  cellToMove );
+             scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], cellToMove);
 
 
-             console.log(pieceToAnimateId, pieceToMove);
-         } else
-             console.log("Not bot Player", scene.currentPlayer);
+             console.log(pieceToAnimateId, pieceToMove, worldCoords);
+         }
+
          scene.graph.movTrack.animate();
+
 
          if (data['nextPlayer'] === 0) {
              scene.gameOver = true;
