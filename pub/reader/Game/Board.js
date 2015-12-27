@@ -98,7 +98,6 @@ Board.prototype.getPieceNode = function(id) {
 };
 Board.prototype.setPieceNode = function(id, node) {
     this.pieces[id].node = node;
-    console.log(node);
 };
 Board.prototype.getPiece = function(id) {
     return this.pieces[id];
