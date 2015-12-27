@@ -10,6 +10,8 @@ function Board(graph){
     	mat4.identity(matrix);
     	this.pieceLocation[id] = matrix;
     }
+
+    this.pieceCell = new Array();
 }
 
 Board.prototype = Object.create(Node.prototype);
@@ -26,4 +28,10 @@ Board.prototype.apply = function(id){
 
 Board.prototype.newPos = function(id, translate){
     mat4.translate(this.pieceLocation[id],this.pieceLocation[id],translate);
+    this.pieceCell[id] = translate;
+    console.log("trans",this.pieceCell[id]);
+}
+
+Board.prototype.getPieceCell = function(id){
+    return this.pieceCell[id];
 }

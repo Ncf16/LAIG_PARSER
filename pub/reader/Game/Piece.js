@@ -7,16 +7,12 @@ function Piece(graph){
     this.origin = [0,0,0];
     this.deltaY = 3;
     this.deltaT = 1.2;
-
-    this.debug = 0;
 }
 
 Piece.prototype = Object.create(Node.prototype);
 Piece.prototype.constructor = Piece;
 
 Piece.prototype.display = function(parentElement){
-
-    console.log(this.id);
 	
 	var piece = this.graph.movTrack.getPiece();
 	var pieceId;
@@ -107,4 +103,19 @@ Piece.prototype.move = function(orig,dest){
     tempAnimation.type = "linear";
     this.graph.movTrack.animation = tempAnimation;
 	tempAnimation.init(this.graph.scene.currTime);
+}
+
+Piece.prototype.reverseMove = function(orig,dest){
+    
+    var deltaX = dest[0] - orig[0];
+    var deltaZ = dest[2] - orig[2];
+
+    var distance = Math.sqrt(deltaX*deltaX + deltaZ * deltaZ);
+    var deltaT = this.deltaT + (0.01* distance);
+    var control = [[deltaX,0,deltaZ], [deltaX,this.deltaY,deltaZ], [this.origin[0],this.deltaY,this.origin[2]], this.origin];
+
+    var tempAnimation = new LinearAnimation(this.graph.scene, deltaT, control);
+    tempAnimation.type = "linear";
+    this.graph.movTrack.animation = tempAnimation;
+    tempAnimation.init(this.graph.scene.currTime);
 }

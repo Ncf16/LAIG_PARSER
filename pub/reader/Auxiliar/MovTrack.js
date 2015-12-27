@@ -20,6 +20,8 @@ function MovTrack(scene) {
     this.animationElements['cell'] = new Info();
     this.id = 1;
     this.board = null;
+
+    this.animated = 0;
 }
 
 MovTrack.prototype.resetId = function() {
@@ -34,10 +36,20 @@ MovTrack.prototype.update = function(currTime) {
         else {
             var orig = this.animationElements['piece'].coord;
             var dest = this.animationElements['cell'].coord;
+            console.log("piece",orig);
             this.board.newPos(this.animationElements['piece'].id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]]);
+            console.log("cell",dest);
             this.animation = null;
             this.scene.animationPlaying = false;
+            this.animated++;
         }
+    }
+    if(this.animated == 1){
+        console.log(this.animationElements['piece'].coord);
+        var piece = this.animationElements['piece'];
+        console.log(piece);
+        this.undo(piece);
+        this.animated++;
     }
 };
 
@@ -70,7 +82,6 @@ MovTrack.prototype.copy = function(dest, orig) {
 
 MovTrack.prototype.translateId = function(obj, id) {
 
-
     if (id > 0 && id < this.totalSize + 1) {
         var col = (id - 1) % this.sides;
         var lin = Math.floor((id - 1) / this.sides);
@@ -101,6 +112,23 @@ MovTrack.prototype.translateId = function(obj, id) {
 
     this.validateMove();
 };
+
+MovTrack.prototype.undo = function(piece){
+    console.log("undoing",piece);
+    this.scene.animationPlaying = true;
+    //cell [orig] = piece + translate;
+    //stack  [dest] = piece;
+    //dif [orig,dest] = [dest-orig] = piece - (piece + translate) = 0 - translate;
+    // ou seja [translate,0] em move
+    //reverse [0,translate]
+    var cell = this.board.getPieceCell(piece.id);
+    var stack = [0,0,0];
+
+    this.animationElements['piece'].coord = cell;
+    this.animationElements['cell'].coord = stack;
+
+    piece.node.reverseMove(stack,cell);
+}
 
 MovTrack.prototype.animate = function() {
     if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
