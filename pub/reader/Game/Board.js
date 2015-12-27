@@ -16,11 +16,11 @@ function Board(graph) {
 Board.prototype = Object.create(Node.prototype);
 Board.prototype.constructor = Board;
 
-Board.prototype.createStacks = function(){
-   var contador = 0;
-   var currentStackIndex = 0;
-   var currentStack = this.stack[currentStackIndex];
-   for (var id = this.min; id < this.max; id++) {
+Board.prototype.createStacks = function() {
+    var contador = 0;
+    var currentStackIndex = 0;
+    var currentStack = this.stack[currentStackIndex];
+    for (var id = this.min; id < this.max; id++) {
         if (contador > 23 && currentStackIndex < this.stack.length) {
             contador = 0;
             currentStackIndex++;
@@ -30,11 +30,11 @@ Board.prototype.createStacks = function(){
         contador++;
     }
 
-    for(var i=0; i < this.stack.length; i++)
-        console.log(this.stack[i]);
+    /* for (var i = 0; i < this.stack.length; i++)
+         console.log(this.stack[i]);*/
 }
 
-Board.prototype.createPieces = function(){
+Board.prototype.createPieces = function() {
     for (var id = this.min; id < this.max; id++) {
         var piece = [];
         var matrix = mat4.create();
@@ -58,12 +58,12 @@ Board.prototype.apply = function(id) {
     this.scene.multMatrix(this.pieces[id].location);
 }
 
-Board.prototype.newPos = function(id, translate,node,newPos){
-    mat4.translate(this.pieces[id].location,this.pieces[id].location,translate);
+Board.prototype.newPos = function(id, translate, node, newPos) {
+    mat4.translate(this.pieces[id].location, this.pieces[id].location, translate);
     this.pieces[id].transformation = translate;
     this.pieces[id].node = node;
     this.pieces[id].cell = newPos;
-    console.log(id,this.pieces[id]);
+    console.log(id, this.pieces[id]);
 }
 
 Board.prototype.getStackByPieceType = function(pieceType) {
@@ -87,21 +87,23 @@ Board.prototype.addPiece = function(type, id) {
 };
 Board.prototype.removeTopPiece = function(type) {
     var tempStack = this.getStackByPieceType(type);
-    var idToReturn = tempStack[0];
-    tempStack.splice(0, 1);
+    var idToReturn = tempStack[tempStack.length - 1];
+    tempStack.splice(tempStack.length - 1, 1);
     return idToReturn;
 };
-Board.prototype.getPieceCell = function(id){
+Board.prototype.getPieceCell = function(id) {
     return this.pieces[id].transformation;
 };
 
-Board.prototype.getPieceNode = function(id){
+Board.prototype.getPieceNode = function(id) {
     return this.pieces[id].node;
 };
-
-Board.prototype.getPieceId = function(world){
-    for(var key in this.pieces){
-        if(this.pieces[key].cell!= null && equalCoords(this.pieces[key].cell,world))
+Board.prototype.getPiece = function(id) {
+    return this.pieces[id];
+};
+Board.prototype.getPieceId = function(world) {
+    for (var key in this.pieces) {
+        if (this.pieces[key].cell != null && equalCoords(this.pieces[key].cell, world))
             return key;
     }
     return -1;

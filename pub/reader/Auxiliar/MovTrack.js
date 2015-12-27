@@ -49,8 +49,10 @@ MovTrack.prototype.listen = function() {
         if (this.scene.pickResults != null && this.scene.pickResults.length > 0) {
             for (var i = 0; i < this.scene.pickResults.length; i++) {
                 var obj = this.scene.pickResults[i][0];
+
                 if (obj) {
                     var customId = this.scene.pickResults[i][1];
+                console.log(obj,customId,this.scene);
                     this.translateId(obj, customId);
                 }
             }

@@ -46,7 +46,6 @@ function MySceneGraph(filename, scene) {
     this.defaultMaterial.setDiffuse(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setShininess(10.0);
-    this.pieces = [];
     this.movTrack = new MovTrack(this.scene);
     // File reading 
     this.reader = new CGFXMLreader();
@@ -540,10 +539,9 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
             this.movTrack.board = node;
         } else if (id == "hexObject")
             node = new BoardCell(this);
-        else if (id == "diskObject" || id == "ringObject") {
+        else if (id == "diskObject" || id == "ringObject")  
             node = new Piece(this);
-            this.pieces.push(node);
-        } else
+         else
             node = new Node(this);
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);

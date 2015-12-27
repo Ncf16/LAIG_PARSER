@@ -80,6 +80,7 @@
      initialPos.radius = initialPosTemp[0];
      initialPos.theta = initialPosTemp[1];
      initialPos.phi = initialPosTemp[2];
+     console.log(initialPos);
 
      for (var i = 0; i < 4; i++) {
          var newPos = new Object();
@@ -148,8 +149,7 @@
  };
 
  XMLscene.prototype.undoPlacement = function(move) {
-    var worldCoords = boardCoordsToWolrd(move[0], move[1]);
-    this.graph.movTrack.undo(worldCoords);
+     this.graph.movTrack.undo(boardCoordsToWorld(move[0], move[1]));
  };
 
  function initBoard(scene, response) {
@@ -170,22 +170,23 @@
      }
  };
 
- function getStats(scene, data) {
+ function getStats(scene) {
      makeRequest("getStats", [], (function(data) {
-             var response = JSON.parse(data.target.response);
+         var response = JSON.parse(data.target.response);
          if (response['message'] === "OK") {
-             this.gameStats
+             scene.gameStats = response['newPlayer'];
+             console.log(response);
          }
-     }).bind(this));
+     }).bind(scene));
  };
 
  function incStat(scene, player, move) {
-     //add player who did the move to each "move";
-     makeRequest("incStats", [player, move[2]], (function(data) {
+     //add player who did the move to each "move"; the placed piece occupies the 4th position on the array of moves
+     makeRequest("incStats", [player, move[3]], (function(data) {
 
-         checkError(this, JSON.parse(data.target.response));
+         checkError(scene, JSON.parse(data.target.response));
 
-     }).bind(this));
+     }).bind(scene));
  };
 
  function play(scene, move) {
@@ -221,7 +222,7 @@
          scene.boards.push(newBoard);
          scene.currentBoard = newBoard;
          scene.moves.push(newMove);
-         nextPlayer(scene);
+
          // console.log(scene.boards, scene.moves);
          scene.play = false;
 
@@ -230,13 +231,23 @@
          console.log(scene.graph.movTrack.newPick);
          */
          //4th position is the placed piece
-         var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
+         if (botPlayers.indexOf(scene.currentPlayer) >= 0) {
+             var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
+
+             var pieceToMove = scene.graph.movTrack.board.getPieceNode(pieceToAnimateId);
+             // var cellToMove = scene.graph.movTrack.board.getPieceCell(cellToMoveId);
+
+             console.log(pieceToAnimateId, pieceToMove);
+         } else
+             console.log("Not bot Player", scene.currentPlayer);
          scene.graph.movTrack.animate();
+
          if (data['nextPlayer'] === 0) {
              scene.gameOver = true;
 
              scene.endStatus = data['message'];
          }
+         nextPlayer(scene);
      } else {
          scene.gameError = true;
          this.valid = false;
@@ -281,7 +292,8 @@
          this.rotateCameraFlag = false;
          this.camera.updateZeros();
          this.camera.updatePos();
-         console.log(deltaT, timePassed, this.camera.theta, this.camera.thetaZero, this.camera.position);
+         console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
+         //console.log(deltaT, timePassed, this.camera.theta, this.camera.thetaZero, this.camera.position);
      }
  };
 
@@ -306,7 +318,9 @@
      this.lightsEnable = [];
 
      this.textShader = new CGFshader(this.gl, "shaders/font.vert", "shaders/font.frag");
-    this.textShader.setUniformsValues({'dims': [16, 16]});
+     this.textShader.setUniformsValues({
+         'dims': [16, 16]
+     });
  };
 
  //initialize with scene with a light that will be overwrited after the parsing of the file
@@ -408,7 +422,6 @@
 
      this.gui.scene = this;
      this.setUpdatePeriod(updateTime);
-     console.log(this.graph.pieces);
  };
 
  XMLscene.prototype.update = function(currTime) {
@@ -439,16 +452,16 @@
 
          this.startCameraAnimation = false;
          this.camera.startTime = currTime;
-         console.log( /*this.camera.theta, this.camera.thetaZero,*/ this.camera, this.camera.position);
          this.camera.calcRadius();
          this.camera.calcAngles();
          this.camera.updatePos();
-         console.log(this.camera, this.camera.position);
+         console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
          if (typeof this.cameraToMovePos !== 'undefined') {
              // console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
 
              //console.log(this.camera.theta, this.cameraToMovePos);
              var distance = distanceBetweenTwoSphericPoint(this.camera, this.cameraToMovePos);
+             console.log(this.cameraToMovePos);
              this.cameraPhiDelta = distance[2];
              this.cameraThetaDelta = distance[1];
              this.cameraRadiusDelta = distance[0];

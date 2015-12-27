@@ -17,7 +17,7 @@ function truncRadian(angle) {
 
 function cartesianToSphericCoords(cartesianCoords) {
     var radius = distanceBetweenVectors(cartesianCoords, [0, 0, 0, 0]);
-    return [radius, Math.atan2(cartesianCoords[0], cartesianCoords[1]), Math.acos(cartesianCoords[1] / radius)];
+    return [radius, Math.atan2(cartesianCoords[2], cartesianCoords[0]), Math.acos(cartesianCoords[1] / radius)];
 };
 
 function mod(number1, number2) {

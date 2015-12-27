@@ -70,7 +70,7 @@ play(Tab,Player,_,NewTab,_,BotMove):-bot(Player),!,playMode([BotMode,Player|[]])
 %play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
 play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-getMoveCol(HumanMove,PosC),getMoveLine(HumanMove,PosL),getMovePiece(HumanMove,Piece),validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),
-applyMove(Tab,NewTab,[PosL,PosC,NewPiece]),createHumanMove(HumanMove,NewPiece,ReturnMove).
+applyMove(Tab,NewTab,[PosL,PosC,NewPiece]),createHumanMove(HumanMove,NewPiece,ReturnMove),updateStats(Player,Piece,_,_).
 %,write('Line '),write(PosL),write(' Col '),write(PosC),write('   '),write(ReturnMove),nl.
 
 play(_,_,_,_,_,Message):-Message="MOVE FAIL".
@@ -140,8 +140,8 @@ getStartingPoint(Player,Tab,Piece,Line1,Col1,0):- getStartingPointDown(Player,Ta
 getPossibleMoves(Tab,Player,NumberList,L):-findall( [PosL,PosC,NewPiece,Piece],(getSimplePieces(Player,PiecesList),member(PosL,NumberList),member(PosC,NumberList),member(Piece,PiecesList),
 	validateMove(Tab,PosL,PosC,Piece,Player,NewPiece)),L).	
 
-getStats(_,Stats,_,Message):-Message="OK",stats(white,WhiteStats),stats(black,BlackStats),append(WhiteStats,BlackStats,Stats).
-getStats(_,_,_,Message):-Message="GET STATS FAIL".
+getStats(Stats,_,Message):-Message="OK",stats(white,WhiteStats),stats(black,BlackStats),append(WhiteStats,BlackStats,Stats).
+getStats(_,_,Message):-Message="GET STATS FAIL".
 
 getPlayerStats(Player,[Player|Stats],_,Message):-stats(Player,Stats),!,Message="OK".
 getPlayerStats(Bot,[Player|Stats],_,Message):-bot(Player),playMode([Bot,Player]),!,stats(Player,Stats),!,Message="OK".

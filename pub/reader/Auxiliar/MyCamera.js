@@ -7,7 +7,7 @@ function MyCamera(fov, near, far, position, target) {
     this.calcAngles();
     this.updateZeros();
     this.updatePos();
-    console.log(this.position);
+    console.log(this.radius, this.theta, this.phi, this.position);
 
 };
 MyCamera.prototype = Object.create(CGFcamera.prototype);
