@@ -230,7 +230,7 @@ LeafPlane.prototype.parseLeaf = function(args, scene) {
         console.error("Invalid paramenter in the creation of a plane ( " + tempArgs[tempIndex] + " ), this leaf will be ignored")
     } else {
 
-      
+
         this.element = new Plane(scene, args[0]);
     }
 };
@@ -285,4 +285,61 @@ LeafTerrain.prototype.processArgs = function(leaf, currLeaf, scene) {
     var texture = readElement(leaf, ["texture"], 1);
     var heightmap = readElement(leaf, ["heightmap"], 1);
     this.parseLeaf([texture, heightmap], scene);
+};
+
+function LeafText() {
+    Leaf.call(this);
+    this.limits = 16;
+};
+
+function LeafText(scene, element, text) {
+    Leaf.call(this);
+    this.scene = scene;
+    this.element = element;
+    this.text = text;
+    this.limits = 16;
+};
+var teste = false;
+LeafText.prototype = Object.create(Leaf.prototype);
+LeafText.prototype.constructor = LeafText;
+
+LeafText.prototype.display = function() {
+
+    this.scene.setActiveShaderSimple(this.scene.textShader);
+
+    for (var i = 0; i < this.text.length; i++) {
+        this.scene.pushMatrix();
+        var coords = this.findLocation(this.text.charCodeAt(i));
+        console.log(coords);
+        this.scene.activeShader.setUniformsValues({
+            'charCoords': coords
+        });
+        this.scene.translate(i, 0, 0);
+        this.element.display();
+        this.scene.popMatrix();
+    }
+    if (!teste) {
+        teste = true;
+        console.log(this);
+    }
+
+    this.scene.setActiveShaderSimple(this.scene.defaultShader);
+};
+
+LeafText.prototype.findLocation = function(code) {
+
+    return [code % this.limits, Math.floor(code / this.limits)];
+};
+LeafText.prototype.parseLeaf = function(args, scene) {
+    this.scene = scene;
+    this.element = new Rectangle(scene, [-0.5, 0.5, 0], [0.5, -0.5, 0]);;
+    this.text = args;
+};
+LeafText.prototype.processArgs = function(leaf, currLeaf, scene) {
+    var args = readElement(leaf, ["args"], 1)[FIRST_ELEMENT];
+    this.parseLeaf(args, scene);
+};
+LeafText.prototype.setText = function(text) {
+    if (typeof text !== 'undefined' && typeof text === "string")
+        this.text = text;
 };

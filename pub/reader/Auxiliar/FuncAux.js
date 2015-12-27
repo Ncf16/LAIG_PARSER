@@ -212,6 +212,8 @@ function parseLeafAux(leave, type) {
         return new LeafTerrain();
     } else if (type == "torus") {
         return new LeafTorus();
+    } else if (type == "text") {
+        return new LeafText();
     } else {
         console.warn("Invalid type of Leaf: " + type);
     }
