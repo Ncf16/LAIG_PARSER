@@ -204,7 +204,7 @@
     <NODE id="diskObject">
      <MATERIAL id="null" />
      <TEXTURE id="clear" />
-     <TRANSLATION x="3" y="0" z="14" />
+     <TRANSLATION x="3" y="0.15" z="14" />
      <SCALE sx="1" sy="0.3" sz="1" />
      <DESCENDANTS>
         <DESCENDANT id="sphere" />
@@ -213,7 +213,7 @@
 <NODE id="ringObject">
     <MATERIAL id="null" />
     <TEXTURE id="transparency" />
-    <TRANSLATION x="5" y="0" z="14" />
+    <TRANSLATION x="5" y="0.05" z="14" />
     <SCALE sx="1" sy="0.3" sz="1" />
     <DESCENDANTS>
         <DESCENDANT id="torus" />

@@ -28,6 +28,8 @@ function Board(graph) {
         mat4.identity(matrix);
         this.pieceLocation[id] = matrix;
     }
+
+    this.pieceCell = new Array();
 }
 
 Board.prototype = Object.create(Node.prototype);
@@ -42,7 +44,10 @@ Board.prototype.apply = function(id) {
     this.scene.multMatrix(this.pieceLocation[id]);
 }
 
-Board.prototype.newPos = function(id, translate) {
+Board.prototype.newPos = function(id, translate){
+    mat4.translate(this.pieceLocation[id],this.pieceLocation[id],translate);
+    this.pieceCell[id] = translate;
+}
 
     mat4.translate(this.pieceLocation[id], this.pieceLocation[id], translate);
 };
@@ -71,4 +76,7 @@ Board.prototype.removeTopPiece = function(type) {
     var idToReturn = tempStack[0];
     tempStack.splice(0, 1);
     return idToReturn;
+};
+Board.prototype.getPieceCell = function(id){
+    return this.pieceCell[id];
 };

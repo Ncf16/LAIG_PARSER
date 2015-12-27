@@ -7,12 +7,6 @@ function Info() {
     this.id;
 };
 
-function pieceInfo(pos, id, piece) {
-    this.position = pos;
-    this.id = id;
-    this.piece = piece;
-};
-
 function MovTrack(scene) {
     this.sides = 7;
     this.totalSize = this.sides * this.sides;
@@ -31,23 +25,6 @@ function MovTrack(scene) {
 MovTrack.prototype.resetId = function() {
     this.id = 1;
 };
-MovTrack.prototype.undo = function(pieceInfo) {
-    var origem = new Object();
-    origem.obj = "cell";
-    origem.coord = [0, 0, 0];
-    origem.node = null;
-    origem.info1 = null;
-    origem.info2 = null;
-    origem.id = null;
-    pieceInfo.piece.coord = pieceInfo.position;
-    //console.log(pieceInfo.piece.coord);
-    this.copy(this.animationElements['piece'], pieceInfo.piece);
-    this.copy(this.animationElements['cell'], origem);
-    this.scene.animationPlaying = true;
-    var prologPiece = convertToProlog(pieceInfo.piece.info1, pieceInfo.piece.info2);
-    this.board.addPiece(prologPiece, piecesInfo.id);
-    this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
-};
 
 MovTrack.prototype.update = function(currTime) {
 
@@ -57,8 +34,6 @@ MovTrack.prototype.update = function(currTime) {
         else {
             var orig = this.animationElements['piece'].coord;
             var dest = this.animationElements['cell'].coord;
-            console.log(orig);
-            console.log(dest);
             this.board.newPos(this.animationElements['piece'].id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]]);
             this.animation = null;
             this.scene.animationPlaying = false;
@@ -96,7 +71,6 @@ MovTrack.prototype.copy = function(dest, orig) {
 
 MovTrack.prototype.translateId = function(obj, id) {
 
-
     if (id > 0 && id < this.totalSize + 1) {
         var col = (id - 1) % this.sides;
         var lin = Math.floor((id - 1) / this.sides);
@@ -128,12 +102,28 @@ MovTrack.prototype.translateId = function(obj, id) {
     this.validateMove();
 };
 
+MovTrack.prototype.undo = function(piece){
+    
+    this.scene.animationPlaying = true;
+    //cell [orig] = piece + translate;
+    //stack  [dest] = piece;
+    //dif [orig,dest] = [dest-orig] = piece - (piece + translate) = 0 - translate;
+    // ou seja [translate,0] em move
+    //reverse [0,translate]
+    var cell = this.board.getPieceCell(piece.id);
+    var stack = [0,0,0];
+
+    this.animationElements['piece'].coord = cell;
+    this.animationElements['cell'].coord = stack;
+
+    piece.node.reverseMove(stack,cell);
+}
+
 MovTrack.prototype.animate = function() {
     if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
         return false;
     this.scene.animationPlaying = true;
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
-    console.log(this.animation);
     return true;
 };
 

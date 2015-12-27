@@ -308,14 +308,6 @@
      this.startTime = new Date(); //time value that is the number of milliseconds since 1 January, 1970 UTC.
      this.axis = new CGFaxis(this);
      this.lightsEnable = [];
-
-     this.CustomShader = new CGFshader(this.gl, "shaders/proj.vert", "shaders/proj.frag");
-     this.CustomShader.setUniformsValues({
-         uSampler2: 1
-     });
-     this.CustomShader.setUniformsValues({
-         max: 0.25
-     });
  };
 
  //initialize with scene with a light that will be overwrited after the parsing of the file
