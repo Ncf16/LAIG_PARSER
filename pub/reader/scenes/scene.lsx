@@ -91,7 +91,8 @@
         <LEAF id="sphere" type="sphere" args="0.65 20 20" />
         <LEAF id="hex" type="hex" />
         <LEAF id="torus" type="torus" args="0.7 0.1 20 20" />
-        <LEAF id="text" type="text" args="ola que dizes?" />
+        <LEAF id="text" type="text" texture="textures/oolite-font.png" value="Filipe é nabo" />
+         <LEAF id="text2" type="text" texture="textures/oolite-font.png" value="Ass: Costa" />
     </LEAVES>
     <NODES>
         <ROOT id="root" />
@@ -103,14 +104,23 @@
                 <DESCENDANT id="board" />
                 <DESCENDANT id="pieces" />
                 <DESCENDANT id="teste"/>
+                <DESCENDANT id="teste2"/>
             </DESCENDANTS>
         </NODE>
         <NODE id="teste">
             <MATERIAL id="clear" />
             <TEXTURE id="clear" />
-            <TRANSLATION x="0" y="2" z="0" />
+            <TRANSLATION x="0" y="3" z="0" />
             <DESCENDANTS>
                 <DESCENDANT id="text" />
+            </DESCENDANTS>
+        </NODE>
+          <NODE id="teste2">
+            <MATERIAL id="clear" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="0" y="2" z="0" />
+            <DESCENDANTS>
+                <DESCENDANT id="text2" />
             </DESCENDANTS>
         </NODE>
         <NODE id="board">
