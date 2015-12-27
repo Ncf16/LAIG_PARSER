@@ -292,19 +292,23 @@ function LeafText() {
     this.limits = 16;
 };
 
-function LeafText(scene, element, text) {
+function LeafText(scene, element, text, texture) {
     Leaf.call(this);
     this.scene = scene;
     this.element = element;
     this.text = text;
     this.limits = 16;
+    this.texture = null;
 };
-var teste = false;
+
 LeafText.prototype = Object.create(Leaf.prototype);
 LeafText.prototype.constructor = LeafText;
 
 LeafText.prototype.display = function() {
 
+    var material = this.graph.matArray[this.graph.matArray.length - 1];
+    material.setTexture(this.texture);
+    material.appearance.apply();
     this.scene.setActiveShaderSimple(this.scene.textShader);
 
     for (var i = 0; i < this.text.length; i++) {
@@ -318,10 +322,6 @@ LeafText.prototype.display = function() {
         this.element.display();
         this.scene.popMatrix();
     }
-    if (!teste) {
-        teste = true;
-        console.log(this);
-    }
 
     this.scene.setActiveShaderSimple(this.scene.defaultShader);
 };
@@ -333,11 +333,13 @@ LeafText.prototype.findLocation = function(code) {
 LeafText.prototype.parseLeaf = function(args, scene) {
     this.scene = scene;
     this.element = new Rectangle(scene, [-0.5, 0.5, 0], [0.5, -0.5, 0]);;
-    this.text = args;
+    this.text = args[0];
+    this.texture = new CGFtexture(scene, args[1]);
 };
 LeafText.prototype.processArgs = function(leaf, currLeaf, scene) {
-    var args = readElement(leaf, ["args"], 1)[FIRST_ELEMENT];
-    this.parseLeaf(args, scene);
+    var value = readElement(leaf, ["value"], 1)[FIRST_ELEMENT];
+    var texture = readElement(leaf, ["texture"], 1);
+    this.parseLeaf([value,texture], scene);
 };
 LeafText.prototype.setText = function(text) {
     if (typeof text !== 'undefined' && typeof text === "string")
