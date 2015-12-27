@@ -11,6 +11,7 @@ BoardCell.prototype.display = function(parentElement) {
 }
 
 BoardCell.prototype.getCoords = function(col, lin) {
-    var coords = [1.5 * (col - lin), 0, 0.866 * (col + lin)];
-    return coords;
-}
+    return boardCoordsToWolrd(col, lin);
+};
+
+ 

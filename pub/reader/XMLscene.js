@@ -61,6 +61,7 @@
      this.moveTime = 0;
      this.startPlay = 0;
      this.rotateCamera = new Object();
+     this.piecesInfo = [];
      this.initCameraPos();
      this.initHandlers();
  };
@@ -87,17 +88,16 @@
      for (var i = 0; i < 3; i++) {
          var newPos = new Object();
          newPos.radius = initialPos.radius;
-         newPos.theta = initialPos.theta - degToRad(90) * i;
+         newPos.theta = initialPos.theta + degToRad(90) * i;
          newPos.phi = initialPos.phi;
          cameraPositionsCoords.push(newPos);
-
      };
 
-     initialPosTemp = cartesianToSphericCoords(topCameraPos);
-     initialPos.radius = initialPosTemp[0];
-     initialPos.theta = initialPosTemp[1] - degToRad(90);
-     initialPos.phi = initialPosTemp[2];
-     cameraPositionsCoords.push(initialPos);
+     /* initialPosTemp = cartesianToSphericCoords(topCameraPos);
+      initialPos.radius = initialPosTemp[0];
+      initialPos.theta = initialPosTemp[1] - degToRad(90);
+      initialPos.phi = initialPosTemp[2];
+      cameraPositionsCoords.push(initialPos);*/
 
      console.log(cameraPositionsCoords);
  };
@@ -146,19 +146,25 @@
      }).bind(this)
 
      this.undoMove = (function() {
-
-         //criar Undo Move in PROLOG que é chamado?
-         //criar um para stats
-         // play(this);
-
-         //versão + simples
-         // this.undoPlacement(this.moves[this.moves.length - 1]);
-         this.boards.splice(this.boards.length - 1, 1);
-         this.currentBoard = this.boards[this.boards.length - 1];
-         var moveToUndo = this.moves[this.moves.length - 1];
-         this.moves.splice(this.moves.length - 1, 1);
+         if (this.gameStarted && !this.replayOfGame && this.moves.length > 0) {
+             this.undoPlacement(this.moves[this.moves.length - 1]);
+             this.boards.splice(this.boards.length - 1, 1);
+             this.currentBoard = this.boards[this.boards.length - 1];
+             var moveToUndo = this.moves[this.moves.length - 1];
+             this.moves.splice(this.moves.length - 1, 1);
+         }
 
      }).bind(this);
+ };
+
+ XMLscene.prototype.undoPlacement = function(move) {
+     var worldCoords = boardCoordsToWolrd(move[0], move[1]);
+     var index = getIndex(this.piecesInfo,worldCoords, equalCoords);
+     if (index >= 0)
+         this.graph.movTrack.undo(this.piecesInfo[index]);
+     else {
+         console.log("index not found");
+     }
  };
 
  function initBoard(scene, response) {
@@ -275,15 +281,15 @@
          this.camera.setPhi(currentPhi);
          this.camera.setRadius(currentRadius);
 
-         console.log(this.camera);
+         //   console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
          this.camera.updatePos();
 
      } else {
-         console.log("HERE");
+         //  console.log("HERE");
          this.rotateCameraFlag = false;
          this.camera.updateZeros();
          this.camera.updatePos();
-         console.log(deltaT, timePassed, this.camera);
+         console.log(deltaT, timePassed, this.camera.theta, this.camera.thetaZero, this.camera.position);
      }
  };
 
@@ -406,6 +412,7 @@
 
      this.gui.scene = this;
      this.setUpdatePeriod(updateTime);
+     console.log(this.graph.pieces);
  };
 
  XMLscene.prototype.update = function(currTime) {
@@ -434,15 +441,21 @@
      if (this.startCameraAnimation) {
          this.startCameraAnimation = false;
          this.camera.startTime = currTime;
-         this.camera.calcRadius();
-         this.camera.calcAngles();
-         this.camera.updatePos();
+         console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
+         /*    this.camera.calcRadius();
+             this.camera.calcAngles();
+             this.camera.updatePos();*/
          if (typeof this.cameraToMovePos !== 'undefined') {
+             console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
+
+             //console.log(this.camera.theta, this.cameraToMovePos);
              var distance = distanceBetweenTwoSphericPoint(this.camera, this.cameraToMovePos);
              this.cameraPhiDelta = distance[2];
              this.cameraThetaDelta = distance[1];
              this.cameraRadiusDelta = distance[0];
-             console.log(this.camera, this.cameraToMovePos, distance);
+             console.log(distance);
+
+
              var absoluteDistance = absoluteDistanceBetweenTwoSphericPoints([this.camera.radius, this.camera.theta, this.camera.phi], [this.cameraToMovePos.radius, this.cameraToMovePos.theta, this.cameraToMovePos.phi]);
 
              this.cameraAnimationdeltaT = absoluteDistance / this.cameraSpeed * 100.0;

@@ -46,7 +46,7 @@ function MySceneGraph(filename, scene) {
     this.defaultMaterial.setDiffuse(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
     this.defaultMaterial.setShininess(10.0);
-
+    this.pieces = [];
     this.movTrack = new MovTrack(this.scene);
     // File reading 
     this.reader = new CGFXMLreader();
@@ -93,7 +93,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseLeaf(rootElement);
         this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
-        
+
     } catch (err) {
         if (err instanceof XMLError) {
             console.error(err.message);
@@ -486,7 +486,7 @@ MySceneGraph.prototype.parseST = function(obj, node, tag) {
 };
 
 MySceneGraph.prototype.checkTag = function(node, tag, def, min, origin) {
-    
+
     var various;
     if (typeof min === 'undefined') min = -1, various = 1;
     else
@@ -531,19 +531,19 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
     var rootName = this.reader.getString(root[0], 'id');
     var animated;
     elems = this.checkTag(elems[0], 'NODE', false, 1);
-    
+
     for (var i = 0; i < elems.length; i++) {
         var id = addID(elems[i], this, this.nodesID);
-         var node;
-        if(id == "board"){
+        var node;
+        if (id == "board") {
             node = new Board(this);
             this.movTrack.board = node;
-        }
-        else if(id == "hexObject")
+        } else if (id == "hexObject")
             node = new BoardCell(this);
-        else if (id == "diskObject" || id == "ringObject")
+        else if (id == "diskObject" || id == "ringObject") {
             node = new Piece(this);
-        else
+            this.pieces.push(node);
+        } else
             node = new Node(this);
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
@@ -560,7 +560,6 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         for (var j = 0; j < elems2.length; j++) {
             var descendant = this.reader.getString(elems2[j], 'id');
             descendants.push(descendant);
-
         }
         node.descendentsID = descendants;
 
