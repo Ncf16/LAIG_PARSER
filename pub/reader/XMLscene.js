@@ -5,11 +5,6 @@
  var botTypes = ["random", "greedy"];
  var FAILURE_MESSAGE = "FAIL";
  var updateTime = 1;
- var whiteDiskPos = [0, 0, 0];
- var whiteRingPos = [0, 0, 0];
-
- var blackDiskPos = [0, 0, 0];
- var blackRingPos = [0, 0, 0];
 
  var player1Color = "black";
  var player2Color = "white";
@@ -62,6 +57,7 @@
      this.startPlay = 0;
      this.rotateCamera = new Object();
      this.piecesInfo = [];
+     this.gameStats = [];
      this.initCameraPos();
      this.initHandlers();
  };
@@ -180,7 +176,12 @@
  };
 
  function getStats(scene, data) {
-     console.log(data);
+     makeRequest("getStats", [], (function(data) {
+             var response = JSON.parse(data.target.response));
+         if (response['message'] === "OK") {
+             this.gameStats
+         }
+     }).bind(this));
  };
 
  function incStat(scene, player, move) {
@@ -234,7 +235,7 @@
          console.log(scene.graph.movTrack.newPick);
          */
          //4th position is the placed piece
-         var pieceToAnimateId=scene.graph.movTrack.removeTopPiece(newMove[3]);
+         var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
          scene.graph.movTrack.animate();
          if (data['nextPlayer'] === 0) {
              scene.gameOver = true;

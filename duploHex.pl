@@ -140,9 +140,12 @@ getStartingPoint(Player,Tab,Piece,Line1,Col1,0):- getStartingPointDown(Player,Ta
 getPossibleMoves(Tab,Player,NumberList,L):-findall( [PosL,PosC,NewPiece,Piece],(getSimplePieces(Player,PiecesList),member(PosL,NumberList),member(PosC,NumberList),member(Piece,PiecesList),
 	validateMove(Tab,PosL,PosC,Piece,Player,NewPiece)),L).	
 
-getStats(Player,[Player|Stats],_,Message):-stats(Player,Stats),!,Message="OK".
-getStats(Bot,[Player|Stats],_,Message):-bot(Player),!,playMode([Bot,Player]),!,stats(Player,Stats),!,Message="OK".
-getStats(_,_,_,Message):-Message="FAIL".
+getStats(_,Stats,_,Message):-Message="OK",stats(white,WhiteStats),stats(black,BlackStats),append(WhiteStats,BlackStats,Stats).
+getStats(_,_,_,Message):-Message="GET STATS FAIL".
+
+getPlayerStats(Player,[Player|Stats],_,Message):-stats(Player,Stats),!,Message="OK".
+getPlayerStats(Bot,[Player|Stats],_,Message):-bot(Player),playMode([Bot,Player]),!,stats(Player,Stats),!,Message="OK".
+getPlayerStats(_,_,_,Message):-Message="FAIL".
 /****************************************************************************************************************************************/
 %%Set
 setElement(Tab,Line,Col,Element,NewTab):-setLine(Tab,Line,Col,Element,NewTab).
