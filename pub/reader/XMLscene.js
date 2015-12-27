@@ -213,7 +213,7 @@
  function handlePlay(scene, data) {
      scene.moveSelected = false;
      if (data['message'].indexOf(FAILURE_MESSAGE) == -1) {
-         this.valid = true;
+         scene.valid = true;
 
 
          console.log(data);
@@ -243,8 +243,8 @@
              cellToMove.coord = worldCoords;
              cellToMove.obj = "cell";
         
-             this.copy(this.animationElements['piece'], pieceToMove);
-             this.copy(this.animationElements['cell'],  cellToMove);
+             scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], pieceToMove);
+             scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'],  cellToMove );
 
 
              console.log(pieceToAnimateId, pieceToMove);
@@ -260,12 +260,12 @@
          nextPlayer(scene);
      } else {
          scene.gameError = true;
-         this.valid = false;
+         scene.valid = false;
          console.log("ERROR", data);
 
      }
      console.log("HAVE ASNWERS");
-     this.answer = true;
+     scene.answer = true;
  };
 
  function nextPlayer(scene) {

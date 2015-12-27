@@ -183,7 +183,7 @@ function prologToInfo(pieceType, obj) {
             break;
         case 3:
             obj.info1 = "black";
-            obj.info2 = ;
+            obj.info2 = "ring";
             break;
         case 4:
             obj.info1 = "black";
