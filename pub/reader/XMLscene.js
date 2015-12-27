@@ -15,7 +15,7 @@
  var player2Color = "white";
  var cameraPositions = ['Pos1', 'Pos2', 'Pos3', 'Pos4'];
  var cameraPositionsCoords = [];
- var topCameraPos = [-17.218096710496933, 33.67162046730127, -24.56699301233211, 0];
+ var topCameraPos = [19.325374603271484, 30, 27.57368278503418, 0];
  //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
  //Movimento Rui
  //Jogadas ->Movimentos -> criar ciclo de jogo em javascript need to test it
@@ -24,7 +24,7 @@
  //SkyBox Not Done
  //Animations to Do, create function that creates Templates 1 for placement another to retrieve pieces
  //Camara coordenads esféricas DONE check animação da camara check 
- //Diferença entre posições e depois ter delta Radius/Phi/Theta check
+ //Diferença entre posições e depois ter delta Radius/Phi/Theta check camera Quadrantbug, check how to calculate animation with rebelo
  //Array de texturas e materiais em vez de lsx
  function XMLscene() {
      CGFscene.call(this);
@@ -85,19 +85,13 @@
      initialPos.theta = initialPosTemp[1];
      initialPos.phi = initialPosTemp[2];
 
-     for (var i = 0; i < 3; i++) {
+     for (var i = 0; i < 4; i++) {
          var newPos = new Object();
          newPos.radius = initialPos.radius;
          newPos.theta = initialPos.theta + degToRad(90) * i;
          newPos.phi = initialPos.phi;
          cameraPositionsCoords.push(newPos);
      };
-
-     /* initialPosTemp = cartesianToSphericCoords(topCameraPos);
-      initialPos.radius = initialPosTemp[0];
-      initialPos.theta = initialPosTemp[1] - degToRad(90);
-      initialPos.phi = initialPosTemp[2];
-      cameraPositionsCoords.push(initialPos);*/
 
      console.log(cameraPositionsCoords);
  };
@@ -159,7 +153,7 @@
 
  XMLscene.prototype.undoPlacement = function(move) {
      var worldCoords = boardCoordsToWolrd(move[0], move[1]);
-     var index = getIndex(this.piecesInfo,worldCoords, equalCoords);
+     var index = getIndex(this.piecesInfo, worldCoords, equalCoords);
      if (index >= 0)
          this.graph.movTrack.undo(this.piecesInfo[index]);
      else {
@@ -239,6 +233,8 @@
          console.log(scene.graph.movTrack.lastPick);
          console.log(scene.graph.movTrack.newPick);
          */
+         //4th position is the placed piece
+         var pieceToAnimateId=scene.graph.movTrack.removeTopPiece(newMove[3]);
          scene.graph.movTrack.animate();
          if (data['nextPlayer'] === 0) {
              scene.gameOver = true;
@@ -409,10 +405,11 @@
      this.CreateLights();
      this.CreateMaterials();
 
-     this.gui.addCameraDropdown(this, cameraPositions);
+
      this.gui.game.add(this, 'startGame');
      this.gui.game.add(this, 'resetGame');
      this.gui.game.add(this, 'undoMove');
+     this.gui.addCameraDropdown(this, cameraPositions);
      // Choose from accepted values
      this.gui.game.add(this, 'player1', ['black', 'random', 'greedy']);
      this.gui.game.add(this, 'player2', ['white', 'random', 'greedy']);
@@ -425,6 +422,7 @@
 
  XMLscene.prototype.update = function(currTime) {
      this.currTime = currTime;
+
 
      if (this.gameStarted) {
          /* if (this.changePlayer) {
@@ -447,14 +445,16 @@
      }
 
      if (this.startCameraAnimation) {
+
          this.startCameraAnimation = false;
          this.camera.startTime = currTime;
-         console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
-         /*    this.camera.calcRadius();
-             this.camera.calcAngles();
-             this.camera.updatePos();*/
+         console.log( /*this.camera.theta, this.camera.thetaZero,*/ this.camera, this.camera.position);
+         this.camera.calcRadius();
+         this.camera.calcAngles();
+         this.camera.updatePos();
+         console.log(this.camera, this.camera.position);
          if (typeof this.cameraToMovePos !== 'undefined') {
-             console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
+             // console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
 
              //console.log(this.camera.theta, this.cameraToMovePos);
              var distance = distanceBetweenTwoSphericPoint(this.camera, this.cameraToMovePos);

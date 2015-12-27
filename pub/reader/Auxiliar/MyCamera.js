@@ -1,9 +1,13 @@
 function MyCamera(fov, near, far, position, target) {
     CGFcamera.call(this, fov, near, far, position, target);
+    console.log(this.position);
+
     this.zoomValue = 1;
     this.calcRadius();
     this.calcAngles();
     this.updateZeros();
+    this.updatePos();
+    console.log(this.position);
 
 };
 MyCamera.prototype = Object.create(CGFcamera.prototype);
@@ -19,7 +23,7 @@ MyCamera.prototype.setRadius = function(radius) {
     this.radius = radius;
 };
 MyCamera.prototype.updateZeros = function() {
-    console.log("updateZeros");
+    // console.log("updateZeros");
     this.thetaZero = this.theta;
     this.phiZero = this.phi;
     this.radiusZero = this.radius;
@@ -47,9 +51,9 @@ MyCamera.prototype.orbit = function(a, b) {
 };
 
 MyCamera.prototype.updatePos = function() {
-    var newPos = [this.radius * Math.sin(this.theta) * Math.sin(this.phi),
+    var newPos = [this.radius * Math.cos(this.theta) * Math.sin(this.phi),
         this.radius * Math.cos(this.phi),
-        this.radius * Math.cos(this.theta) * Math.sin(this.phi), 0
+        this.radius * Math.sin(this.theta) * Math.sin(this.phi), 0
     ]
     this.setPosition(newPos);
     this.position = newPos;
@@ -62,8 +66,8 @@ MyCamera.prototype.updatePos = function() {
 MyCamera.prototype.calcAngles = function() {
     //y/r 
     this.phi = Math.acos(this.position[1] / this.radius);
-    //x/z
-    this.theta = Math.atan2(this.position[0], this.position[1]);
+    //z/x
+    this.theta = Math.atan2(this.position[2], this.position[0]);
 };
 MyCamera.prototype.calcRadius = function() {
     this.radius = this.zoomValue * distanceBetweenVectors(this.position, [0, 0, 0, 0]);

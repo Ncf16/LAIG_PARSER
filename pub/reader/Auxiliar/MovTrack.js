@@ -5,7 +5,7 @@ function Info() {
     this.info2;
     this.coord;
     this.id;
-}
+};
 
 function pieceInfo(pos, id, piece) {
     this.position = pos;
@@ -26,7 +26,7 @@ function MovTrack(scene) {
     this.animationElements['cell'] = new Info();
     this.id = 1;
     this.board = null;
-}
+};
 
 MovTrack.prototype.resetId = function() {
     this.id = 1;
@@ -44,6 +44,8 @@ MovTrack.prototype.undo = function(pieceInfo) {
     this.copy(this.animationElements['piece'], pieceInfo.piece);
     this.copy(this.animationElements['cell'], origem);
     this.scene.animationPlaying = true;
+    var prologPiece = convertToProlog(pieceInfo.piece.info1, pieceInfo.piece.info2);
+    this.board.addPiece(prologPiece, piecesInfo.id);
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
 };
 
@@ -144,6 +146,9 @@ MovTrack.prototype.validateMove = function() {
         play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
         // this.animate();
     }
+};
+MovTrack.prototype.removeTopPiece = function(type) {
+    return this.board.removeTopPiece(type);
 };
 
 function convertToProlog(colour, pieceType) {

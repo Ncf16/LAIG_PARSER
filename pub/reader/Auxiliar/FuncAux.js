@@ -36,9 +36,7 @@ function differenceBetweenAngles(sourceA, targetA) {
 };
 
 function distanceBetweenTwoSphericPoint(point1, point2) {
-    console.log(point1.radius, point1.theta, point1.phi);
-    console.log(point2.radius, point2.theta, point2.phi);
-    return [point1.radius - point2.radius,
+    return [point2.radius - point1.radius,
         differenceBetweenAngles(point1.theta, point2.theta),
         differenceBetweenAngles(point1.phi, point2.phi)
     ];
