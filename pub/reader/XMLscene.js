@@ -233,9 +233,19 @@
          //4th position is the placed piece
          if (botPlayers.indexOf(scene.currentPlayer) >= 0) {
              var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
-
+             var worldCoords = boardCoordsToWorld(newMove[0], newMove[1]);
              var pieceToMove = scene.graph.movTrack.board.getPieceNode(pieceToAnimateId);
-             // var cellToMove = scene.graph.movTrack.board.getPieceCell(cellToMoveId);
+             prologToInfo(newMove[3], pieceToMove);
+             pieceToMove.obj = "piece";
+             var cellToMove = new Object();
+             cellToMove.info1 = newMove[0];
+             cellToMove.info2 = newMove[1];
+             cellToMove.coord = worldCoords;
+             cellToMove.obj = "cell";
+        
+             this.copy(this.animationElements['piece'], pieceToMove);
+             this.copy(this.animationElements['cell'],  cellToMove);
+
 
              console.log(pieceToAnimateId, pieceToMove);
          } else

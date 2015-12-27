@@ -52,7 +52,7 @@ MovTrack.prototype.listen = function() {
 
                 if (obj) {
                     var customId = this.scene.pickResults[i][1];
-                console.log(obj,customId,this.scene);
+                    console.log(obj, customId, this.scene);
                     this.translateId(obj, customId);
                 }
             }
@@ -103,10 +103,10 @@ MovTrack.prototype.translateId = function(obj, id) {
     this.validateMove();
 };
 
-MovTrack.prototype.undo = function(worldCoords){
+MovTrack.prototype.undo = function(worldCoords) {
 
     var index = this.board.getPieceId(worldCoords);
-    if(index == -1){
+    if (index == -1) {
         console.log("index not found");
         return;
     }
@@ -119,14 +119,14 @@ MovTrack.prototype.undo = function(worldCoords){
     // //reverse [0,translate]
     var cell = this.board.getPieceCell(index);
     var node = this.board.getPieceNode(index);
-    var stack = [0,0,0];
+    var stack = [0, 0, 0];
 
     this.animationElements['piece'].id = index;
     this.animationElements['piece'].node = node;
     this.animationElements['piece'].coord = cell;
     this.animationElements['cell'].coord = stack;
 
-     node.reverseMove(stack,cell);
+    node.reverseMove(stack, cell);
 }
 
 MovTrack.prototype.animate = function() {
@@ -170,6 +170,28 @@ function convertToProlog(colour, pieceType) {
     }
 };
 
+function prologToInfo(pieceType, obj) {
+
+    switch (pieceType) {
+        case 1:
+            obj.info1 = "white";
+            obj.info2 = "ring";
+            break;
+        case 2:
+            obj.info1 = "white" ;
+            obj.info2 = "disk";
+            break;
+        case 3:
+            obj.info1 = "black";
+            obj.info2 = ;
+            break;
+        case 4:
+            obj.info1 = "black";
+            obj.info2 = "disk";
+            break;
+
+    }
+};
 MovTrack.prototype.getPiece = function() {
     return this.animationElements['piece'];
 };

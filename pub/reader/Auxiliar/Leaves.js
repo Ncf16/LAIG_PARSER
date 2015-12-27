@@ -310,7 +310,7 @@ LeafText.prototype.display = function() {
     for (var i = 0; i < this.text.length; i++) {
         this.scene.pushMatrix();
         var coords = this.findLocation(this.text.charCodeAt(i));
-        console.log(coords);
+       // console.log(coords);
         this.scene.activeShader.setUniformsValues({
             'charCoords': coords
         });
