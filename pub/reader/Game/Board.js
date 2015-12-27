@@ -2,38 +2,52 @@ function Board(graph) {
     this.scene = graph.scene;
     Node.call(this, graph);
     this.min = 50;
-    this.max = this.min + 4 * 24 + 1;
+    this.max = this.min + 4 * 24;
     this.whiteRings = [];
     this.whiteDisks = [];
     this.blackRings = [];
     this.blackDisks = [];
+    this.pieces = new Array();
     this.stack = [this.whiteDisks, this.whiteRings, this.blackDisks, this.blackRings];
-    var contador = 0;
-    var currentStackIndex = 0;
-    var currentStack = this.stack[currentStackIndex];
-    for (var id = this.min; id < this.max; id++) {
-
-        if (contador > 24 && currentStackIndex < this.stack.length) {
-            contador = 0;
-            currentStackIndex++;
-            currentStack = this.stack[currentStackIndex];
-            id--;
-        }
-        currentStack.push(id);
-        contador++;
-    }
-    this.pieceLocation = new Array();
-    for (var id = this.min; id < this.max; id++) {
-        var matrix = mat4.create();
-        mat4.identity(matrix);
-        this.pieceLocation[id] = matrix;
-    }
-
-    this.pieceCell = new Array();
+    this.createStacks();
+    this.createPieces();
 }
 
 Board.prototype = Object.create(Node.prototype);
 Board.prototype.constructor = Board;
+
+Board.prototype.createStacks = function(){
+   var contador = 0;
+   var currentStackIndex = 0;
+   var currentStack = this.stack[currentStackIndex];
+   for (var id = this.min; id < this.max; id++) {
+        if (contador > 23 && currentStackIndex < this.stack.length) {
+            contador = 0;
+            currentStackIndex++;
+            currentStack = this.stack[currentStackIndex];
+        }
+        currentStack.push(id);
+        contador++;
+    }
+
+    for(var i=0; i < this.stack.length; i++)
+        console.log(this.stack[i]);
+}
+
+Board.prototype.createPieces = function(){
+    for (var id = this.min; id < this.max; id++) {
+        var piece = [];
+        var matrix = mat4.create();
+        mat4.identity(matrix);
+        piece.location = matrix;
+        piece.node = null;
+        piece.transformation = null;
+        piece.cell = null;
+
+        this.pieces[id] = piece;
+    }
+
+}
 
 Board.prototype.display = function(parentElement) {
     this.graph.movTrack.resetId();
@@ -41,16 +55,16 @@ Board.prototype.display = function(parentElement) {
 }
 
 Board.prototype.apply = function(id) {
-    this.scene.multMatrix(this.pieceLocation[id]);
+    this.scene.multMatrix(this.pieces[id].location);
 }
 
-Board.prototype.newPos = function(id, translate){
-    mat4.translate(this.pieceLocation[id],this.pieceLocation[id],translate);
-    this.pieceCell[id] = translate;
+Board.prototype.newPos = function(id, translate,node,newPos){
+    mat4.translate(this.pieces[id].location,this.pieces[id].location,translate);
+    this.pieces[id].transformation = translate;
+    this.pieces[id].node = node;
+    this.pieces[id].cell = newPos;
+    console.log(id,this.pieces[id]);
 }
-
-    mat4.translate(this.pieceLocation[id], this.pieceLocation[id], translate);
-};
 
 Board.prototype.getStackByPieceType = function(pieceType) {
     switch (pieceType) {
@@ -78,5 +92,17 @@ Board.prototype.removeTopPiece = function(type) {
     return idToReturn;
 };
 Board.prototype.getPieceCell = function(id){
-    return this.pieceCell[id];
+    return this.pieces[id].transformation;
+};
+
+Board.prototype.getPieceNode = function(id){
+    return this.pieces[id].node;
+};
+
+Board.prototype.getPieceId = function(world){
+    for(var key in this.pieces){
+        if(this.pieces[key].cell!= null && equalCoords(this.pieces[key].cell,world))
+            return key;
+    }
+    return -1;
 };

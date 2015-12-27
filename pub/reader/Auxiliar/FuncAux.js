@@ -42,7 +42,7 @@ function distanceBetweenTwoSphericPoint(point1, point2) {
     ];
 };
 
-function boardCoordsToWolrd(col, lin) {
+function boardCoordsToWorld(col, lin) {
     return [1.5 * (col - lin), 0, 0.866 * (col + lin)];
 };
 
@@ -51,7 +51,7 @@ function equal(Element1, Element2) {
 };
 
 function equalCoords(Element1, Element2) {
-    return (Element1.position[0] == Element2[0] && Element1.position[1] == Element2[1] && Element1.position[2] == Element2[2]);
+    return (Element1[0] == Element2[0] && Element1[1] == Element2[1] && Element1[2] == Element2[2]);
 };
 
 function getIndex(array, element, process) {

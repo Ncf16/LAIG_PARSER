@@ -5,8 +5,8 @@ function Piece(graph) {
     this.yStackPos = 14;
     this.deltaObj = 2;
     this.origin = [0, 0, 0];
-    this.deltaY = 3;
-    this.deltaT = 1.2;
+    this.deltaY = 5;
+    this.deltaT = 2;
 }
 
 Piece.prototype = Object.create(Node.prototype);

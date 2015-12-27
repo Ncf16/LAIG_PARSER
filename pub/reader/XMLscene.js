@@ -148,13 +148,8 @@
  };
 
  XMLscene.prototype.undoPlacement = function(move) {
-     var worldCoords = boardCoordsToWolrd(move[0], move[1]);
-     var index = getIndex(this.piecesInfo, worldCoords, equalCoords);
-     if (index >= 0)
-         this.graph.movTrack.undo(this.piecesInfo[index]);
-     else {
-         console.log("index not found");
-     }
+    var worldCoords = boardCoordsToWolrd(move[0], move[1]);
+    this.graph.movTrack.undo(worldCoords);
  };
 
  function initBoard(scene, response) {
@@ -177,7 +172,7 @@
 
  function getStats(scene, data) {
      makeRequest("getStats", [], (function(data) {
-             var response = JSON.parse(data.target.response));
+             var response = JSON.parse(data.target.response);
          if (response['message'] === "OK") {
              this.gameStats
          }
@@ -309,6 +304,9 @@
      this.startTime = new Date(); //time value that is the number of milliseconds since 1 January, 1970 UTC.
      this.axis = new CGFaxis(this);
      this.lightsEnable = [];
+
+     this.textShader = new CGFshader(this.gl, "shaders/font.vert", "shaders/font.frag");
+    this.textShader.setUniformsValues({'dims': [16, 16]});
  };
 
  //initialize with scene with a light that will be overwrited after the parsing of the file
