@@ -84,11 +84,11 @@ updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
 playHuman(addPiece,Tab,NewTab,Player):-moveAddPiece(Tab,NewTab,Player).
 
 %2 human players
-retract(_,_,Message):-Message="RETRACT OK",playMode(players),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))).
+retract(_,_,Message):-Message="RETRACT OK",playMode(players),retractall((playMode(_))),retractall((stats(_,_))),retractall((numberList(_))).
 % 2 bots players
-retract(_,_,Message):-Message="RETRACT OK",retract((bot(_))),retract((bot(_))),retract((playMode(_))),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))). 
+retract(_,_,Message):-Message="RETRACT OK",retractall((bot(_))), retractall((playMode(_))),retractall((stats(_,_))),retractall((numberList(_))). 
 %1 of each
-retract(_,_,Message):-Message="RETRACT OK",retract((bot(_))),retract((playMode(_))),retract((stats(white,_))),retract((stats(black,_))),retract((stats(tab,_))),asserta((numberList(_))). 
+retract(_,_,Message):-Message="RETRACT OK",retractall((bot(_))),retractall((playMode(_))),retractall((stats(_,_)),retractall((numberList(_))). 
 retract(_,_,Message):-Message="RETRACT FAIL".
 
 createHumanMove(HumanMove,NewPiece,[Line,Col,NewPiece,Piece]):-getMoveLine(HumanMove,Line),getMoveCol(HumanMove,Col),getMovePiece(HumanMove,Piece).

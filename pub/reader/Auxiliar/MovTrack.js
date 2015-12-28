@@ -38,7 +38,7 @@ MovTrack.prototype.update = function(currTime) {
             this.board.newPos(this.animationElements['piece'].id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]], this.animationElements['piece'].node, dest);
             this.animation = null;
             this.scene.animationPlaying = false;
-            this.scene.replayingMove=false;
+            this.scene.replayingMove = false;
         }
     }
 };
@@ -149,11 +149,14 @@ MovTrack.prototype.animate = function() {
 MovTrack.prototype.validateMove = function() {
 
     if (this.lastPick.node != null && this.newPick.node != null && this.lastPick.obj == "piece" && this.newPick.obj == "cell") {
-        this.scene.moveSelected = true;
-        this.copy(this.animationElements['piece'], this.lastPick);
-        this.copy(this.animationElements['cell'], this.newPick);
-        play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
-        //this.animate();
+        if (!this.scene.animationPlaying && ((botPlayers.indexOf(this.scene.currentPlayer) < 0))) {
+            this.scene.moveSelected = true;
+            this.copy(this.animationElements['piece'], this.lastPick);
+            this.copy(this.animationElements['cell'], this.newPick);
+
+            play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
+            //this.animate();
+        }
     }
 };
 MovTrack.prototype.removeTopPiece = function(type) {
