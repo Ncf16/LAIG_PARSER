@@ -30,6 +30,6 @@ MyInterface.prototype.addCameraDropdown = function(scene,array) {
 
     this.scene = scene;
     this.game.add(this.scene, 'rotateCamera',array).onChange((function() {
-    	this.scene.teste();
+    	this.scene.cameraChange();
     }).bind(this));
 };

@@ -133,12 +133,12 @@ MovTrack.prototype.animate = function() {
     if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
         return false;
     this.scene.animationPlaying = true;
-    console.log(this.animationElements['piece'],this.animationElements['piece'].coord);
+    //console.log(this.animationElements['piece'], this.animationElements['piece'].coord);
     //naquela sitaução eu faço copy já do node,não já? e tenho duvidas das .coord da piece //volta la aquela secçao
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
     return true;
 };
- 
+
 
 MovTrack.prototype.validateMove = function() {
 
@@ -198,7 +198,9 @@ function prologToInfo(pieceType, obj) {
 MovTrack.prototype.getPiece = function() {
     return this.animationElements['piece'];
 };
-
+MovTrack.prototype.resetBoard = function() {
+    this.board.resetPieces();
+};
 MovTrack.prototype.getCell = function() {
     return this.animationElements['cell'];
 };

@@ -23,6 +23,13 @@ function cartesianToSphericCoords(cartesianCoords) {
 function mod(number1, number2) {
     return number1 - Math.floor(number1 / number2) * number2
 };
+Date.prototype.yyyymmdd = function() {
+    var yyyy = this.getFullYear().toString();
+    var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
+    var dd = this.getDate().toString();
+    return yyyy+"/" + (mm[1] ? mm : "0" + mm[0]) +"/"+ (dd[1] ? dd : "0" + dd[0]); // padding
+};
+
 /*
 Beware in many languages the modulo operation returns a value with the same sign as the dividend 
 (like C, C++, C#, JavaScript, full list here). This requires a custom mod function like so:
