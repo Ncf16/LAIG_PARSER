@@ -527,10 +527,11 @@ MySceneGraph.prototype.parseAmbients = function(elems2, arr){
     var def = null;
     for(var i = 0; i < elems2.length; i++){
         var id = this.reader.getString(elems2[i], 'id');
-        var ambient = this.reader.getString(elems2[i], 'ambient');
+        var ambient = this.reader.getString(elems2[i], 'ambient', false);
         if(ambient == "default")
             def = id;
-        arr[ambient] = id;
+        if(ambient != null)
+            arr[ambient] = id;
     }
     if(def == null)
         def = this.reader.getString(elems2[0], 'id');
@@ -565,10 +566,11 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
         node.id = id;
-        var elems2 = this.checkTag(elems[i], 'MATERIAL', undefined, undefined, node.id);
+        var elems2 = this.checkTag(elems[i], 'MATERIAL', false, 1);
         node.material = this.parseAmbients(elems2,node.materials);
-        elems2 = this.checkTag(elems[i], 'TEXTURE');
+        elems2 = this.checkTag(elems[i], 'TEXTURE', false, 1);
         node.texture =  this.parseAmbients(elems2,node.textures);
+        node.setPickingAmbient();
 
         //descendants
         elems2 = this.checkTag(elems[i], 'DESCENDANTS', false);

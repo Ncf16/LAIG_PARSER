@@ -7,6 +7,10 @@ function Piece(graph) {
     this.origin = [0, 0, 0];
     this.deltaY = 5;
     this.deltaT = 2;
+
+    this.requestId = 0;
+    this.pickingMaterial = null;
+    this.pickingTexture = null;
 }
 
 Piece.prototype = Object.create(Node.prototype);
@@ -25,13 +29,42 @@ Piece.prototype.setObjects = function(idObject){
     }
 }
 
+Piece.prototype.setPickingAmbient = function(){
+
+    this.pickingMaterial = this.material;
+    this.pickingTexture = this.texture;
+
+    var tmpMaterial = this.materials["picking"];
+    if(typeof tmpMaterial !== "undefined")
+        this.pickingMaterial = tmpMaterial;
+    var tmpTexture = this.textures["picking"];
+    if(typeof tmpTexture !== "undefined")
+        this.pixkingTexture = tmpTexture;
+}
+
+Piece.prototype.setPicking = function(id){
+    this.requestId = id;
+}
+
+Piece.prototype.clearPicking = function(){
+    console.log("clear");
+    this.requestId = 0;
+}
+
+
 Piece.prototype.display = function(parentElement){
 	
+    var pieceId;
 	var piece = this.graph.movTrack.getPiece();
-	var pieceId;
 	if(piece != null)
 		pieceId = piece.id;
 	id = this.graph.movTrack.id;
+    if(id == this.requestId){
+        var tmpMaterial = this.material;
+        this.material = this.pickingMaterial;
+        var tmpTexture = this.texture;
+        this.texture = this.pickingTexture;
+    }
 	this.graph.scene.registerForPick(this.graph.movTrack.id++, this);
 	
 	var material;
@@ -82,6 +115,11 @@ Piece.prototype.display = function(parentElement){
 
     if (material != null)
         this.graph.matArray.pop();
+
+    if(id == this.requestId){
+        this.material = tmpMaterial;
+        this.texture = tmpTexture;
+    }
 }
 
 Piece.prototype.getCoords = function(color, type) {
