@@ -85,19 +85,15 @@ Piece.prototype.display = function(parentElement){
 }
 
 Piece.prototype.getCoords = function(color, type) {
-    if (color == "white" && type == "disk") {
-        var coords = [this.xStackPos - this.deltaObj, 0, this.yStackPos];
-        return coords;
-    } else if (color == "white" && type == "ring") {
-        var coords = [this.xStackPos, 0, this.yStackPos];
-        return coords;
-    } else if (color == "black" && type == "disk") {
-        var coords = [this.xStackPos - this.deltaObj, 0, this.yStackPos - this.deltaObj];
-        return coords;
-    } else if (color == "black" && type == "ring") {
-        var coords = [this.xStackPos, 0, this.yStackPos - this.deltaObj];
-        return coords;
-    }
+    if (color == "white" && type == "disk")
+        return [this.xStackPos - this.deltaObj, 0, this.yStackPos];
+    else if (color == "white" && type == "ring")
+        return [this.xStackPos, 0, this.yStackPos];
+    else if (color == "black" && type == "disk")
+        return [this.xStackPos - this.deltaObj, 0, this.yStackPos - this.deltaObj];
+    else if (color == "black" && type == "ring")
+        return [this.xStackPos, 0, this.yStackPos - this.deltaObj];
+    return [];
 };
 
 Piece.prototype.move = function(orig, dest) {

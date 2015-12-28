@@ -59,10 +59,6 @@ Board.prototype.apply = function(id) {
 }
 
 Board.prototype.newPos = function(id, translate, node, newPos) {
-    console.log("id",id);
-    for(var key in this.pieces)
-        console.log("piece",this.pieces[key]);
-
     mat4.translate(this.pieces[id].location, this.pieces[id].location, translate);
     this.pieces[id].transformation = translate;
     this.pieces[id].cell = newPos;

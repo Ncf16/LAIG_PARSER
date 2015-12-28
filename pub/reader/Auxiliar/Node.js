@@ -15,12 +15,24 @@ function Node(graph) {
     this.animations = [];
     this.currentAnimation = null;
     this.index = 1;
+
+    //different ambients
+    this.materials = [];
+    this.textures = [];
 };
 
 Node.prototype.getID = function() {
 
     return this.id;
 }
+Node.prototype.setAmbient = function(text){
+
+    if (typeof text !== 'undefined' && typeof text === "string"){
+        this.material = this.materials[text];
+        this.texture = this.textures[text];
+    }
+}
+
 Node.prototype.update = function(currTime) {
 
     if (this.graph.scene.Loop && this.animations.length > 0) {
