@@ -97,8 +97,8 @@
     </AMBIENTS>
     <!-- The leaves -->
     <LEAVES>
-        <LEAF id="text" type="text" texture="textures/oolite-font.png" value="Filipe é nabo" />
-         <LEAF id="text2" type="text" texture="textures/oolite-font.png" value="Ass: Costa" />
+        <LEAF id="text" type="text" texture="textures/oolite-font.png" value="Liberté dans Uranus" />
+         <LEAF id="text2" type="text" texture="textures/oolite-font.png" value="Ass Costa" />
         <LEAF id="rectangleAnimated" type="rectangle" args="-0.5 0.5 0.5 -0.5" />
         <LEAF id="sphere" type="sphere" args="0.65 20 20" />
         <LEAF id="hex" type="hex" />
@@ -120,7 +120,8 @@
         <NODE id="teste">
             <MATERIAL id="clear" />
             <TEXTURE id="clear" />
-            <TRANSLATION x="0" y="3" z="0" />
+            <SCALE sx="0.9" sy="1" sz="0.9"/>
+            <TRANSLATION x="-6" y="3.2" z="0" />
             <DESCENDANTS>
                 <DESCENDANT id="text" />
             </DESCENDANTS>

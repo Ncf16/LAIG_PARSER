@@ -319,7 +319,8 @@ LeafText.prototype.display = function() {
             'charCoords': coords
         });
         this.scene.translate(i, 0, 0);
-        this.element.display();
+        if(this.text[i] != " ")
+            this.element.display();
         this.scene.popMatrix();
     }
 
