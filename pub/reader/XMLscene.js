@@ -100,22 +100,10 @@
 
              this.moves.splice(0, this.moves.length);
              this.boards.splice(0, this.boards.length);
-             makeRequest("initialize", [this.player1, this.player2], (function(data) {
-
-                 checkError(this, JSON.parse(data.target.response));
-
-             }).bind(this));
-
-             makeRequest("initStats", [], (function(data) {
-
-                 initBoard(this, JSON.parse(data.target.response));
-
-             }).bind(this));
-             this.parsePlayers();
-             this.replayOfGame = false;
-             this.changePlayer = true;
+             this.gameStarted = true;
              this.gameOver = false;
-             this.replayingMove = false;
+             this.reset(false);
+
          }
 
      }).bind(this);
@@ -156,7 +144,7 @@
  };
 
  XMLscene.prototype.reset = function(flag) {
-     if (this.gameStarted && !this.replayOfGame) {
+     if (this.gameStarted) {
          this.graph.movTrack.resetBoard();
          this.graph.movTrack.board.createStacks();
 
@@ -207,6 +195,8 @@
              console.log("Flag False");
              scene.replayOfGame = false;
              scene.gameOver = false;
+             scene.replayingMove = false;
+             scene.playingAnimation = false;
              scene.parsePlayers();
          }
 
@@ -288,8 +278,8 @@
                  pieceToMove.obj = "piece";
                  pieceToMove.id = pieceToAnimateId; // ->acrescentei esta linha 
                  var cellToMove = new Object();
-                 cellToMove.info1 = newMove[0];
-                 cellToMove.info2 = newMove[1];
+                 cellToMove.info1 = newMove[1];
+                 cellToMove.info2 = newMove[0];
                  cellToMove.coord = worldCoords;
                  cellToMove.obj = "cell";
 
@@ -560,10 +550,25 @@
      // Draw axis
      this.axis.display();
      if (!this.playingAnimation) {
+         /* if (this.changePlayer) {
+              this.moveTime = 0;
+              this.startPlay = currTime;
+              this.changePlayer = false;
+              console.log("updatePlayTime");
+          } else {
+              this.moveTime = (this.currTime - this.startPlay) / 1000.0;
+              console.log(this.moveTime);
+              if (this.moveTime >= this.maxMoveTime) {
+                  this.moveTime = 0;
+                  console.log("changePlayers");
+                  nextPlayer(this);
+              }
+          }*/
          if (!this.gameOver) {
              if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame) {
                  play(this, []);
-             }
+             } /*else
+                 console.log(botPlayers.indexOf(this.currentPlayer) >= 0, this.replayOfGame);*/
          }
          //add play if bot
          if (this.replayOfGame && this.moves.length > 0 && !this.play && !this.replayingMove) {
