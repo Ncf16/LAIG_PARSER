@@ -28,10 +28,19 @@ Node.prototype.getID = function() {
 Node.prototype.setAmbient = function(text){
 
     if (typeof text !== 'undefined' && typeof text === "string"){
-        this.material = this.materials[text];
-        this.texture = this.textures[text];
+        console.log("Ambient change");
+        var tmpMaterial = this.materials[text];
+        if(typeof tmpMaterial !== "undefined")
+            this.material = tmpMaterial;
+        var tmpTexture = this.textures[text];
+        if(typeof tmpTexture !== "undefined")
+            this.texture = tmpTexture;
     }
 }
+
+Node.prototype.setPickingAmbient = function(){
+
+};
 
 Node.prototype.update = function(currTime) {
 

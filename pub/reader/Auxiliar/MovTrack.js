@@ -32,6 +32,7 @@ MovTrack.prototype.update = function(currTime) {
         if (this.animation.validateAnimation(currTime))
             this.animation.update(currTime);
         else {
+            this.animationElements['piece'].node.clearPicking();
             var orig = this.animationElements['piece'].coord;
             var dest = this.animationElements['cell'].coord;
             this.board.newPos(this.animationElements['piece'].id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]], this.animationElements['piece'].node, dest);
@@ -43,16 +44,17 @@ MovTrack.prototype.update = function(currTime) {
 
 MovTrack.prototype.listen = function() {
 
-    this.copy(this.lastPick, this.newPick);
-
     if (this.scene.pickMode == false) {
         if (this.scene.pickResults != null && this.scene.pickResults.length > 0) {
             for (var i = 0; i < this.scene.pickResults.length; i++) {
                 var obj = this.scene.pickResults[i][0];
 
                 if (obj) {
+                    if(this.newPick.node != null)
+                    this.copy(this.lastPick, this.newPick);
                     var customId = this.scene.pickResults[i][1];
                     console.log(obj, customId, this.scene);
+                    obj.setPicking(customId);
                     this.translateId(obj, customId);
                 }
             }
@@ -133,8 +135,6 @@ MovTrack.prototype.animate = function() {
     if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
         return false;
     this.scene.animationPlaying = true;
-    console.log(this.animationElements['piece'],this.animationElements['piece'].coord);
-    //naquela sitaução eu faço copy já do node,não já? e tenho duvidas das .coord da piece //volta la aquela secçao
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
     return true;
 };
