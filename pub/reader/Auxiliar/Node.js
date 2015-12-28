@@ -25,10 +25,11 @@ Node.prototype.getID = function() {
 
     return this.id;
 }
-Node.prototype.setAmbient = function(text){
+Node.prototype.setAmbient = function(){
+
+    text = this.graph.scene.ambientID;
 
     if (typeof text !== 'undefined' && typeof text === "string"){
-        console.log("Ambient change");
         var tmpMaterial = this.materials[text];
         if(typeof tmpMaterial !== "undefined")
             this.material = tmpMaterial;
@@ -73,6 +74,8 @@ Node.prototype.display = function(parentElement) {
     //create the variables
     var material;
     var texture;
+
+    this.setAmbient();
 
     //if string Material from node is different from null is necessary to push the material to material Stack
     if (this.material != "null") {

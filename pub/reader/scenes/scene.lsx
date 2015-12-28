@@ -53,12 +53,12 @@
             <ambient r="0" g="0" b="0" a="1" />
             <emission r="1" g="1" b="1" a="1" />
         </MATERIAL>
-        <MATERIAL id="blue">
+        <MATERIAL id="green">
             <shininess value="30" />
-            <specular r="0" g="0" b="1" a="1" />
-            <diffuse r="0" g="0" b="1" a="1" />
+            <specular r="0" g="1" b="0" a="1" />
+            <diffuse r="0" g="0" b="0" a="1" />
             <ambient r="0" g="0" b="0" a="1" />
-            <emission r="0" g="0" b="1" a="1" />
+            <emission r="0" g="1" b="0" a="1" />
         </MATERIAL>
         <MATERIAL id="red">
             <shininess value="30" />
@@ -370,6 +370,7 @@
         </NODE>
         <NODE id="hexObject">
             <MATERIAL id="white" />
+            <MATERIAL id="green" ambient="lighting" />
             <TEXTURE id="hexCellTex" />
             <TEXTURE id="hexCellPickTex" ambient="picking" />
             <DESCENDANTS>

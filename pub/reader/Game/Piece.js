@@ -69,6 +69,8 @@ Piece.prototype.display = function(parentElement){
 	var material;
     var texture;
 
+    this.setAmbient();
+
     //if string Material from node is different from null is necessary to push the material to material Stack
     if (this.material != "null") {
         //search from material with "this.material" string in Materials array

@@ -594,9 +594,6 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         node.texture =  this.parseNodeAmbients(elems2,node.textures);
         node.setPickingAmbient();
 
-        console.log(id, node.materials, node.material);
-        console.log(id, node.textures, node.texture);
-
         //descendants
         elems2 = this.checkTag(elems[i], 'DESCENDANTS', false);
         elems2 = this.checkTag(elems2[0], 'DESCENDANT', false, 1);
