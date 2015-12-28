@@ -522,7 +522,7 @@ MySceneGraph.prototype.onXMLError = function(message) {
     this.loadedOk = false;
 };
 
-MySceneGraph.prototype.parseAmbients = function(elems2, arr){
+MySceneGraph.prototype.parseNodeAmbients = function(elems2, arr){
 
     var def = null;
     for(var i = 0; i < elems2.length; i++){
@@ -533,8 +533,10 @@ MySceneGraph.prototype.parseAmbients = function(elems2, arr){
         if(ambient != null)
             arr[ambient] = id;
     }
-    if(def == null)
+    if(def == null){
         def = this.reader.getString(elems2[0], 'id');
+        arr['default'] = def;
+    }
 
     return def;
 }
@@ -571,6 +573,9 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         elems2 = this.checkTag(elems[i], 'TEXTURE', false, 1);
         node.texture =  this.parseAmbients(elems2,node.textures);
         node.setPickingAmbient();
+
+        console.log(id,node.materials,node.material);
+        console.log(id,node.textures,node.texture);
 
         //descendants
         elems2 = this.checkTag(elems[i], 'DESCENDANTS', false);
