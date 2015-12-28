@@ -41,7 +41,6 @@ Board.prototype.createPieces = function() {
         resetPiece(piece);
         piece.node = null;
         this.pieces[id] = piece;
-
     }
 
 };
@@ -55,7 +54,7 @@ function resetPiece(piece) {
     var matrix = mat4.create();
     mat4.identity(matrix);
     piece.location = matrix;
-
+    piece.picked = false;
     piece.transformation = null;
     piece.cell = null;
 };
@@ -112,6 +111,12 @@ Board.prototype.getPieceNode = function(id) {
 };
 Board.prototype.setPieceNode = function(id, node) {
     this.pieces[id].node = node;
+};
+Board.prototype.togglePicked = function(id) {
+    this.pieces[id].picked = !this.pieces[id].picked;
+};
+Board.prototype.isPiecePicked = function(id) {
+    return this.pieces[id].picked;
 };
 Board.prototype.getPiece = function(id) {
     return this.pieces[id];

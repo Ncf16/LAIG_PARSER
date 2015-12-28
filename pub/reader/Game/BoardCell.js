@@ -55,4 +55,6 @@ BoardCell.prototype.getCoords = function(col, lin) {
     return boardCoordsToWorld(col, lin);
 };
 
- 
+ BoardCell.prototype.getId = function(col,lin){
+ 	return (lin*7+col)+1;
+ }

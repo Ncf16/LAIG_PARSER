@@ -51,12 +51,15 @@ MovTrack.prototype.listen = function() {
                 var obj = this.scene.pickResults[i][0];
 
                 if (obj) {
-                    if(this.newPick.node != null)
                     this.copy(this.lastPick, this.newPick);
                     var customId = this.scene.pickResults[i][1];
-                   // console.log(obj, customId, this.scene);
-                    obj.setPicking(customId);
-                    this.translateId(obj, customId);
+                    if(obj instanceof Piece && !this.board.isPiecePicked(customId) || obj instanceof BoardCell){
+                        // console.log(obj, customId, this.scene);
+                        if(this.newPick.node != null && this.newPick.node instanceof Piece && obj instanceof Piece && this.newPick.node.id != obj.id)
+                            this.newPick.node.clearPicking();
+                        obj.setPicking(customId);
+                        this.translateId(obj, customId);
+                    }
                 }
             }
             this.scene.pickResults.splice(0, this.scene.pickResults.length);
@@ -130,6 +133,7 @@ MovTrack.prototype.undo = function(worldCoords) {
     this.animationElements['cell'].coord = stack;
 
     node.reverseMove(stack, cell);
+    this.board.togglePicked(this.animationElements['piece'].id);
 }
 
 MovTrack.prototype.animate = function() {
@@ -137,6 +141,7 @@ MovTrack.prototype.animate = function() {
         return false;
     this.scene.animationPlaying = true;
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
+    this.board.togglePicked(this.animationElements['piece'].id);
     return true;
 };
 

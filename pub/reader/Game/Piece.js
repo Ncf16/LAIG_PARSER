@@ -47,7 +47,6 @@ Piece.prototype.setPicking = function(id){
 }
 
 Piece.prototype.clearPicking = function(){
-    console.log("clear");
     this.requestId = 0;
 }
 
