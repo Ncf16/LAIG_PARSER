@@ -51,6 +51,7 @@
      this.cameraToMovePos = new Object();
      this.animationPlaying = false;
      this.changePlayer = false;
+     this.replayingMove = false;
      this.moveTime = 0;
      this.startPlay = 0;
      this.rotateCamera = new Object();
@@ -64,6 +65,7 @@
  XMLscene.prototype.constructor = XMLscene;
 
  XMLscene.prototype.parsePlayers = function() {
+     botPlayers = [];
      if (botTypes.indexOf(this.player1) >= 0)
          botPlayers.push(player1Color);
 
@@ -91,37 +93,6 @@
      console.log(cameraPositionsCoords);
  };
 
- function onInitFs(fs) {
-     console.log('Opened file system: ' + fs.name);
- }
-
- function errorHandler(e) {
-     var msg = '';
-
-     switch (e.code) {
-         case FileError.QUOTA_EXCEEDED_ERR:
-             msg = 'QUOTA_EXCEEDED_ERR';
-             break;
-         case FileError.NOT_FOUND_ERR:
-             msg = 'NOT_FOUND_ERR';
-             break;
-         case FileError.SECURITY_ERR:
-             msg = 'SECURITY_ERR';
-             break;
-         case FileError.INVALID_MODIFICATION_ERR:
-             msg = 'INVALID_MODIFICATION_ERR';
-             break;
-         case FileError.INVALID_STATE_ERR:
-             msg = 'INVALID_STATE_ERR';
-             break;
-         default:
-             msg = 'Unknown Error';
-             break;
-     };
-
-     console.log('Error: ' + msg);
- }
-
  XMLscene.prototype.initHandlers = function() {
      this.startGame = (function() {
          if (!this.gameStarted && !this.replayOfGame) {
@@ -141,16 +112,22 @@
 
              }).bind(this));
              this.parsePlayers();
+             this.replayOfGame = false;
              this.changePlayer = true;
+             this.gameOver = false;
+             this.replayingMove = false;
          }
 
      }).bind(this);
 
      this.resetGame = (function() {
-
+         this.replayingMove = false;
+         console.log("Reset Game");
          this.moves.splice(0, this.moves.length);
          this.boards.splice(0, this.boards.length);
-         this.reset();
+         this.reset(false);
+         console.log(this.graph.movTrack.board);
+         console.log("End Reset");
      }).bind(this)
 
      this.undoMove = (function() {
@@ -164,25 +141,38 @@
 
      }).bind(this);
      this.saveGame = (function() {
-         console.log(this.gameStarted, this.gameOver);
-         if (!this.gameStarted && this.gameOver) {
-             this.reset();
-             this.replayOfGame = true;
-             this.gameStarted = true;
-             console.log("HERE");
+         if (this.gameOver) {
+             this.replayingMove = false;
+             this.boards.splice(0, this.boards.length);
+             this.reset(true);
+
              /* var date = new Date();
               console.log(date.yyyymmdd());
               window.webkitRequestFileSystem(window.TEMPORARY, 5 * 1024 * 1024 /*5MB* , onInitFs, errorHandler);*/
+         } else {
+             console.log("No reset", this.gameStarted, this.gameOver);
          }
      }).bind(this);
  };
 
- XMLscene.prototype.reset = function() {
+ XMLscene.prototype.reset = function(flag) {
      if (this.gameStarted && !this.replayOfGame) {
-         console.log("reset");
+         this.graph.movTrack.resetBoard();
+         this.graph.movTrack.board.createStacks();
+
          makeRequest("retract", [], handleReply);
 
-         makeRequest("initialize", [this.player1, this.player2], (function(data) {
+         var player1;
+         var player2;
+         if (flag) {
+             player1 = player1Color;
+             player2 = player2Color;
+         } else {
+             player1 = this.player1;
+             player2 = this.player2;
+         }
+
+         makeRequest("initialize", [player1, player2], (function(data) {
 
              checkError(this, JSON.parse(data.target.response));
 
@@ -190,31 +180,41 @@
 
          makeRequest("initStats", [], (function(data) {
 
-             initBoard(this, JSON.parse(data.target.response));
+             initBoard(this, JSON.parse(data.target.response), flag);
 
          }).bind(this));
-         this.parsePlayers();
-         this.graph.movTrack.resetBoard();
-         this.changePlayer = true;
-         this.gameOver = false;
+
      }
  };
 
  XMLscene.prototype.undoPlacement = function(move) {
+
      this.graph.movTrack.undo(boardCoordsToWorld(move[0], move[1]));
  };
 
- function initBoard(scene, response) {
+ function initBoard(scene, response, flag) {
+
+     console.log(response);
      if (response['message'] === "OK") {
 
          scene.currentBoard = JSON.parse(response['newBoard']);
          scene.boards.push(scene.currentBoard);
          scene.gameStarted = true;
          scene.currentPlayer = player1Color;
+         if (flag) {
+             scene.replayOfGame = true;
+         } else {
+             console.log("Flag False");
+             scene.replayOfGame = false;
+             scene.gameOver = false;
+             scene.parsePlayers();
+         }
+
      }
  };
 
  function checkError(scene, response) {
+     console.log(response);
      if (response['message'] !== "OK") {
          scene.gameError = true;
      }
@@ -240,14 +240,16 @@
  };
 
  function play(scene, move) {
-     if (!scene.animationPlaying && scene.gameStarted && !scene.play && !this.gameOver && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected || scene.replayOfGame)) {
+     if (!scene.animationPlaying && scene.gameStarted && !scene.play && !this.gameOver && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected || (scene.replayOfGame && move.length > 0))) {
          scene.play = true;
-         console.log("currentPlayer", scene.currentPlayer);
+         console.log("currentPlayer", scene.currentPlayer, scene.currentBoard, move);
          makeRequest("play", [JSON.stringify(scene.currentBoard), scene.currentPlayer, JSON.stringify(move)], (function(data) {
 
              handlePlay(scene, JSON.parse(data.target.response));
 
          }).bind(scene));
+     } else {
+         //   console.log(!scene.animationPlaying, scene.gameStarted, !scene.play, !this.gameOver, (botPlayers.indexOf(scene.currentPlayer) >= 0), scene.moveSelected, scene.replayOfGame);
      }
  };
 
@@ -256,8 +258,9 @@
      if (data['message'].indexOf(FAILURE_MESSAGE) == -1) {
          if (data['message'].indexOf(VICTORY_MESSAGE) > -1) {
              scene.gameOver = true;
-             scene.gameStarted = false;
              scene.endStatus = data['message'];
+             console.log("SOMEONE WON");
+             console.log(scene.moves.length);
          } else {
              console.log(data);
              var newBoard = JSON.parse(data['newPlayer']);
@@ -267,7 +270,6 @@
                  scene.currentBoard = newBoard;
                  scene.moves.push(newMove);
              }
-             scene.play = false;
 
              /*console.log(scene.graph.movTrack.lastPick.node);
              console.log(scene.graph.movTrack.lastPick);
@@ -295,7 +297,7 @@
                  scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], cellToMove);
 
 
-                 console.log(pieceToAnimateId, pieceToMove, worldCoords);
+                 //   console.log(pieceToAnimateId, pieceToMove, worldCoords);
              }
 
              scene.graph.movTrack.animate();
@@ -304,10 +306,10 @@
              nextPlayer(scene);
          }
      } else {
-         scene.gameError = true;
          console.log("ERROR", data);
 
      }
+     scene.play = false;
      // console.log("HAVE ASNWERS");
  };
 
@@ -482,7 +484,7 @@
      this.gl.clearColor(this.graph.background['r'], this.graph.background['g'], this.graph.background['b'], this.graph.background['a']);
      this.setGlobalAmbientLight(this.graph.ambient['r'], this.graph.ambient['g'], this.graph.ambient['b'], this.graph.ambient['a']);
 
-     //enable textures
+     //enable textures/
      this.enableTextures(true);
 
      //create the axis given the INITIAL values
@@ -535,6 +537,7 @@
  };
 
  XMLscene.prototype.replayMove = function(move) {
+     console.log("Replay Move", move);
      play(this, move);
  };
 
@@ -556,21 +559,23 @@
 
      // Draw axis
      this.axis.display();
-     if (!this.playingAnimation && !this.gameOver) {
-
-         if (botPlayers.indexOf(this.currentPlayer) >= 0) {
-             play(this, []);
+     if (!this.playingAnimation) {
+         if (!this.gameOver) {
+             if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame) {
+                 play(this, []);
+             }
          }
          //add play if bot
-         if (this.replayOfGame && this.moves.length > 0) {
+         if (this.replayOfGame && this.moves.length > 0 && !this.play && !this.replayingMove) {
+
              console.log(this.moves.length);
-             var moveToReplay = this.moves[this.moves.length - 1];
-             this.moves.splice(this.moves.length - 1, 1);
-             replayMove(moveToReplay);
+             var moveToReplay = this.moves[0];
+             this.moves.splice(0, 1);
+             this.replayMove(moveToReplay);
+             this.replayingMove = true;
          }
 
      }
-
      // ---- END Background, camera and axis setup
      // it is important that things depending on the proper loading of the graph
      // only get executed after the graph has loaded correctly.
@@ -628,7 +633,6 @@
 
  //Handle the JSON Reply
  function handleReply(data) {
-     console.log(data.target.response);
      response = JSON.parse(data.target.response);
      console.log(response);
  };

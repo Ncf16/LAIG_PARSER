@@ -3,12 +3,8 @@ function Board(graph) {
     Node.call(this, graph);
     this.min = 50;
     this.max = this.min + 4 * 24;
-    this.whiteRings = [];
-    this.whiteDisks = [];
-    this.blackRings = [];
-    this.blackDisks = [];
     this.pieces = new Array();
-    this.stack = [this.whiteDisks, this.whiteRings, this.blackDisks, this.blackRings];
+
     this.createStacks();
     this.createPieces();
 }
@@ -17,6 +13,11 @@ Board.prototype = Object.create(Node.prototype);
 Board.prototype.constructor = Board;
 
 Board.prototype.createStacks = function() {
+    this.whiteRings = [];
+    this.whiteDisks = [];
+    this.blackRings = [];
+    this.blackDisks = [];
+    this.stack = [this.whiteDisks, this.whiteRings, this.blackDisks, this.blackRings];
     var contador = 0;
     var currentStackIndex = 0;
     var currentStack = this.stack[currentStackIndex];
@@ -68,9 +69,9 @@ Board.prototype.apply = function(id) {
 };
 
 Board.prototype.newPos = function(id, translate, node, newPos) {
-    console.log("id", id);
-    /*  for (var key in this.pieces)
-          console.log("piece", this.pieces[key]);*/
+    /* console.log("id", id);
+       for (var key in this.pieces)
+           console.log("piece", this.pieces[key]);*/
 
     mat4.translate(this.pieces[id].location, this.pieces[id].location, translate);
     this.pieces[id].transformation = translate;

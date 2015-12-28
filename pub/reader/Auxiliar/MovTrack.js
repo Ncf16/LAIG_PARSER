@@ -37,6 +37,7 @@ MovTrack.prototype.update = function(currTime) {
             this.board.newPos(this.animationElements['piece'].id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]], this.animationElements['piece'].node, dest);
             this.animation = null;
             this.scene.animationPlaying = false;
+            this.scene.replayingMove=false;
         }
     }
 };
@@ -52,7 +53,7 @@ MovTrack.prototype.listen = function() {
 
                 if (obj) {
                     var customId = this.scene.pickResults[i][1];
-                    console.log(obj, customId, this.scene);
+                   // console.log(obj, customId, this.scene);
                     this.translateId(obj, customId);
                 }
             }
