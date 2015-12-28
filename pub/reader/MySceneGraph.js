@@ -589,9 +589,9 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         var nodeTransformation = new Transformation(this.scene);
         node.id = id;
         var elems2 = this.checkTag(elems[i], 'MATERIAL', false, 1);
-        node.material = this.parseAmbients(elems2, node.materials);
+        node.material = this.parseNodeAmbients(elems2,node.materials);
         elems2 = this.checkTag(elems[i], 'TEXTURE', false, 1);
-        node.texture = this.parseAmbients(elems2, node.textures);
+        node.texture =  this.parseNodeAmbients(elems2,node.textures);
         node.setPickingAmbient();
 
         console.log(id, node.materials, node.material);
