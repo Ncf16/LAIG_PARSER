@@ -529,7 +529,6 @@ MySceneGraph.prototype.onXMLError = function(message) {
 };
 
 MySceneGraph.prototype.parseNodeAmbients = function(elems2, arr){
->>>>>>> c2a1ffcd1b317862db80d3874f11bcb631320c96
 
     var def = null;
     for (var i = 0; i < elems2.length; i++) {
