@@ -54,6 +54,8 @@
      this.replayingMove = false;
      this.moveTime = 0;
      this.startPlay = 0;
+     this.ambientID = new Object();
+     this.ambientIndex = 0;
      this.rotateCamera = new Object();
      this.piecesInfo = [];
      this.gameStats = [];
@@ -128,7 +130,7 @@
          }
 
      }).bind(this);
-     this.saveGame = (function() {
+     this.replayGame = (function() {
          if (this.gameOver) {
              this.replayingMove = false;
              this.boards.splice(0, this.boards.length);
@@ -488,12 +490,14 @@
      this.gui.game.add(this, 'startGame');
      this.gui.game.add(this, 'resetGame');
      this.gui.game.add(this, 'undoMove');
+     this.gui.game.add(this, 'replayGame');
      this.gui.addCameraDropdown(this, cameraPositions);
      // Choose from accepted values
      this.gui.game.add(this, 'player1', ['black', 'random', 'greedy']);
      this.gui.game.add(this, 'player2', ['white', 'random', 'greedy']);
+     this.gui.game.add(this, 'ambientID', this.ambients);
      this.gui.game.add(this, 'maxMoveTime').min(5).step(1); // Mix and match
-     this.gui.game.add(this, 'saveGame');
+
 
      this.gui.scene = this;
      this.setUpdatePeriod(updateTime);

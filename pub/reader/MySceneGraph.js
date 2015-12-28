@@ -92,6 +92,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseLeaf(rootElement);
         this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
+        this.parseAmbients(rootElement);
 
     } catch (err) {
         if (err instanceof XMLError) {
@@ -126,12 +127,16 @@ MySceneGraph.prototype.parseAmbients = function(rootElement) {
         this.onXMLWarn("More than 1 set of AMBIENTS, only the first set will be used");
     }
     var nAmbients = tempList[0].children.length;
-    this.ambients = typeof this.ambients !== 'undefined' ? this.ambients : [];
-    for (var i = 0; i < nMaterials; i++) {
-        var currMaterial = tempList[FIRST_ELEMENT].children[i];
-        if (currMaterial.nodeName == 'AMBIENT') {
-
+    this.scene.ambients = typeof this.scene.ambients !== 'undefined' ? this.ambients : ['Default'];
+    for (var i = 0; i < nAmbients; i++) {
+        var currAmbient = tempList[FIRST_ELEMENT].children[i];
+        if (currAmbient.nodeName == 'AMBIENT') {
+            addID(currAmbient, this, this.scene.ambients);
         }
+        /*8+2+2+1+1=14-19
+        V:Carlos,Ines,Tiago,Cats,ML,MJ,Pedro,Catarina,Luis,CJ,Bea,Raquel,Rita,Eu
+        F:Dias,Duarte,Eduardo,stella,tenreiro
+        N:Kiko,Zé*/
     }
     console.log("END AMBIENTS");
 };
@@ -548,7 +553,7 @@ MySceneGraph.prototype.parseNodeAmbients = function(elems2, arr) {
     for (var i = 0; i < elems2.length; i++) {
         var id = this.reader.getString(elems2[i], 'id');
         var ambient = this.reader.getString(elems2[i], 'ambient', false);
-        if (ambient == "default")
+        if (ambient == "Default")
             def = id;
         if (ambient != null)
             arr[ambient] = id;
@@ -556,7 +561,7 @@ MySceneGraph.prototype.parseNodeAmbients = function(elems2, arr) {
 
     if (def == null) {
         def = this.reader.getString(elems2[0], 'id');
-        arr['default'] = def;
+        arr['Default'] = def;
     }
 
     return def;
@@ -589,9 +594,9 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         var nodeTransformation = new Transformation(this.scene);
         node.id = id;
         var elems2 = this.checkTag(elems[i], 'MATERIAL', false, 1);
-        node.material = this.parseNodeAmbients(elems2,node.materials);
+        node.material = this.parseNodeAmbients(elems2, node.materials);
         elems2 = this.checkTag(elems[i], 'TEXTURE', false, 1);
-        node.texture =  this.parseNodeAmbients(elems2,node.textures);
+        node.texture = this.parseNodeAmbients(elems2, node.textures);
         node.setPickingAmbient();
 
         //descendants
