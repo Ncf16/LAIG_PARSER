@@ -522,6 +522,22 @@ MySceneGraph.prototype.onXMLError = function(message) {
     this.loadedOk = false;
 };
 
+MySceneGraph.prototype.parseAmbients = function(elems2, arr){
+
+    var def = null;
+    for(var i = 0; i < elems2.length; i++){
+        var id = this.reader.getString(elems2[i], 'id');
+        var ambient = this.reader.getString(elems2[i], 'ambient');
+        if(ambient == "default")
+            def = id;
+        arr[ambient] = id;
+    }
+    if(def == null)
+        def = this.reader.getString(elems2[0], 'id');
+
+    return def;
+}
+
 MySceneGraph.prototype.parseNodes = function(rootElement) {
     console.log("Start NODES");
     var elems = this.checkTag(rootElement, 'NODES', false);
@@ -545,13 +561,14 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         }
          else
             node = new Node(this);
+
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
         node.id = id;
         var elems2 = this.checkTag(elems[i], 'MATERIAL', undefined, undefined, node.id);
-        node.material = this.reader.getString(elems2[0], 'id');
+        node.material = this.parseAmbients(elems2,node.materials);
         elems2 = this.checkTag(elems[i], 'TEXTURE');
-        node.texture = this.reader.getString(elems2[0], 'id', undefined, undefined, node.id);
+        node.texture =  this.parseAmbients(elems2,node.textures);
 
         //descendants
         elems2 = this.checkTag(elems[i], 'DESCENDANTS', false);
