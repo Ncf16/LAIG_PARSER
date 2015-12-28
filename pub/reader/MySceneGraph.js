@@ -116,10 +116,24 @@ MySceneGraph.prototype.update = function(currTime) {
     this.scene.Loop = false;
 };
 MySceneGraph.prototype.parseAmbients = function(rootElement) {
-        console.log("Start AMBIENTS");
-    var tempList = rootElement.getElementsByTagName('MATERIALS');
+    console.log("Start AMBIENTS");
+    var tempList = rootElement.getElementsByTagName('AMBIENTS');
 
-     console.log("END AMBIENTS");
+    if (tempList == null || tempList.length == 0) {
+        console.warn("No AMBIENTS available ");
+    } else
+    if (tempList.length > 1) {
+        this.onXMLWarn("More than 1 set of AMBIENTS, only the first set will be used");
+    }
+    var nAmbients = tempList[0].children.length;
+    this.ambients = typeof this.ambients !== 'undefined' ? this.ambients : [];
+    for (var i = 0; i < nMaterials; i++) {
+        var currMaterial = tempList[FIRST_ELEMENT].children[i];
+        if (currMaterial.nodeName == 'AMBIENT') {
+
+        }
+    }
+    console.log("END AMBIENTS");
 };
 
 MySceneGraph.prototype.parseMaterials = function(rootElement) {
@@ -129,7 +143,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 
     if (tempList == null || tempList.length == 0) {
-        console.warn("No MATERIALS available, default light will be createrd ");
+        console.warn("No MATERIALS available");
     } else
     if (tempList.length > 1) {
         this.onXMLWarn("More than 1 set of MATERIALS, only the first set will be used");
@@ -138,12 +152,12 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
     var nMaterials = tempList[0].children.length;
     this.materials = typeof this.materials !== 'undefined' ? this.materials : [];
     for (var i = 0; i < nMaterials; i++) {
-        var currLight = tempList[FIRST_ELEMENT].children[i];
-        if (currLight.nodeName == 'MATERIAL') {
+        var currMaterial = tempList[FIRST_ELEMENT].children[i];
+        if (currMaterial.nodeName == 'MATERIAL') {
             //por as classes a tratar do parsing dos objetos em si
 
             var newMaterial = new Materials();
-            var newID = addID(currLight, this, this.materialsID);
+            var newID = addID(currMaterial, this, this.materialsID);
             var newSpec = readElement(tempList[FIRST_ELEMENT].children[i].getElementsByTagName("specular"), RGB_VARIABLES, 1);
             var newShin = readElement(tempList[FIRST_ELEMENT].children[i].getElementsByTagName("shininess"), ["value"], 1);
             var newEmi = readElement(tempList[FIRST_ELEMENT].children[i].getElementsByTagName("emission"), RGB_VARIABLES, 1);
@@ -160,7 +174,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
             this.materials[newID] = newMaterial; // this.materials.push(newMaterial);
         } else {
-            this.onXMLWarn("Element was not MATERIAL it was: " + currLight.nodeName);
+            this.onXMLWarn("Element was not MATERIAL it was: " + currMaterial.nodeName);
         }
     }
 
@@ -528,7 +542,7 @@ MySceneGraph.prototype.onXMLError = function(message) {
     this.loadedOk = false;
 };
 
-MySceneGraph.prototype.parseNodeAmbients = function(elems2, arr){
+MySceneGraph.prototype.parseNodeAmbients = function(elems2, arr) {
 
     var def = null;
     for (var i = 0; i < elems2.length; i++) {
@@ -540,7 +554,7 @@ MySceneGraph.prototype.parseNodeAmbients = function(elems2, arr){
             arr[ambient] = id;
     }
 
-    if(def == null){
+    if (def == null) {
         def = this.reader.getString(elems2[0], 'id');
         arr['default'] = def;
     }
@@ -580,8 +594,8 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         node.texture = this.parseAmbients(elems2, node.textures);
         node.setPickingAmbient();
 
-        console.log(id,node.materials,node.material);
-        console.log(id,node.textures,node.texture);
+        console.log(id, node.materials, node.material);
+        console.log(id, node.textures, node.texture);
 
         //descendants
         elems2 = this.checkTag(elems[i], 'DESCENDANTS', false);
