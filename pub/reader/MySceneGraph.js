@@ -115,6 +115,12 @@ MySceneGraph.prototype.update = function(currTime) {
     this.movTrack.update(currTime);
     this.scene.Loop = false;
 };
+MySceneGraph.prototype.parseAmbients = function(rootElement) {
+        console.log("Start AMBIENTS");
+    var tempList = rootElement.getElementsByTagName('MATERIALS');
+
+     console.log("END AMBIENTS");
+};
 
 MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
@@ -522,18 +528,18 @@ MySceneGraph.prototype.onXMLError = function(message) {
     this.loadedOk = false;
 };
 
-MySceneGraph.prototype.parseAmbients = function(elems2, arr){
+MySceneGraph.prototype.parseAmbients = function(elems2, arr) {
 
     var def = null;
-    for(var i = 0; i < elems2.length; i++){
+    for (var i = 0; i < elems2.length; i++) {
         var id = this.reader.getString(elems2[i], 'id');
         var ambient = this.reader.getString(elems2[i], 'ambient', false);
-        if(ambient == "default")
+        if (ambient == "default")
             def = id;
-        if(ambient != null)
+        if (ambient != null)
             arr[ambient] = id;
     }
-    if(def == null)
+    if (def == null)
         def = this.reader.getString(elems2[0], 'id');
 
     return def;
@@ -559,17 +565,16 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         else if (id == "diskObject" || id == "ringObject") {
             node = new Piece(this);
             node.setObjects(id);
-        }
-         else
+        } else
             node = new Node(this);
 
         var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
         node.id = id;
         var elems2 = this.checkTag(elems[i], 'MATERIAL', false, 1);
-        node.material = this.parseAmbients(elems2,node.materials);
+        node.material = this.parseAmbients(elems2, node.materials);
         elems2 = this.checkTag(elems[i], 'TEXTURE', false, 1);
-        node.texture =  this.parseAmbients(elems2,node.textures);
+        node.texture = this.parseAmbients(elems2, node.textures);
         node.setPickingAmbient();
 
         //descendants
