@@ -138,7 +138,7 @@ MovTrack.prototype.animate = function() {
     this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
     return true;
 };
- 
+
 
 MovTrack.prototype.validateMove = function() {
 
@@ -198,7 +198,9 @@ function prologToInfo(pieceType, obj) {
 MovTrack.prototype.getPiece = function() {
     return this.animationElements['piece'];
 };
-
+MovTrack.prototype.resetBoard = function() {
+    this.board.resetPieces();
+};
 MovTrack.prototype.getCell = function() {
     return this.animationElements['cell'];
 };

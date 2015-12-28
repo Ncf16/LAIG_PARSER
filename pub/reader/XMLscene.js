@@ -4,6 +4,7 @@
  var botPlayers = [];
  var botTypes = ["random", "greedy"];
  var FAILURE_MESSAGE = "FAIL";
+ var VICTORY_MESSAGE = "WON";
  var updateTime = 1;
 
  var player1Color = "black";
@@ -33,7 +34,6 @@
      this.rotateCameraFlag = false;
      this.startCameraAnimation = false;
      this.cameraAnimationdeltaT = 0;
-     // this.cameraRotationAngle = degToRad(90);
      this.play = false;
      this.moves = [];
      this.boards = [];
@@ -50,8 +50,6 @@
      this.cameraSpeed = 1;
      this.cameraToMovePos = new Object();
      this.animationPlaying = false;
-     this.answer = false;
-     this.valid = false;
      this.changePlayer = false;
      this.moveTime = 0;
      this.startPlay = 0;
@@ -93,11 +91,44 @@
      console.log(cameraPositionsCoords);
  };
 
+ function onInitFs(fs) {
+     console.log('Opened file system: ' + fs.name);
+ }
+
+ function errorHandler(e) {
+     var msg = '';
+
+     switch (e.code) {
+         case FileError.QUOTA_EXCEEDED_ERR:
+             msg = 'QUOTA_EXCEEDED_ERR';
+             break;
+         case FileError.NOT_FOUND_ERR:
+             msg = 'NOT_FOUND_ERR';
+             break;
+         case FileError.SECURITY_ERR:
+             msg = 'SECURITY_ERR';
+             break;
+         case FileError.INVALID_MODIFICATION_ERR:
+             msg = 'INVALID_MODIFICATION_ERR';
+             break;
+         case FileError.INVALID_STATE_ERR:
+             msg = 'INVALID_STATE_ERR';
+             break;
+         default:
+             msg = 'Unknown Error';
+             break;
+     };
+
+     console.log('Error: ' + msg);
+ }
+
  XMLscene.prototype.initHandlers = function() {
      this.startGame = (function() {
          if (!this.gameStarted && !this.replayOfGame) {
 
 
+             this.moves.splice(0, this.moves.length);
+             this.boards.splice(0, this.boards.length);
              makeRequest("initialize", [this.player1, this.player2], (function(data) {
 
                  checkError(this, JSON.parse(data.target.response));
@@ -117,23 +148,9 @@
 
      this.resetGame = (function() {
 
-         if (this.gameStarted && !this.replayOfGame) {
-             makeRequest("retract", [], handleReply);
-
-             makeRequest("initialize", [this.player1, this.player2], (function(data) {
-
-                 checkError(this, JSON.parse(data.target.response));
-
-             }).bind(this));
-
-             makeRequest("initStats", [], (function(data) {
-
-                 initBoard(this, JSON.parse(data.target.response));
-
-             }).bind(this));
-             this.parsePlayers();
-             this.changePlayer = true;
-         }
+         this.moves.splice(0, this.moves.length);
+         this.boards.splice(0, this.boards.length);
+         this.reset();
      }).bind(this)
 
      this.undoMove = (function() {
@@ -146,6 +163,41 @@
          }
 
      }).bind(this);
+     this.saveGame = (function() {
+         console.log(this.gameStarted, this.gameOver);
+         if (!this.gameStarted && this.gameOver) {
+             this.reset();
+             this.replayOfGame = true;
+             this.gameStarted = true;
+             console.log("HERE");
+             /* var date = new Date();
+              console.log(date.yyyymmdd());
+              window.webkitRequestFileSystem(window.TEMPORARY, 5 * 1024 * 1024 /*5MB* , onInitFs, errorHandler);*/
+         }
+     }).bind(this);
+ };
+
+ XMLscene.prototype.reset = function() {
+     if (this.gameStarted && !this.replayOfGame) {
+         console.log("reset");
+         makeRequest("retract", [], handleReply);
+
+         makeRequest("initialize", [this.player1, this.player2], (function(data) {
+
+             checkError(this, JSON.parse(data.target.response));
+
+         }).bind(this));
+
+         makeRequest("initStats", [], (function(data) {
+
+             initBoard(this, JSON.parse(data.target.response));
+
+         }).bind(this));
+         this.parsePlayers();
+         this.graph.movTrack.resetBoard();
+         this.changePlayer = true;
+         this.gameOver = false;
+     }
  };
 
  XMLscene.prototype.undoPlacement = function(move) {
@@ -155,8 +207,6 @@
  function initBoard(scene, response) {
      if (response['message'] === "OK") {
 
-         scene.moves.splice(0, scene.moves.length);
-         scene.boards.splice(0, scene.boards.length);
          scene.currentBoard = JSON.parse(response['newBoard']);
          scene.boards.push(scene.currentBoard);
          scene.gameStarted = true;
@@ -190,16 +240,7 @@
  };
 
  function play(scene, move) {
-     console.log("HERE");
-     if (!scene.animationPlaying && scene.gameStarted && !scene.play && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected)) { //    console.log(scene.currentBoard[0], JSON.stringify([0, 0, 3]));
-         /*  scene.currentBoard=[
-                              [3,0,0,0,0,0],
-                                [3,3,3,3,3,3],
-                                 [3,3,3,3,3,3],
-                                   [3,3,3,3,3,3],
-                                     [3,3,3,3,3,3],
-                                       [3,3,3,3,3,3],
-                                         [3,3,3,3,3,3]]*/
+     if (!scene.animationPlaying && scene.gameStarted && !scene.play && !this.gameOver && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected || scene.replayOfGame)) {
          scene.play = true;
          console.log("currentPlayer", scene.currentPlayer);
          makeRequest("play", [JSON.stringify(scene.currentBoard), scene.currentPlayer, JSON.stringify(move)], (function(data) {
@@ -213,65 +254,61 @@
  function handlePlay(scene, data) {
      scene.moveSelected = false;
      if (data['message'].indexOf(FAILURE_MESSAGE) == -1) {
-         scene.valid = true;
-
-
-         console.log(data);
-         var newBoard = JSON.parse(data['newPlayer']);
-         var newMove = JSON.parse(data['message']);
-         scene.boards.push(newBoard);
-         scene.currentBoard = newBoard;
-         scene.moves.push(newMove);
-
-         // console.log(scene.boards, scene.moves);
-         scene.play = false;
-
-         /*console.log(scene.graph.movTrack.lastPick.node);
-         console.log(scene.graph.movTrack.lastPick);
-         console.log(scene.graph.movTrack.newPick);
-         */
-         //4th position is the placed piece
-         if (botPlayers.indexOf(scene.currentPlayer) >= 0) {
-
-             //Aqui é para fazer o move do bot mas ele está a borkar //where exactly
-             var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
-             var worldCoords = boardCoordsToWorld(newMove[0], newMove[1]);
-             var pieceToMove = new Info(); //got it? will it work?
-             prologToInfo(newMove[3], pieceToMove);
-             pieceToMove.node = scene.graph.movTrack.board.getPieceNode(pieceToAnimateId);
-             pieceToMove.coord = pieceToMove.node.getCoords(pieceToMove.info1,pieceToMove.info2); //sabes color e type da p já acrescentei//? nao é isto? oh merda troquei
-             pieceToMove.obj = "piece";
-             pieceToMove.id = pieceToAnimateId; // ->acrescentei esta linha 
-             var cellToMove = new Object();
-             cellToMove.info1 = newMove[0];
-             cellToMove.info2 = newMove[1];
-             cellToMove.coord = worldCoords;
-             cellToMove.obj = "cell";
-
-             scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], pieceToMove);
-             scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], cellToMove);
-
-
-             console.log(pieceToAnimateId, pieceToMove, worldCoords);
-         }
-
-         scene.graph.movTrack.animate();
-
-
-         if (data['nextPlayer'] === 0) {
+         if (data['message'].indexOf(VICTORY_MESSAGE) > -1) {
              scene.gameOver = true;
-
+             scene.gameStarted = false;
              scene.endStatus = data['message'];
+         } else {
+             console.log(data);
+             var newBoard = JSON.parse(data['newPlayer']);
+             var newMove = JSON.parse(data['message']);
+             scene.boards.push(newBoard);
+             if (!this.replayOfGame) {
+                 scene.currentBoard = newBoard;
+                 scene.moves.push(newMove);
+             }
+             scene.play = false;
+
+             /*console.log(scene.graph.movTrack.lastPick.node);
+             console.log(scene.graph.movTrack.lastPick);
+             console.log(scene.graph.movTrack.newPick);
+             */
+             //4th position is the placed piece
+             if (botPlayers.indexOf(scene.currentPlayer) >= 0 || this.replayOfGame) {
+
+                 //Aqui é para fazer o move do bot mas ele está a borkar //where exactly
+                 var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
+                 var worldCoords = boardCoordsToWorld(newMove[0], newMove[1]);
+                 var pieceToMove = new Info(); //got it? will it work?
+                 prologToInfo(newMove[3], pieceToMove);
+                 pieceToMove.node = scene.graph.movTrack.board.getPieceNode(pieceToAnimateId);
+                 pieceToMove.coord = pieceToMove.node.getCoords(pieceToMove.info1, pieceToMove.info2); //sabes color e type da p já acrescentei//? nao é isto? oh merda troquei
+                 pieceToMove.obj = "piece";
+                 pieceToMove.id = pieceToAnimateId; // ->acrescentei esta linha 
+                 var cellToMove = new Object();
+                 cellToMove.info1 = newMove[0];
+                 cellToMove.info2 = newMove[1];
+                 cellToMove.coord = worldCoords;
+                 cellToMove.obj = "cell";
+
+                 scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], pieceToMove);
+                 scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], cellToMove);
+
+
+                 console.log(pieceToAnimateId, pieceToMove, worldCoords);
+             }
+
+             scene.graph.movTrack.animate();
+
+
+             nextPlayer(scene);
          }
-         nextPlayer(scene);
      } else {
          scene.gameError = true;
-         scene.valid = false;
          console.log("ERROR", data);
 
      }
-     console.log("HAVE ASNWERS");
-     scene.answer = true;
+     // console.log("HAVE ASNWERS");
  };
 
  function nextPlayer(scene) {
@@ -402,13 +439,42 @@
 
  // Handler called when the graph is finally loaded. 
  // As loading is asynchronous, this may be called already after the application has started the run loop
- XMLscene.prototype.teste = function() {
+ XMLscene.prototype.cameraChange = function() {
 
      if (this.graph.loadedOk && !this.rotateCameraFlag) {
          var cameraIndex = getIndex(cameraPositions, this.rotateCamera, equal);
          this.rotateCameraFlag = true;
          this.cameraToMovePos = cameraPositionsCoords[cameraIndex];
          this.startCameraAnimation = true;
+     }
+
+     if (this.startCameraAnimation) {
+
+         this.startCameraAnimation = false;
+         this.camera.startTime = Date.now();
+         this.camera.calcRadius();
+         this.camera.calcAngles();
+         this.camera.updatePos();
+         console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
+         if (typeof this.cameraToMovePos !== 'undefined') {
+             // console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
+
+             //console.log(this.camera.theta, this.cameraToMovePos);
+             var distance = distanceBetweenTwoSphericPoint(this.camera, this.cameraToMovePos);
+             console.log(this.cameraToMovePos);
+             this.cameraPhiDelta = distance[2];
+             this.cameraThetaDelta = distance[1];
+             this.cameraRadiusDelta = distance[0];
+             console.log(distance);
+
+
+             var absoluteDistance = absoluteDistanceBetweenTwoSphericPoints([this.camera.radius, this.camera.theta, this.camera.phi], [this.cameraToMovePos.radius, this.cameraToMovePos.theta, this.cameraToMovePos.phi]);
+
+             this.cameraAnimationdeltaT = absoluteDistance / this.cameraSpeed * 100.0;
+             if (this.cameraAnimationdeltaT < 1000)
+                 this.cameraAnimationdeltaT = 1000
+         } else
+             this.rotateCameraFlag = false;
      }
  };
  XMLscene.prototype.onGraphLoaded = function() {
@@ -435,6 +501,7 @@
      this.gui.game.add(this, 'player1', ['black', 'random', 'greedy']);
      this.gui.game.add(this, 'player2', ['white', 'random', 'greedy']);
      this.gui.game.add(this, 'maxMoveTime').min(5).step(1); // Mix and match
+     this.gui.game.add(this, 'saveGame');
 
      this.gui.scene = this;
      this.setUpdatePeriod(updateTime);
@@ -444,54 +511,25 @@
      this.currTime = currTime;
 
 
-     if (this.gameStarted) {
-         /* if (this.changePlayer) {
-              this.moveTime = 0;
-              this.startPlay = currTime;
-              this.changePlayer = false;
-              console.log("updatePlayTime");
-          } else {
-              this.moveTime = (this.currTime - this.startPlay) / 1000.0;
-              console.log(this.moveTime);
-              if (this.moveTime >= this.maxMoveTime) {
-                  this.moveTime = 0;
-                  console.log("changePlayers");
-                  nextPlayer(this);
-              }
-          }*/
+     if (this.gameStarted && !this.gameOver) {
+         /*  if (this.changePlayer) {
+               this.moveTime = 0;
+               this.startPlay = currTime;
+               this.changePlayer = false;
+            //   console.log("updatePlayTime");
+           } else {
+               this.moveTime = (this.currTime - this.startPlay) / 1000.0;
+               //  console.log(this.moveTime);
+               if (this.moveTime >= this.maxMoveTime) {
+                   this.moveTime = 0;
+                   nextPlayer(this);
+               }
+           }*/
      }
      if (this.graph.loadedOk) {
          this.graph.update(currTime);
      }
 
-     if (this.startCameraAnimation) {
-
-         this.startCameraAnimation = false;
-         this.camera.startTime = currTime;
-         this.camera.calcRadius();
-         this.camera.calcAngles();
-         this.camera.updatePos();
-         console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
-         if (typeof this.cameraToMovePos !== 'undefined') {
-             // console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
-
-             //console.log(this.camera.theta, this.cameraToMovePos);
-             var distance = distanceBetweenTwoSphericPoint(this.camera, this.cameraToMovePos);
-             console.log(this.cameraToMovePos);
-             this.cameraPhiDelta = distance[2];
-             this.cameraThetaDelta = distance[1];
-             this.cameraRadiusDelta = distance[0];
-             console.log(distance);
-
-
-             var absoluteDistance = absoluteDistanceBetweenTwoSphericPoints([this.camera.radius, this.camera.theta, this.camera.phi], [this.cameraToMovePos.radius, this.cameraToMovePos.theta, this.cameraToMovePos.phi]);
-
-             this.cameraAnimationdeltaT = absoluteDistance / this.cameraSpeed * 100.0;
-             if (this.cameraAnimationdeltaT < 1000)
-                 this.cameraAnimationdeltaT = 1000
-         } else
-             this.rotateCameraFlag = false;
-     }
      if (this.rotateCameraFlag)
          this.updateCamera(currTime);
  };
@@ -518,13 +556,14 @@
 
      // Draw axis
      this.axis.display();
-     if (!this.playingAnimation) {
+     if (!this.playingAnimation && !this.gameOver) {
 
          if (botPlayers.indexOf(this.currentPlayer) >= 0) {
              play(this, []);
          }
          //add play if bot
-         if (this.replayOfGame) {
+         if (this.replayOfGame && this.moves.length > 0) {
+             console.log(this.moves.length);
              var moveToReplay = this.moves[this.moves.length - 1];
              this.moves.splice(this.moves.length - 1, 1);
              replayMove(moveToReplay);

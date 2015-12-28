@@ -37,32 +37,45 @@ Board.prototype.createStacks = function() {
 Board.prototype.createPieces = function() {
     for (var id = this.min; id < this.max; id++) {
         var piece = [];
-        var matrix = mat4.create();
-        mat4.identity(matrix);
-        piece.location = matrix;
+        resetPiece(piece);
         piece.node = null;
-        piece.transformation = null;
-        piece.cell = null;
-
         this.pieces[id] = piece;
+
     }
 
-}
+};
+Board.prototype.resetPieces = function() {
+    for (var id = this.min; id < this.max; id++) {
+        resetPiece(this.pieces[id]);
+    }
+};
 
+function resetPiece(piece) {
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    piece.location = matrix;
+
+    piece.transformation = null;
+    piece.cell = null;
+};
 Board.prototype.display = function(parentElement) {
     this.graph.movTrack.resetId();
     Node.prototype.display.call(this, parentElement);
-}
+};
 
 Board.prototype.apply = function(id) {
     this.scene.multMatrix(this.pieces[id].location);
-}
+};
 
 Board.prototype.newPos = function(id, translate, node, newPos) {
+    console.log("id", id);
+    /*  for (var key in this.pieces)
+          console.log("piece", this.pieces[key]);*/
+
     mat4.translate(this.pieces[id].location, this.pieces[id].location, translate);
     this.pieces[id].transformation = translate;
     this.pieces[id].cell = newPos;
-}
+};
 
 Board.prototype.getStackByPieceType = function(pieceType) {
     switch (pieceType) {
