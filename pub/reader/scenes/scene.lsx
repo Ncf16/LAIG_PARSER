@@ -89,6 +89,12 @@
             <emission r="1" g="1" b="1" a="1" />
         </MATERIAL>
     </MATERIALS>
+    <AMBIENTS>
+        <AMBIENT id="Testar"/>
+        <AMBIENT id="Testar1"/>
+        <AMBIENT id="Testar2"/>
+        <AMBIENT id="Testar3"/>
+    </AMBIENTS>
     <!-- The leaves -->
     <LEAVES>
         <LEAF id="text" type="text" texture="textures/oolite-font.png" value="Filipe é nabo" />
