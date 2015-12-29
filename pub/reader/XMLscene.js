@@ -123,7 +123,7 @@
      }).bind(this)
 
      this.undoMove = (function() {
-         if (this.gameStarted && !this.replayOfGame && this.moves.length > 0) {
+         if (this.gameStarted && !this.replayOfGame && this.moves.length > 0 && !this.animationPlaying) {
              var moveToUndo = this.moves[this.moves.length - 1];
              this.undoPlacement(moveToUndo);
              this.boards.splice(this.boards.length - 1, 1);
@@ -161,6 +161,7 @@
      if (this.gameStarted) {
          this.graph.movTrack.resetBoard();
          this.graph.movTrack.board.createStacks();
+         this.gameStats = [24,24,24,24];
 
          makeRequest("retract", [], handleReply);
 
@@ -294,7 +295,7 @@
              console.log(scene.graph.movTrack.newPick);
              */
              //4th position is the placed piece
-             if (botPlayers.indexOf(scene.currentPlayer) >= 0 || this.replayOfGame) {
+             if (botPlayers.indexOf(scene.currentPlayer) >= 0 || this.replayOfGame && !this.animationPlaying) {
 
                  //Aqui é para fazer o move do bot mas ele está a borkar //where exactly
                  var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);

@@ -113,11 +113,11 @@ MovTrack.prototype.undo = function(worldCoords) {
 
     var index = this.board.getPieceId(worldCoords);
     if (index == -1) {
-        console.log("index not found");
+        console.log(worldCoords,"index not found");
         return;
     }
 
-    // this.scene.animationPlaying = true;
+    this.scene.animationPlaying = true;
     // //cell [orig] = piece + translate;
     // //stack  [dest] = piece;
     // //dif [orig,dest] = [dest-orig] = piece - (piece + translate) = 0 - translate;
