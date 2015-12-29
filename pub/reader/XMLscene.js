@@ -54,11 +54,10 @@
      this.replayingMove = false;
      this.moveTime = 0;
      this.startPlay = 0;
-     this.ambientID = new Object();
-     this.ambientIndex = 0;
+     this.ambientID = "";
      this.rotateCamera = new Object();
      this.piecesInfo = [];
-     this.gameStats = [];
+     this.gameStats = [23,22,21,20];
      this.initCameraPos();
      this.initHandlers();
  };
@@ -293,7 +292,7 @@
              }
 
              scene.graph.movTrack.animate();
-
+             this.getStats(scene);
 
              nextPlayer(scene);
          }
