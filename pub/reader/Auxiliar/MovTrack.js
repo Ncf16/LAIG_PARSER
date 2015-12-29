@@ -117,7 +117,7 @@ MovTrack.prototype.undo = function(worldCoords) {
         return;
     }
 
-    // this.scene.animationPlaying = true;
+    this.scene.animationPlaying = true;
     // //cell [orig] = piece + translate;
     // //stack  [dest] = piece;
     // //dif [orig,dest] = [dest-orig] = piece - (piece + translate) = 0 - translate;

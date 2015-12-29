@@ -123,7 +123,6 @@ Board.prototype.getPiece = function(id) {
 };
 Board.prototype.getPieceId = function(world) {
     for (var key in this.pieces) {
-        console.log(key,this.pieces[key].cell);
         if (this.pieces[key].cell != null && equalCoords(this.pieces[key].cell, world))
             return key;
     }
