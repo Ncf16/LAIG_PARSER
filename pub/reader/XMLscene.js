@@ -112,16 +112,18 @@
      }).bind(this);
 
      this.resetGame = (function() {
-         this.replayingMove = false;
+         if (this.gameStarted && !this.replayOfGame && !this.animationPlaying) {
+             this.replayingMove = false;
 
-         this.moves.splice(0, this.moves.length);
-         this.boards.splice(0, this.boards.length);
-         this.reset(false);
-         console.log(this.graph.movTrack.board);
-         this.gamestatS = [24, 24, 24, 24];
-         console.log("End Reset");
+             this.moves.splice(0, this.moves.length);
+             this.boards.splice(0, this.boards.length);
+             this.reset(false);
+             console.log(this.graph.movTrack.board);
+             this.gamestatS = [24, 24, 24, 24];
+             console.log("End Reset");
 
-         this.endMoveTime = 1001;
+             this.endMoveTime = 1001;
+         }
      }).bind(this)
 
      this.undoMove = (function() {
