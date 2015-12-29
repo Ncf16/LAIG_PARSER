@@ -304,7 +304,33 @@ function LeafText(scene, element, text, texture) {
 LeafText.prototype = Object.create(Leaf.prototype);
 LeafText.prototype.constructor = LeafText;
 
-LeafText.prototype.display = function() {
+LeafText.prototype.translateId = function(id){
+
+    //console.log(this.graph.scene.gameStats[0]);
+
+    switch(id){
+        case "whiteDisksStats":
+        this.text = this.graph.scene.gameStats[0].toString();
+        //console.log(this.text);
+        break;
+        case "whiteRingsStats":
+        this.text = this.graph.scene.gameStats[1].toString();
+        break;
+        case "blackDisksStats":
+        this.text = this.graph.scene.gameStats[2].toString();
+        break;
+        case "blackRingsStats":
+        this.text = this.graph.scene.gameStats[3].toString();
+        break;
+        default:
+        //do nothing
+        break;
+    }
+}
+
+LeafText.prototype.display = function(parentElement) {
+
+    this.translateId(parentElement.id);
 
     var material = this.graph.matArray[this.graph.matArray.length - 1];
     material.setTexture(this.texture);

@@ -98,7 +98,8 @@
     <!-- The leaves -->
     <LEAVES>
         <LEAF id="text" type="text" texture="textures/oolite-font.png" value="Liberté dans Uranus" />
-         <LEAF id="text2" type="text" texture="textures/oolite-font.png" value="Ass Costa" />
+        <LEAF id="text2" type="text" texture="textures/oolite-font.png" value="Ass Costa" />
+        <LEAF id="stats" type="text" texture="textures/oolite-font.png" value="24" />
         <LEAF id="rectangleAnimated" type="rectangle" args="-0.5 0.5 0.5 -0.5" />
         <LEAF id="sphere" type="sphere" args="0.65 20 20" />
         <LEAF id="hex" type="hex" />
@@ -113,12 +114,13 @@
             <DESCENDANTS>
                 <DESCENDANT id="teste"/>
                 <DESCENDANT id="teste2"/>
+                <DESCENDANT id="gameStats"/>
                 <DESCENDANT id="board" />
                 <DESCENDANT id="pieces" />
             </DESCENDANTS>
         </NODE>
         <NODE id="teste">
-            <MATERIAL id="clear" />
+            <MATERIAL id="null" />
             <TEXTURE id="clear" />
             <SCALE sx="0.9" sy="1" sz="0.9"/>
             <TRANSLATION x="-6" y="3.2" z="0" />
@@ -127,11 +129,54 @@
             </DESCENDANTS>
         </NODE>
           <NODE id="teste2">
-            <MATERIAL id="clear" />
+            <MATERIAL id="null" />
             <TEXTURE id="clear"/>
             <TRANSLATION x="0" y="2" z="0" />
             <DESCENDANTS>
                 <DESCENDANT id="text2" />
+            </DESCENDANTS>
+        </NODE>
+         <NODE id="gameStats">
+            <MATERIAL id="null" />
+            <TEXTURE id="clear" />
+            <TRANSLATION x="0" y="5" z="0" />
+            <DESCENDANTS>
+                <DESCENDANT id="whiteDisksStats"/>
+                <DESCENDANT id="whiteRingsStats"/>
+                <DESCENDANT id="blackDisksStats"/>
+                <DESCENDANT id="blackRingsStats"/>
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="whiteDisksStats">
+            <MATERIAL id="null" />
+            <TEXTURE id="clear"/>
+            <TRANSLATION x="-5" y="1" z="0" />
+            <DESCENDANTS>
+                <DESCENDANT id="stats" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="whiteRingsStats">
+            <MATERIAL id="null" />
+            <TEXTURE id="clear"/>
+            <TRANSLATION x="-5" y="0" z="0" />
+            <DESCENDANTS>
+                <DESCENDANT id="stats" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="blackDisksStats">
+            <MATERIAL id="null" />
+            <TEXTURE id="clear"/>
+            <TRANSLATION x="5" y="1" z="0" />
+            <DESCENDANTS>
+                <DESCENDANT id="stats" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="blackRingsStats">
+            <MATERIAL id="null" />
+            <TEXTURE id="clear"/>
+            <TRANSLATION x="5" y="0" z="0" />
+            <DESCENDANTS>
+                <DESCENDANT id="stats" />
             </DESCENDANTS>
         </NODE>
         <NODE id="board">
