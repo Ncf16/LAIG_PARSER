@@ -113,7 +113,7 @@
      }).bind(this);
 
      this.resetGame = (function() {
-         if (this.gameStarted && !this.replayOfGame && !this.animationPlaying) {
+         if (this.gameStarted && !this.animationPlaying) {
              this.replayingMove = false;
 
              this.moves.splice(0, this.moves.length);
@@ -128,7 +128,7 @@
      }).bind(this)
 
      this.undoMove = (function() {
-         if (this.gameStarted && !this.replayOfGame && this.moves.length > 0 && !this.animationPlaying) {
+         if (this.gameStarted && this.moves.length > 0 && !this.animationPlaying) {
              var moveToUndo = this.moves[this.moves.length - 1];
              this.undoPlacement(moveToUndo);
              this.boards.splice(this.boards.length - 1, 1);
@@ -162,36 +162,39 @@
          return player1Color;
 
  };
+ XMLscene.prototype.handleReset = function(scene, flag) {
+     var player1;
+     var player2;
+     if (flag) {
+         player1 = player1Color;
+         player2 = player2Color;
+     } else {
+         player1 = this.player1;
+         player2 = this.player2;
+     }
+
+     makeRequest("initialize", [player1, player2], (function(data) {
+
+         checkError(scene, JSON.parse(data.target.response));
+
+     }).bind(scene));
+     makeRequest("initStats", [], (function(data) {
+
+         initBoard(scene, JSON.parse(data.target.response), flag);
+
+     }).bind(scene));
+
+
+ };
  XMLscene.prototype.reset = function(flag) {
      if (this.gameStarted) {
          this.graph.movTrack.resetBoard();
          this.graph.movTrack.board.createStacks();
          this.gameStats = [24, 24, 24, 24];
 
-         makeRequest("retract", [], handleReply);
-
-         var player1;
-         var player2;
-         if (flag) {
-             player1 = player1Color;
-             player2 = player2Color;
-         } else {
-             player1 = this.player1;
-             player2 = this.player2;
-         }
-
-         makeRequest("initialize", [player1, player2], (function(data) {
-
-             checkError(this, JSON.parse(data.target.response));
-
+         makeRequest("retract", [], (function(data) {
+             this.handleReset(this, flag);
          }).bind(this));
-
-         makeRequest("initStats", [], (function(data) {
-
-             initBoard(this, JSON.parse(data.target.response), flag);
-
-         }).bind(this));
-
      }
  };
 
@@ -279,7 +282,7 @@
 
  function handlePlay(scene, data) {
      scene.moveSelected = false;
-     if (data['message'].indexOf(FAILURE_MESSAGE) == -1 && data['message'].indexOf(DRAW_MESSAGE)==-1) {
+     if (data['message'].indexOf(FAILURE_MESSAGE) == -1 && data['message'].indexOf(DRAW_MESSAGE) == -1) {
          if (data['message'].indexOf(VICTORY_MESSAGE) > -1) {
              scene.gameOver = true;
              scene.endStatus = data['message'];
@@ -290,7 +293,7 @@
              var newBoard = JSON.parse(data['newPlayer']);
              var newMove = JSON.parse(data['message']);
              scene.boards.push(newBoard);
-             if (!this.replayOfGame) {
+             if (!scene.replayOfGame) {
                  scene.currentBoard = newBoard;
                  scene.moves.push(newMove);
              }
@@ -300,7 +303,7 @@
              console.log(scene.graph.movTrack.newPick);
              */
              //4th position is the placed piece
-             if (botPlayers.indexOf(scene.currentPlayer) >= 0 || this.replayOfGame && !this.animationPlaying) {
+             if (botPlayers.indexOf(scene.currentPlayer) >= 0 || scene.replayOfGame && !scene.animationPlaying) {
 
                  //Aqui é para fazer o move do bot mas ele está a borkar //where exactly
                  var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
@@ -320,6 +323,7 @@
                  scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], pieceToMove);
                  scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], cellToMove);
                  if (scene.replayOfGame) {
+                     console.log("Cutting used move");
                      scene.moves.splice(0, 1);
                      console.log(scene.moves.length);
                  }
@@ -335,7 +339,6 @@
          }
      } else {
          console.log("ERROR", data);
-         scene.replayOfGame = false;
 
      }
      scene.updateEndTime = true;
@@ -573,7 +576,7 @@
  };
 
  XMLscene.prototype.replayMove = function(move) {
-     console.log("Replay Move", move);
+     console.log("Replay Move", move, this.moves);
      play(this, move);
  };
 
@@ -602,10 +605,10 @@
                  this.endMoveTime = 0;
                  this.updateEndTime = false;
                  play(this, []);
-             } else{
+             } else {
 
              }
-                 //console.log(this.endMoveTime);
+             //console.log(this.endMoveTime);
              /*else
                              console.log(botPlayers.indexOf(this.currentPlayer) >= 0, this.replayOfGame);*/
          }
