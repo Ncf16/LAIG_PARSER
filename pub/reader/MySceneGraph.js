@@ -133,10 +133,7 @@ MySceneGraph.prototype.parseAmbients = function(rootElement) {
         if (currAmbient.nodeName == 'AMBIENT') {
             addID(currAmbient, this, this.scene.ambients);
         }
-        /*8+2+2+1+1=14-19
-        V:Carlos,Ines,Tiago,Cats,ML,MJ,Pedro,Catarina,Luis,CJ,Bea,Raquel,Rita,Eu
-        F:Dias,Duarte,Eduardo,stella,tenreiro
-        N:Kiko,Zé*/
+       
     }
     console.log("END AMBIENTS");
 };
