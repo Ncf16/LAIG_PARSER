@@ -57,7 +57,7 @@
      this.ambientID = "";
      this.rotateCamera = new Object();
      this.piecesInfo = [];
-     this.gameStats = [24,24,24,24];
+     this.gameStats = [24, 24, 24, 24];
      this.initCameraPos();
      this.initHandlers();
  };
@@ -116,7 +116,7 @@
          this.boards.splice(0, this.boards.length);
          this.reset(false);
          console.log(this.graph.movTrack.board);
-          this.gamestatS = [24,24,24,24];
+         this.gamestatS = [24, 24, 24, 24];
          console.log("End Reset");
      }).bind(this)
 
@@ -126,6 +126,7 @@
              this.boards.splice(this.boards.length - 1, 1);
              this.currentBoard = this.boards[this.boards.length - 1];
              var moveToUndo = this.moves[this.moves.length - 1];
+             incStat(this, getPlayer(moveToUndo), moveToUndo);
              this.moves.splice(this.moves.length - 1, 1);
          }
 
@@ -145,6 +146,13 @@
      }).bind(this);
  };
 
+ function getPlayer(move) {
+     if (move[3] = < 2)
+         return player2Color;
+     else
+         return player1Color;
+
+ };
  XMLscene.prototype.reset = function(flag) {
      if (this.gameStarted) {
          this.graph.movTrack.resetBoard();
@@ -211,13 +219,14 @@
          scene.gameError = true;
      }
  };
+
  function statsCheck(scene, response) {
      console.log(response);
      if (response['message'] === "OK") {
-        //TODO
-        //THIS IS CALLED WHEN STATS CHECK IS DONE
-        //SO THIS SHOULD BE ENOUGH
-        getStats(scene);
+         //moveToUndo
+         //THIS IS CALLED WHEN STATS CHECK IS DONE
+         //SO THIS SHOULD BE ENOUGH
+         getStats(scene);
      }
  };
 
@@ -225,7 +234,7 @@
      makeRequest("getStats", [], (function(data) {
          var response = JSON.parse(data.target.response);
          if (response['message'] === "OK") {
-             scene.gameStats=JSON.parse(response['newPlayer']);
+             scene.gameStats = JSON.parse(response['newPlayer']);
              console.log(response);
          }
      }).bind(scene));
