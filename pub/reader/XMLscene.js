@@ -147,7 +147,7 @@
  };
 
  function getPlayer(move) {
-     if (move[3] = < 2)
+     if (move[3] <= 2)
          return player2Color;
      else
          return player1Color;
