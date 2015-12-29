@@ -5,6 +5,7 @@
  var botTypes = ["random", "greedy"];
  var FAILURE_MESSAGE = "FAIL";
  var VICTORY_MESSAGE = "WON";
+ var DRAW_MESSAGE = "DRAW";
  var updateTime = 1;
  var endTimeMax = 200;
  var player1Color = "black";
@@ -276,7 +277,7 @@
 
  function handlePlay(scene, data) {
      scene.moveSelected = false;
-     if (data['message'].indexOf(FAILURE_MESSAGE) == -1) {
+     if (data['message'].indexOf(FAILURE_MESSAGE) == -1 && data['message'].indexOf(DRAW_MESSAGE)==-1) {
          if (data['message'].indexOf(VICTORY_MESSAGE) > -1) {
              scene.gameOver = true;
              scene.endStatus = data['message'];
@@ -598,8 +599,10 @@
                  this.endMoveTime = 0;
                  this.updateEndTime = false;
                  play(this, []);
-             } else
-                 console.log(this.endMoveTime);
+             } else{
+
+             }
+                 //console.log(this.endMoveTime);
              /*else
                              console.log(botPlayers.indexOf(this.currentPlayer) >= 0, this.replayOfGame);*/
          }
