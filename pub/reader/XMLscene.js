@@ -211,6 +211,15 @@
          scene.gameError = true;
      }
  };
+ function statsCheck(scene, response) {
+     console.log(response);
+     if (response['message'] === "OK") {
+        //TODO
+        //THIS IS CALLED WHEN STATS CHECK IS DONE
+        //SO THIS SHOULD BE ENOUGH
+        getStats(scene);
+     }
+ };
 
  function getStats(scene) {
      makeRequest("getStats", [], (function(data) {
@@ -226,7 +235,7 @@
      //add player who did the move to each "move"; the placed piece occupies the 4th position on the array of moves
      makeRequest("incStats", [player, move[3]], (function(data) {
 
-         checkError(scene, JSON.parse(data.target.response));
+         statsCheck(scene, JSON.parse(data.target.response));
 
      }).bind(scene));
  };
