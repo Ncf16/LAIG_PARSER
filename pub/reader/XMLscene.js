@@ -122,10 +122,10 @@
 
      this.undoMove = (function() {
          if (this.gameStarted && !this.replayOfGame && this.moves.length > 0) {
-             this.undoPlacement(this.moves[this.moves.length - 1]);
+             var moveToUndo = this.moves[this.moves.length - 1];
+             this.undoPlacement(moveToUndo);
              this.boards.splice(this.boards.length - 1, 1);
              this.currentBoard = this.boards[this.boards.length - 1];
-             var moveToUndo = this.moves[this.moves.length - 1];
              incStat(this, getPlayer(moveToUndo), moveToUndo);
              this.moves.splice(this.moves.length - 1, 1);
          }
