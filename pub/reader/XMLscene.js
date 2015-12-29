@@ -448,6 +448,7 @@
          this.camera.calcRadius();
          this.camera.calcAngles();
          this.camera.updatePos();
+         this.camera.updateZeros();
          console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
          if (typeof this.cameraToMovePos !== 'undefined') {
              // console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
@@ -521,6 +522,7 @@
              }
          }
      }
+
      if (this.graph.loadedOk) {
          this.graph.update(currTime);
      }

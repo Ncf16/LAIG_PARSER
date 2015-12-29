@@ -55,9 +55,9 @@ MyCamera.prototype.updatePos = function() {
         this.radius * Math.cos(this.phi),
         this.radius * Math.sin(this.theta) * Math.sin(this.phi), 0
     ]
-    console.log(this.radius);
-   /* console.log(this.theta);
-    console.log(this.phi);*/
+     
+    /* console.log(this.theta);
+     console.log(this.phi);*/
     this.setPosition(newPos);
     /* this.setPosition([this.radius * Math.cos(this.theta) * Math.sin(this.phi),
          this.radius * Math.sin(this.theta) * Math.sin(this.phi),
