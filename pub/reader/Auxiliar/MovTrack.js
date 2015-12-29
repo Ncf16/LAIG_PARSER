@@ -53,9 +53,9 @@ MovTrack.prototype.listen = function() {
                 if (obj) {
                     this.copy(this.lastPick, this.newPick);
                     var customId = this.scene.pickResults[i][1];
-                    if(obj instanceof Piece && !this.board.isPiecePicked(customId) || obj instanceof BoardCell){
+                    if (obj instanceof Piece && !this.board.isPiecePicked(customId) || obj instanceof BoardCell) {
                         // console.log(obj, customId, this.scene);
-                        if(this.newPick.node != null && this.newPick.node instanceof Piece && obj instanceof Piece && this.newPick.node.id != obj.id)
+                        if (this.newPick.node != null && this.newPick.node instanceof Piece && obj instanceof Piece && this.newPick.node.id != obj.id)
                             this.newPick.node.clearPicking();
                         obj.setPicking(customId);
                         this.translateId(obj, customId);
@@ -131,7 +131,7 @@ MovTrack.prototype.undo = function(worldCoords) {
     this.animationElements['piece'].node = node;
     this.animationElements['piece'].coord = cell;
     this.animationElements['cell'].coord = stack;
-
+    this.scene.animationPlaying = true;
     node.reverseMove(stack, cell);
     this.board.togglePicked(this.animationElements['piece'].id);
 }

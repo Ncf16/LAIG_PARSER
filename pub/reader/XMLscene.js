@@ -58,6 +58,8 @@
      this.rotateCamera = new Object();
      this.piecesInfo = [];
      this.gameStats = [24, 24, 24, 24];
+     this.endMoveTime = 0;
+     this.updateEndTime = false;
      this.initCameraPos();
      this.initHandlers();
  };
@@ -111,7 +113,7 @@
 
      this.resetGame = (function() {
          this.replayingMove = false;
-         console.log("Reset Game");
+
          this.moves.splice(0, this.moves.length);
          this.boards.splice(0, this.boards.length);
          this.reset(false);
@@ -308,7 +310,7 @@
                  cellToMove.info2 = newMove[0];
                  cellToMove.coord = worldCoords;
                  cellToMove.obj = "cell";
-
+                 scene.updateEndTime = true;
                  scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], pieceToMove);
                  scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], cellToMove);
 
@@ -551,6 +553,8 @@
      if (this.graph.loadedOk) {
          this.graph.update(currTime);
      }
+     if (this.updateEndTime)
+         this.endMoveTime++;
 
      if (this.rotateCameraFlag)
          this.updateCamera(currTime);
@@ -582,7 +586,9 @@
      if (!this.playingAnimation) {
 
          if (!this.gameOver) {
-             if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame) {
+             if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame && (this.endMoveTime >= 1000)) {
+                 this.endMoveTime = 0;
+                 this.updateEndTime = false;
                  play(this, []);
              }
              /*else
