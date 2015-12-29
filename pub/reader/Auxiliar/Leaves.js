@@ -305,10 +305,13 @@ LeafText.prototype = Object.create(Leaf.prototype);
 LeafText.prototype.constructor = LeafText;
 
 LeafText.prototype.translateId = function(id){
-    console.log(id);
+
+    //console.log(this.graph.scene.gameStats[0]);
+
     switch(id){
         case "whiteDisksStats":
         this.text = this.graph.scene.gameStats[0].toString();
+        //console.log(this.text);
         break;
         case "whiteRingsStats":
         this.text = this.graph.scene.gameStats[1].toString();

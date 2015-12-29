@@ -88,7 +88,7 @@ retract(_,_,Message):-Message="RETRACT OK",playMode(players),retractall((playMod
 % 2 bots players
 retract(_,_,Message):-Message="RETRACT OK",retractall((bot(_))), retractall((playMode(_))),retractall((stats(_,_))),retractall((numberList(_))). 
 %1 of each
-retract(_,_,Message):-Message="RETRACT OK",retractall((bot(_))),retractall((playMode(_))),retractall((stats(_,_)),retractall((numberList(_))). 
+retract(_,_,Message):-Message="RETRACT OK",retractall((bot(_))),retractall((playMode(_))),retractall((stats(_,_))),retractall((numberList(_))). 
 retract(_,_,Message):-Message="RETRACT FAIL".
  
 createHumanMove(HumanMove,NewPiece,[Line,Col,NewPiece,Piece]):-getMoveLine(HumanMove,Line),getMoveCol(HumanMove,Col),getMovePiece(HumanMove,Piece).

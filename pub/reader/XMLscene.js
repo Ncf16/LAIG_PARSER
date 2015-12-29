@@ -57,7 +57,7 @@
      this.ambientID = "";
      this.rotateCamera = new Object();
      this.piecesInfo = [];
-     this.gameStats = [23,22,21,20];
+     this.gameStats = [24,24,24,24];
      this.initCameraPos();
      this.initHandlers();
  };
@@ -116,6 +116,7 @@
          this.boards.splice(0, this.boards.length);
          this.reset(false);
          console.log(this.graph.movTrack.board);
+          this.gamestatS = [24,24,24,24];
          console.log("End Reset");
      }).bind(this)
 
@@ -215,7 +216,7 @@
      makeRequest("getStats", [], (function(data) {
          var response = JSON.parse(data.target.response);
          if (response['message'] === "OK") {
-             scene.gameStats = response['newPlayer'];
+             scene.gameStats=JSON.parse(response['newPlayer']);
              console.log(response);
          }
      }).bind(scene));
