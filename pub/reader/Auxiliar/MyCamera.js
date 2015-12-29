@@ -48,9 +48,7 @@ MyCamera.prototype.orbit = function(a, b) {
 
     }
     if (!check2Qchange(c, e)) {
-        console.log(this.position);
         vec4.add(this.position, this.target, e);
-        console.log(c, e, this.position);
         this.direction = this.calculateDirection();
     }
 };
