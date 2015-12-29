@@ -57,7 +57,6 @@
      this.startPlay = 0;
      this.ambientID = "";
      this.rotateCamera = new Object();
-     this.piecesInfo = [];
      this.gameStats = [24, 24, 24, 24];
      this.endMoveTime = 0;
      this.updateEndTime = false;
@@ -76,6 +75,15 @@
      if (botTypes.indexOf(this.player2) >= 0)
          botPlayers.push(player2Color);
  };
+
+ XMLscene.prototype.canSelectPiece = function(color){
+    console.log("bots",botPlayers,color,botPlayers.indexOf(color));
+    return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1);
+ }
+
+ XMLscene.prototype.canSelectCell = function(){
+    return this.gameStarted;
+ }
 
  XMLscene.prototype.initCameraPos = function() {
 
@@ -276,6 +284,7 @@
 
          }).bind(scene));
      } else {
+        scene.graph.movTrack.response(false);
          //   console.log(!scene.animationPlaying, scene.gameStarted, !scene.play, !this.gameOver, (botPlayers.indexOf(scene.currentPlayer) >= 0), scene.moveSelected, scene.replayOfGame);
      }
  };
@@ -298,10 +307,6 @@
                  scene.moves.push(newMove);
              }
 
-             /*console.log(scene.graph.movTrack.lastPick.node);
-             console.log(scene.graph.movTrack.lastPick);
-             console.log(scene.graph.movTrack.newPick);
-             */
              //4th position is the placed piece
              if (botPlayers.indexOf(scene.currentPlayer) >= 0 || scene.replayOfGame && !scene.animationPlaying) {
 
@@ -312,16 +317,14 @@
                  prologToInfo(newMove[3], pieceToMove);
                  pieceToMove.node = scene.graph.movTrack.board.getPieceNode(pieceToAnimateId);
                  pieceToMove.coord = pieceToMove.node.getCoords(pieceToMove.info1, pieceToMove.info2); //sabes color e type da p já acrescentei//? nao é isto? oh merda troquei
-                 pieceToMove.obj = "piece";
                  pieceToMove.id = pieceToAnimateId; // ->acrescentei esta linha 
                  var cellToMove = new Object();
                  cellToMove.info1 = newMove[1];
                  cellToMove.info2 = newMove[0];
                  cellToMove.coord = worldCoords;
-                 cellToMove.obj = "cell";
 
-                 scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], pieceToMove);
-                 scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], cellToMove);
+                 scene.graph.movTrack.copy(scene.graph.movTrack.piece, pieceToMove);
+                 scene.graph.movTrack.copy(scene.graph.movTrack.cell, cellToMove);
                  if (scene.replayOfGame) {
                      console.log("Cutting used move");
                      scene.moves.splice(0, 1);
@@ -333,12 +336,17 @@
              }
 
              scene.graph.movTrack.animate();
+             scene.graph.movTrack.response(true);
              getStats(scene);
-
              nextPlayer(scene);
          }
      } else {
          console.log("ERROR", data);
+<<<<<<< HEAD
+=======
+         scene.graph.movTrack.response(false);
+         scene.replayOfGame = false;
+>>>>>>> 377998b554dfee9a24a1475855da5b4c25adcff4
 
      }
      scene.updateEndTime = true;
