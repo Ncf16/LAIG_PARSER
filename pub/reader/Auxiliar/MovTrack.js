@@ -1,6 +1,5 @@
 function Info() {
     this.node = null;
-    this.obj;
     this.info1;
     this.info2;
     this.coord;
@@ -13,11 +12,9 @@ function MovTrack(scene) {
     this.pieceCnt = 24;
     this.scene = scene;
     this.animation = null;
-    this.lastPick = new Info();
-    this.newPick = new Info();
-    this.animationElements = new Array();
-    this.animationElements['piece'] = new Info();
-    this.animationElements['cell'] = new Info();
+    this.piece = new Info();
+    this.cell = new Info();
+    this.pickArray = ["",""];
     this.id = 1;
     this.board = null;
 };
@@ -32,10 +29,13 @@ MovTrack.prototype.update = function(currTime) {
         if (this.animation.validateAnimation(currTime))
             this.animation.update(currTime);
         else {
-            this.animationElements['piece'].node.clearPicking();
-            var orig = this.animationElements['piece'].coord;
-            var dest = this.animationElements['cell'].coord;
-            this.board.newPos(this.animationElements['piece'].id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]], this.animationElements['piece'].node, dest);
+
+            //end of animation
+            this.piece.node.clearPicking();
+
+            var orig = this.piece.coord;
+            var dest = this.cell.coord;
+            this.board.newPos(this.piece.id, [dest[0] - orig[0], dest[1] - orig[1], dest[2] - orig[2]], dest);
             this.animation = null;
             this.scene.animationPlaying = false;
             this.scene.replayingMove = false;
@@ -50,16 +50,10 @@ MovTrack.prototype.listen = function() {
             for (var i = 0; i < this.scene.pickResults.length; i++) {
                 var obj = this.scene.pickResults[i][0];
 
-                if (obj) {
-                    this.copy(this.lastPick, this.newPick);
+                if(obj){
                     var customId = this.scene.pickResults[i][1];
-                    if (obj instanceof Piece && !this.board.isPiecePicked(customId) || obj instanceof BoardCell) {
-                        // console.log(obj, customId, this.scene);
-                        if (this.newPick.node != null && this.newPick.node instanceof Piece && obj instanceof Piece && this.newPick.node.id != obj.id)
-                            this.newPick.node.clearPicking();
-                        obj.setPicking(customId);
-                        this.translateId(obj, customId);
-                    }
+                    this.translateObj(obj,customId);
+                    this.validateMove();
                 }
             }
             this.scene.pickResults.splice(0, this.scene.pickResults.length);
@@ -67,46 +61,73 @@ MovTrack.prototype.listen = function() {
     }
 };
 
+MovTrack.prototype.setLastPick = function(obj){
+    this.pickArray[0] = this.pickArray[1];
+    this.pickArray[1] = obj;
+};
+
+MovTrack.prototype.stackToCell = function(){
+    return (this.pickArray[0] == "piece" && this.pickArray[1] == "cell");
+};
+
+MovTrack.prototype.getPieceInfo = function(id){
+    if (id > this.totalSize && id < this.totalSize + 1 + this.pieceCnt)
+        return ["white","disk"];
+    else if (id > this.totalSize + this.pieceCnt && id < this.totalSize + 1 + 2 * this.pieceCnt)
+        return["white","ring"];
+    else if (id > this.totalSize + 2 * this.pieceCnt && id < this.totalSize + 1 + 3 * this.pieceCnt)
+        return["black","disk"];
+    else if (id > this.totalSize + 3 * this.pieceCnt && id < this.totalSize + 1 + 4 * this.pieceCnt)
+        return ["black","ring"];
+};
+
+MovTrack.prototype.getCellInfo = function(id){
+    return [(id - 1) % this.sides,Math.floor((id - 1) / this.sides)];
+};
+
+MovTrack.prototype.translateObj = function(obj,id){
+    if(obj instanceof Piece && !this.board.isPiecePicked(id)){
+        var info = this.getPieceInfo(id);
+
+        if(this.scene.canSelectPiece()){
+            //clear first the previous object selection
+            if(this.piece.node != null)
+                this.piece.node.clearPicking();
+
+            //set info
+            this.piece.id = id;
+            this.piece.info1 = info[0];
+            this.piece.info2 = info[1];
+            this.piece.node = obj;
+            this.piece.coord = this.piece.node.getCoords(this.piece.info1, this.piece.info2);
+            this.setLastPick("piece");
+
+            //highlight
+            this.piece.node.setPicking(this.piece.id);
+        }
+    }
+    else if(obj instanceof BoardCell){
+        var info = this.getCellInfo(id);
+
+        if(this.scene.canSelectCell()){
+
+            this.cell.id = id;
+             this.cell.info1 = info[0]; //column
+            this.cell.info2 = info[1]//line
+            this.cell.node = obj;
+            this.cell.coord = this.cell.node.getCoords(this.cell.info1,this.cell.info2);
+            this.setLastPick("cell");
+            this.cell.node.setPicking(this.cell.id);
+        }
+    }
+};
+
 MovTrack.prototype.copy = function(dest, orig) {
     dest.node = orig.node;
-    dest.obj = orig.obj;
     dest.info1 = orig.info1;
     dest.info2 = orig.info2;
     dest.coord = orig.coord;
     dest.id = orig.id;
-};
-
-MovTrack.prototype.translateId = function(obj, id) {
-
-    if (id > 0 && id < this.totalSize + 1) {
-        var col = (id - 1) % this.sides;
-        var lin = Math.floor((id - 1) / this.sides);
-        this.newPick.obj = "cell";
-        this.newPick.info1 = col;
-        this.newPick.info2 = lin;
-    } else if (id > this.totalSize && id < this.totalSize + 1 + this.pieceCnt) {
-        this.newPick.obj = "piece";
-        this.newPick.info1 = "white";
-        this.newPick.info2 = "disk";
-    } else if (id > this.totalSize + this.pieceCnt && id < this.totalSize + 1 + 2 * this.pieceCnt) {
-        this.newPick.obj = "piece";
-        this.newPick.info1 = "white";
-        this.newPick.info2 = "ring";
-    } else if (id > this.totalSize + 2 * this.pieceCnt && id < this.totalSize + 1 + 3 * this.pieceCnt) {
-        this.newPick.obj = "piece";
-        this.newPick.info1 = "black";
-        this.newPick.info2 = "disk";
-    } else if (id > this.totalSize + 3 * this.pieceCnt && id < this.totalSize + 1 + 4 * this.pieceCnt) {
-        this.newPick.obj = "piece";
-        this.newPick.info1 = "black";
-        this.newPick.info2 = "ring";
-    }
-
-    this.newPick.id = id;
-    this.newPick.node = obj;
-    this.newPick.coord = this.newPick.node.getCoords(this.newPick.info1, this.newPick.info2);
-
-    this.validateMove();
 };
 
 MovTrack.prototype.undo = function(worldCoords) {
@@ -127,42 +148,48 @@ MovTrack.prototype.undo = function(worldCoords) {
     var node = this.board.getPieceNode(index);
     var stack = [0, 0, 0];
 
-    this.animationElements['piece'].id = index;
-    this.animationElements['piece'].node = node;
-    this.animationElements['piece'].coord = cell;
-    this.animationElements['cell'].coord = stack;
+    this.piece.id = index;
+    this.piece.node = node;
+    this.piece.coord = cell;
+    this.cell.coord = stack;
     this.scene.animationPlaying = true;
     node.reverseMove(stack, cell);
-    this.board.togglePicked(this.animationElements['piece'].id);
+    this.board.togglePicked(this.piece.id);
 }
 
 MovTrack.prototype.animate = function() {
-    if (this.animationElements['piece'].obj != "piece" || this.animationElements['cell'].obj != "cell")
-        return false;
     this.scene.animationPlaying = true;
-    this.animationElements['piece'].node.move(this.animationElements['piece'].coord, this.animationElements['cell'].coord);
-    this.board.togglePicked(this.animationElements['piece'].id);
-    return true;
+    this.piece.node.move(this.piece.coord, this.cell.coord);
 };
 
 
 MovTrack.prototype.validateMove = function() {
 
-    if (this.lastPick.node != null && this.newPick.node != null && this.lastPick.obj == "piece" && this.newPick.obj == "cell") {
-        if (!this.scene.animationPlaying && ((botPlayers.indexOf(this.scene.currentPlayer) < 0))) {
-            this.scene.moveSelected = true;
-            this.copy(this.animationElements['piece'], this.lastPick);
-            this.copy(this.animationElements['cell'], this.newPick);
-
-            play(this.scene, [this.newPick.info2, this.newPick.info1, convertToProlog(this.lastPick.info1, this.lastPick.info2)]);
-            //this.animate();
-        }
+    if (this.stackToCell() && !this.scene.animationPlaying && (botPlayers.indexOf(this.scene.currentPlayer) < 0)) {
+        this.scene.moveSelected = true;
+        play(this.scene, [this.cell.info2, this.cell.info1, convertToProlog(this.piece.info1, this.piece.info2)])
+        console.log(this.scene.playResponse);
     }
 };
+MovTrack.prototype.response = function(result){
+    if(result)
+        this.board.togglePicked(this.piece.id);
+    else
+        this.piece.node.clearPicking();
+};
+
 MovTrack.prototype.removeTopPiece = function(type) {
     return this.board.removeTopPiece(type);
 };
-
+MovTrack.prototype.getPiece = function() {
+    return this.piece;
+};
+MovTrack.prototype.resetBoard = function() {
+    this.board.resetPieces();
+};
+MovTrack.prototype.getCell = function() {
+    return this.cell;
+};
 function convertToProlog(colour, pieceType) {
 
     switch (colour) {
@@ -181,7 +208,6 @@ function convertToProlog(colour, pieceType) {
             break;
     }
 };
-
 function prologToInfo(pieceType, obj) {
 
     switch (pieceType) {
@@ -203,13 +229,4 @@ function prologToInfo(pieceType, obj) {
             break;
 
     }
-};
-MovTrack.prototype.getPiece = function() {
-    return this.animationElements['piece'];
-};
-MovTrack.prototype.resetBoard = function() {
-    this.board.resetPieces();
-};
-MovTrack.prototype.getCell = function() {
-    return this.animationElements['cell'];
 };

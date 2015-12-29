@@ -306,26 +306,29 @@ LeafText.prototype.constructor = LeafText;
 
 LeafText.prototype.translateId = function(id){
 
-    //console.log(this.graph.scene.gameStats[0]);
+    var value;
 
     switch(id){
         case "whiteDisksStats":
-        this.text = this.graph.scene.gameStats[0].toString();
-        //console.log(this.text);
+        value = this.graph.scene.gameStats[0];
         break;
         case "whiteRingsStats":
-        this.text = this.graph.scene.gameStats[1].toString();
+        value = this.graph.scene.gameStats[1];
         break;
         case "blackDisksStats":
-        this.text = this.graph.scene.gameStats[2].toString();
+        value = this.graph.scene.gameStats[2];
         break;
         case "blackRingsStats":
-        this.text = this.graph.scene.gameStats[3].toString();
+        value = this.graph.scene.gameStats[3];
         break;
         default:
-        //do nothing
-        break;
+        return;
     }
+
+    if(value < 10)
+        this.text = "0" + value.toString();
+    else
+        this.text = value.toString();
 }
 
 LeafText.prototype.display = function(parentElement) {

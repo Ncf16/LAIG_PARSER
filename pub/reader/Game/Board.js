@@ -30,9 +30,6 @@ Board.prototype.createStacks = function() {
         currentStack.push(id);
         contador++;
     }
-
-    /* for (var i = 0; i < this.stack.length; i++)
-         console.log(this.stack[i]);*/
 }
 
 Board.prototype.createPieces = function() {
@@ -67,11 +64,7 @@ Board.prototype.apply = function(id) {
     this.scene.multMatrix(this.pieces[id].location);
 };
 
-Board.prototype.newPos = function(id, translate, node, newPos) {
-    /* console.log("id", id);
-       for (var key in this.pieces)
-           console.log("piece", this.pieces[key]);*/
-
+Board.prototype.newPos = function(id, translate, newPos) {
     mat4.translate(this.pieces[id].location, this.pieces[id].location, translate);
     this.pieces[id].transformation = translate;
     this.pieces[id].cell = newPos;
