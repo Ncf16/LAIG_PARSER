@@ -509,19 +509,19 @@
 
 
      if (this.gameStarted && !this.gameOver) {
-         if (this.changePlayer) {
-             this.moveTime = 0;
-             this.startPlay = currTime;
-             this.changePlayer = false;
-             //   console.log("updatePlayTime");
-         } else {
-             this.moveTime = (this.currTime - this.startPlay) / 1000.0;
-             //  console.log(this.moveTime);
-             if (this.moveTime >= this.maxMoveTime) {
-                 this.moveTime = 0;
-                 nextPlayer(this);
-             }
-         }
+         /*  if (this.changePlayer) {
+               this.moveTime = 0;
+               this.startPlay = currTime;
+               this.changePlayer = false;
+               console.log("updatePlayTime");
+           } else {
+               this.moveTime = (this.currTime - this.startPlay) / 1000.0;
+               //  console.log(this.moveTime);
+               if (this.moveTime >= this.maxMoveTime) {
+                   this.moveTime = 0;
+                   nextPlayer(this);
+               }
+           }*/
      }
 
      if (this.graph.loadedOk) {

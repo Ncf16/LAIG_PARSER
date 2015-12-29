@@ -35,19 +35,41 @@ MyCamera.prototype.orbit = function(a, b) {
     c[3] = 0;
     var d;
     var e;
+
     if (a == CGFcameraAxisID.X) {
         d = vec3.cross(vec3.create(), c, this._up);
         var f = mat4.rotate(mat4.create(), mat4.create(), b, d);
         e = vec4.transformMat4(vec4.create(), c, f);
     } else {
         d = this._up;
+
         e = vec4.transformMat4(vec4.create(), c, mat4.rotate(mat4.create(), mat4.create(), b, d));
 
-        // console.log(this._up, b, d, a, c, e);
 
-    };
-    vec4.add(this.position, this.target, e);
-    this.direction = this.calculateDirection();
+    }
+    if (!check2Qchange(c, e)) {
+        console.log(this.position);
+        vec4.add(this.position, this.target, e);
+        console.log(c, e, this.position);
+        this.direction = this.calculateDirection();
+    }
+};
+
+function check2Qchange(vec1, vec2) {
+    if (signalChange(vec1[0], vec2[0]) && (signalChange(vec1[1], vec2[1]) || signalChange(vec1[2], vec2[2])))
+        return true;
+    else
+    if (signalChange(vec1[1], vec2[1]) && (signalChange(vec2[0], vec1[0]) || signalChange(vec1[2], vec2[2])))
+        return true;
+    else
+    if (signalChange(vec1[2], vec2[2]) && (signalChange(vec1[1], vec2[1]) || signalChange(vec1[0], vec2[0])))
+        return true;
+
+    return false;
+};
+
+function signalChange(ele1, ele2) {
+    return ((ele1 > 0 && ele2 < 0) || (ele1 < 0 && ele2 > 0));
 };
 
 MyCamera.prototype.updatePos = function() {
@@ -55,14 +77,7 @@ MyCamera.prototype.updatePos = function() {
         this.radius * Math.cos(this.phi),
         this.radius * Math.sin(this.theta) * Math.sin(this.phi), 0
     ]
-     
-    /* console.log(this.theta);
-     console.log(this.phi);*/
     this.setPosition(newPos);
-    /* this.setPosition([this.radius * Math.cos(this.theta) * Math.sin(this.phi),
-         this.radius * Math.sin(this.theta) * Math.sin(this.phi),
-         this.radius * Math.cos(this.phi), 0
-     ]);*/
 };
 
 MyCamera.prototype.calcAngles = function() {
