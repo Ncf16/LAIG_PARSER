@@ -15,12 +15,11 @@
 <h6>Simplesmente a ver bot vs bot a jogar</h6>
 <img src="tempImages/bot vs bot - watching the game.png">
 
-<h1>Preciso de que corrigir</h1>
-<h4>Picking colors</h4>
 
 <h1>Melhorias</h1>
 <h4>wait time between actions para permitir undo após um undo e assim</h4>
 <h4>Who wins</h4>
+<h4>Which direction to play</h4>
 <h4>Whose turns</h4>
 <h4>Ambientes - lsx e style</h4>
 <h4>Melhorar visual</h4>
