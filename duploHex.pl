@@ -58,7 +58,6 @@ initialize(_,_,_,_,Message):-Message="FAIL".
 
 % MOVE :[PosL,PosC,NewPiece,Piece]
 validatePlayer(Player):-getDisk(Player,Disk),getRing(Player,Ring),(validateNumberOfPieces(Player,Disk); validateNumberOfPieces(Player,Ring)).
-
 %play(Tab,Player,Move,NewTab,Dist,ReturnMove).
 play(Tab,Player,_,_,Dist,Message):-checkEndGame(Tab,Player,Dist),Dist=:=0,!,string_concat(Player," PLAYER WON",Message).
 
@@ -66,19 +65,23 @@ play(Tab,Player,_,_,Dist,Message):-getNextPlayer(Player,NextPlayer),checkEndGame
 
 play(_,Player,_,_,_,Message):-getNextPlayer(Player,NextPlayer),\+(validatePlayer(Player)),\+(validatePlayer(NextPlayer)),!,Message="DRAW".
 
-play(Tab,Player,_,NewTab,_,BotMove):-bot(Player),!,playMode([BotMode,Player|[]]),playBot(BotMode,Tab,NewTab,Player,BotMove).
+play(Tab,Player,_,NewTab,_,BotMove):-bot(Player),!,playMode([BotMode,Player|[]]),playBot(BotMode,Tab,NewTab,Player,BotMove).  
 %play(Tab,PLayer,NewTab,Dist,Move).
 %check if pred done right also need to change some stuff here 
-play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-getMoveCol(HumanMove,PosC),getMoveLine(HumanMove,PosL),getMovePiece(HumanMove,Piece),validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),
+play(Tab,Player,HumanMove,NewTab,_,ReturnMove):-getMoveCol(HumanMove,PosC),getMoveLine(HumanMove,PosL),getHumanPiece(HumanMove,Piece),validateMove(Tab,PosL,PosC,Piece,Player,NewPiece),
 applyMove(Tab,NewTab,[PosL,PosC,NewPiece]),createHumanMove(HumanMove,NewPiece,ReturnMove),updateStats(Player,Piece,_,_).
 %,write('Line '),write(PosL),write(' Col '),write(PosC),write('   '),write(ReturnMove),nl.
 
 play(_,_,_,_,_,Message):-Message="MOVE FAIL".
+
+getHumanPiece(HumanMove,Piece):-length(HumanMove,3),getMovePiece(HumanMove,Piece).
+getHumanPiece(HumanMove,Piece):-length(HumanMove,4),getOldPiece(HumanMove,Piece).
+
 %%check play bots
 playBot(random,Tab,NewTab,Player,SelectedMove):- createRandomMove(Tab,Line,Col,NewPiece,OldPiece,Player),SelectedMove =[Line,Col,NewPiece,OldPiece] ,
 updateStats(Player,NewPiece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
 
-playBot(greedy,Tab,NewTab,Player,SelectedMove):-numberList(NumberList),pickGreedyMove(Tab,Player,NumberList,SelectedMove),getMovePiece(SelectedMove,Piece),
+playBot(greedy,Tab,NewTab,Player,SelectedMove):-numberList(NumberList),pickGreedyMove(Tab,Player,NumberList,SelectedMove),getOldPiece(SelectedMove,Piece),
 updateStats(Player,Piece,SelectedMove,Tab),applyMove(Tab,NewTab,SelectedMove).
 
 playHuman(addPiece,Tab,NewTab,Player):-moveAddPiece(Tab,NewTab,Player).
@@ -91,7 +94,7 @@ retract(_,_,Message):-Message="RETRACT OK",retractall((bot(_))), retractall((pla
 retract(_,_,Message):-Message="RETRACT OK",retractall((bot(_))),retractall((playMode(_))),retractall((stats(_,_))),retractall((numberList(_))). 
 retract(_,_,Message):-Message="RETRACT FAIL".
  
-createHumanMove(HumanMove,NewPiece,[Line,Col,NewPiece,Piece]):-getMoveLine(HumanMove,Line),getMoveCol(HumanMove,Col),getMovePiece(HumanMove,Piece).
+createHumanMove(HumanMove,NewPiece,[Line,Col,NewPiece,Piece]):-getMoveLine(HumanMove,Line),getMoveCol(HumanMove,Col),getHumanPiece(HumanMove,Piece).
 /*****************************************************************************************************************************************/
 %%Gets
 

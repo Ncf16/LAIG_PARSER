@@ -6,7 +6,7 @@
  var FAILURE_MESSAGE = "FAIL";
  var VICTORY_MESSAGE = "WON";
  var updateTime = 1;
-
+ var endTimeMax = 200;
  var player1Color = "black";
  var player2Color = "white";
  var cameraPositions = ['Pos1', 'Pos2', 'Pos3', 'Pos4'];
@@ -106,7 +106,7 @@
              this.gameStarted = true;
              this.gameOver = false;
              this.reset(false);
-
+             this.endMoveTime = 1001;
          }
 
      }).bind(this);
@@ -120,6 +120,8 @@
          console.log(this.graph.movTrack.board);
          this.gamestatS = [24, 24, 24, 24];
          console.log("End Reset");
+
+         this.endMoveTime = 1001;
      }).bind(this)
 
      this.undoMove = (function() {
@@ -140,7 +142,7 @@
              this.replayingMove = false;
              this.boards.splice(0, this.boards.length);
              this.reset(true);
-
+             console.log(this.moves);
              /* var date = new Date();
               console.log(date.yyyymmdd());
               window.webkitRequestFileSystem(window.TEMPORARY, 5 * 1024 * 1024 /*5MB* , onInitFs, errorHandler);*/
@@ -161,7 +163,7 @@
      if (this.gameStarted) {
          this.graph.movTrack.resetBoard();
          this.graph.movTrack.board.createStacks();
-         this.gameStats = [24,24,24,24];
+         this.gameStats = [24, 24, 24, 24];
 
          makeRequest("retract", [], handleReply);
 
@@ -311,16 +313,20 @@
                  cellToMove.info2 = newMove[0];
                  cellToMove.coord = worldCoords;
                  cellToMove.obj = "cell";
-                 scene.updateEndTime = true;
+
                  scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['piece'], pieceToMove);
                  scene.graph.movTrack.copy(scene.graph.movTrack.animationElements['cell'], cellToMove);
+                 if (scene.replayOfGame) {
+                     scene.moves.splice(0, 1);
+                     console.log(scene.moves.length);
+                 }
 
 
                  //   console.log(pieceToAnimateId, pieceToMove, worldCoords);
              }
 
              scene.graph.movTrack.animate();
-             this.getStats(scene);
+             getStats(scene);
 
              nextPlayer(scene);
          }
@@ -328,6 +334,7 @@
          console.log("ERROR", data);
 
      }
+     scene.updateEndTime = true;
      scene.play = false;
      // console.log("HAVE ASNWERS");
  };
@@ -587,11 +594,12 @@
      if (!this.playingAnimation) {
 
          if (!this.gameOver) {
-             if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame && (this.endMoveTime >= 1000)) {
+             if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame /* && (this.endMoveTime >= endTimeMax)*/ ) {
                  this.endMoveTime = 0;
                  this.updateEndTime = false;
                  play(this, []);
-             }
+             } else
+                 console.log(this.endMoveTime);
              /*else
                              console.log(botPlayers.indexOf(this.currentPlayer) >= 0, this.replayOfGame);*/
          }
@@ -600,7 +608,6 @@
 
              console.log(this.moves.length);
              var moveToReplay = this.moves[0];
-             this.moves.splice(0, 1);
              this.replayMove(moveToReplay);
              this.replayingMove = true;
          }
