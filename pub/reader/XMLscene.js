@@ -157,6 +157,7 @@
      if (this.gameStarted) {
          this.graph.movTrack.resetBoard();
          this.graph.movTrack.board.createStacks();
+         this.gameStats = [24,24,24,24];
 
          makeRequest("retract", [], handleReply);
 
