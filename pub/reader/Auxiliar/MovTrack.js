@@ -89,7 +89,7 @@ MovTrack.prototype.translateObj = function(obj,id){
     if(obj instanceof Piece && !this.board.isPiecePicked(id)){
         var info = this.getPieceInfo(id);
 
-        if(this.scene.canSelectPiece()){
+        if(this.scene.canSelectPiece(info[0])){
             //clear first the previous object selection
             if(this.piece.node != null)
                 this.piece.node.clearPicking();
@@ -174,7 +174,7 @@ MovTrack.prototype.validateMove = function() {
 MovTrack.prototype.response = function(result){
     if(result)
         this.board.togglePicked(this.piece.id);
-    else
+    else if(this.piece.node != null)
         this.piece.node.clearPicking();
 };
 
@@ -186,6 +186,10 @@ MovTrack.prototype.getPiece = function() {
 };
 MovTrack.prototype.resetBoard = function() {
     this.board.resetPieces();
+    if(this.piece.node != null)
+        this.piece.node.clearPicking();
+    if(this.cell.node != null)
+        this.cell.node.clearPicking();
 };
 MovTrack.prototype.getCell = function() {
     return this.cell;

@@ -76,8 +76,9 @@
          botPlayers.push(player2Color);
  };
 
- XMLscene.prototype.canSelectPiece = function(){
-    return this.gameStarted && !this.animationPlaying;
+ XMLscene.prototype.canSelectPiece = function(color){
+    console.log("bots",botPlayers,color,botPlayers.indexOf(color));
+    return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1);
  }
 
  XMLscene.prototype.canSelectCell = function(){
