@@ -190,6 +190,7 @@
 
  XMLscene.prototype.undoPlacement = function(move) {
 
+    console.log(move[0],move[1]);
      this.graph.movTrack.undo(boardCoordsToWorld(move[0], move[1]));
  };
 

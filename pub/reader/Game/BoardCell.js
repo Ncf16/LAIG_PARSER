@@ -52,7 +52,7 @@ BoardCell.prototype.clearPicking = function(){
 }
 
 BoardCell.prototype.getCoords = function(col, lin) {
-    return boardCoordsToWorld(col, lin);
+    return boardCoordsToWorld(lin, col);
 };
 
  BoardCell.prototype.getId = function(col,lin){

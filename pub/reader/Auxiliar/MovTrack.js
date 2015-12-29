@@ -113,7 +113,7 @@ MovTrack.prototype.undo = function(worldCoords) {
 
     var index = this.board.getPieceId(worldCoords);
     if (index == -1) {
-        console.log("index not found");
+        console.log(worldCoords,"index not found");
         return;
     }
 

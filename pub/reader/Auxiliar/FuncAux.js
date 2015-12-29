@@ -49,7 +49,7 @@ function distanceBetweenTwoSphericPoint(point1, point2) {
     ];
 };
 
-function boardCoordsToWorld(col, lin) {
+function boardCoordsToWorld(lin,col) {
     return [1.5 * (col - lin), 0, 0.866 * (col + lin)];
 };
 
