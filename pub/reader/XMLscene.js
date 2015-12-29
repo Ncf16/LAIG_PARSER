@@ -126,7 +126,9 @@
              this.undoPlacement(moveToUndo);
              this.boards.splice(this.boards.length - 1, 1);
              this.currentBoard = this.boards[this.boards.length - 1];
-             incStat(this, getPlayer(moveToUndo), moveToUndo);
+             var newPlayer = getPlayer(moveToUndo);
+             console.log("newPlayer", newPlayer);
+             incStat(this, newPlayer, moveToUndo);
              this.moves.splice(this.moves.length - 1, 1);
          }
 
@@ -221,13 +223,16 @@
      }
  };
 
- function statsCheck(scene, response) {
+ function statsCheck(scene, response, player) {
      console.log(response);
      if (response['message'] === "OK") {
          //moveToUndo
          //THIS IS CALLED WHEN STATS CHECK IS DONE
          //SO THIS SHOULD BE ENOUGH
          getStats(scene);
+         scene.currentPlayer = player;
+         scene.changePlayer = true;
+         console.log(scene.currentPlayer);
      }
  };
 
@@ -243,9 +248,10 @@
 
  function incStat(scene, player, move) {
      //add player who did the move to each "move"; the placed piece occupies the 4th position on the array of moves
+     console.log(player);
      makeRequest("incStats", [player, move[3]], (function(data) {
 
-         statsCheck(scene, JSON.parse(data.target.response));
+         statsCheck(scene, JSON.parse(data.target.response), player);
 
      }).bind(scene));
  };
