@@ -342,12 +342,8 @@
          }
      } else {
          console.log("ERROR", data);
-<<<<<<< HEAD
-=======
          scene.graph.movTrack.response(false);
          scene.replayOfGame = false;
->>>>>>> 377998b554dfee9a24a1475855da5b4c25adcff4
-
      }
      scene.updateEndTime = true;
      scene.play = false;
