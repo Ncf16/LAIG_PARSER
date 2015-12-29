@@ -334,6 +334,7 @@
          }
      } else {
          console.log("ERROR", data);
+         scene.replayOfGame = false;
 
      }
      scene.updateEndTime = true;
