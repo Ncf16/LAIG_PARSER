@@ -53,6 +53,11 @@ function boardCoordsToWorld(lin,col) {
     return [1.5 * (col - lin), 0, 0.866 * (col + lin)];
 };
 
+function stackCoordsToWorld(lin,col,sign){
+
+    return [1.5 * (col - lin - sign * 1.6), 0.6, 0.866 * (col + lin-1.6)];
+}
+
 function equal(Element1, Element2) {
     return Element1 == Element2;
 };

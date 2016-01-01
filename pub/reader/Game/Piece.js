@@ -125,33 +125,35 @@ Piece.prototype.display = function(parentElement){
 
 Piece.prototype.getCoords = function(color, type) {
     if (color == "white" && type == "disk")
-        return [this.xStackPos - this.deltaObj, 0, this.yStackPos];
+        return stackCoordsToWorld(4,0,1);
     else if (color == "white" && type == "ring")
-        return [this.xStackPos, 0, this.yStackPos];
+        return  stackCoordsToWorld(1,0,1);
     else if (color == "black" && type == "disk")
-        return [this.xStackPos - this.deltaObj, 0, this.yStackPos - this.deltaObj];
+        return  stackCoordsToWorld(0,4,-1);
     else if (color == "black" && type == "ring")
-        return [this.xStackPos, 0, this.yStackPos - this.deltaObj];
+        return  stackCoordsToWorld(0,1,-1);
     return [];
 };
 
 Piece.prototype.move = function(orig, dest) {
 
     var deltaX = dest[0] - orig[0];
+    var deltaY = dest[1] - orig[1];
     var deltaZ = dest[2] - orig[2];
-    var distance = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     var deltaT = this.deltaT + (0.01 * distance);
-    var control = [this.origin, [this.origin[0], this.deltaY, this.origin[2]],[deltaX, this.deltaY, deltaZ],[deltaX, 0, deltaZ]];
+    var control = [this.origin, [this.origin[0], this.deltaY, this.origin[2]],[deltaX, this.deltaY, deltaZ],[deltaX, deltaY, deltaZ]];
     this.animate(deltaT,control);
 };
 
 Piece.prototype.reverseMove = function(orig,dest){
     
     var deltaX = dest[0] - orig[0];
+    var deltaY = dest[1] - orig[1];
     var deltaZ = dest[2] - orig[2];
-    var distance = Math.sqrt(deltaX*deltaX + deltaZ * deltaZ);
+    var distance = Math.sqrt(deltaX*deltaX + deltaY * deltaY + deltaZ * deltaZ);
     var deltaT = this.deltaT + (0.01* distance);
-    var control = [[deltaX,0,deltaZ], [deltaX,this.deltaY,deltaZ], [this.origin[0],this.deltaY,this.origin[2]], this.origin];
+    var control = [[deltaX,deltaY,deltaZ], [deltaX,this.deltaY,deltaZ], [this.origin[0],this.deltaY,this.origin[2]], this.origin];
     this.animate(deltaT,control);
 };
 

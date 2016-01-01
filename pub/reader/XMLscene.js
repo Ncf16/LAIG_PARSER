@@ -1,6 +1,6 @@
  //axis default Thickness
  var DEFAULT_THICKNESS = 0.05;
- var CAMERA_DEFAULT_POSITION = [21.025890350341797, 30, 26.3, 0]; //[1.0,0.0,0.0,0]; 
+ var CAMERA_DEFAULT_POSITION = [21.025890350341797, 20, 26.3, 0]; //[1.0,0.0,0.0,0]; 
  var botPlayers = [];
  var botTypes = ["random", "greedy"];
  var FAILURE_MESSAGE = "FAIL";
@@ -12,17 +12,9 @@
  var player2Color = "white";
  var cameraPositions = ['Pos1', 'Pos2', 'Pos3', 'Pos4'];
  var cameraPositionsCoords = [];
- var topCameraPos = [19.325374603271484, 30, 27.57368278503418, 0];
- //inheritance from CGFScene and definition of a GUI (Graphic User Interface)
- //Movimento Rui
- //Jogadas ->Movimentos -> criar ciclo de jogo em javascript need to test it
- //Replay -> Jogadas  need to teste 
- //Undo -> tabuleiros || Prolog easy way done
- //SkyBox Not Done
- //Animations to Do, create function that creates Templates 1 for placement another to retrieve pieces
- //Camara coordenads esféricas DONE check animação da camara check 
- //Diferença entre posições e depois ter delta Radius/Phi/Theta check camera Quadrantbug, check how to calculate animation with rebelo
- //Array de texturas e materiais em vez de lsx
+ var topCameraPos = [19.325374603271484, 20, 27.57368278503418, 0];
+
+
  function XMLscene() {
      CGFscene.call(this);
      this.Loop = false;
@@ -77,8 +69,7 @@
  };
 
  XMLscene.prototype.canSelectPiece = function(color){
-    console.log("bots",botPlayers,color,botPlayers.indexOf(color));
-    return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1);
+    return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
  }
 
  XMLscene.prototype.canSelectCell = function(){
@@ -92,7 +83,7 @@
      initialPos.radius = initialPosTemp[0];
      initialPos.theta = initialPosTemp[1];
      initialPos.phi = initialPosTemp[2];
-     console.log(initialPos);
+     //console.log(initialPos);
 
      for (var i = 0; i < 4; i++) {
          var newPos = new Object();
@@ -102,7 +93,7 @@
          cameraPositionsCoords.push(newPos);
      };
 
-     console.log(cameraPositionsCoords);
+     //console.log(cameraPositionsCoords);
  };
 
  XMLscene.prototype.initHandlers = function() {
@@ -127,7 +118,7 @@
              this.moves.splice(0, this.moves.length);
              this.boards.splice(0, this.boards.length);
              this.reset(false);
-             console.log(this.graph.movTrack.board);
+             //console.log(this.graph.movTrack.board);
              this.gamestatS = [24, 24, 24, 24];
              console.log("End Reset");
 
@@ -142,7 +133,7 @@
              this.boards.splice(this.boards.length - 1, 1);
              this.currentBoard = this.boards[this.boards.length - 1];
              var newPlayer = getPlayer(moveToUndo);
-             console.log("newPlayer", newPlayer);
+             //console.log("newPlayer", newPlayer);
              incStat(this, newPlayer, moveToUndo);
              this.moves.splice(this.moves.length - 1, 1);
          }
@@ -153,7 +144,7 @@
              this.replayingMove = false;
              this.boards.splice(0, this.boards.length);
              this.reset(true);
-             console.log(this.moves);
+             //console.log(this.moves);
              /* var date = new Date();
               console.log(date.yyyymmdd());
               window.webkitRequestFileSystem(window.TEMPORARY, 5 * 1024 * 1024 /*5MB* , onInitFs, errorHandler);*/
@@ -210,7 +201,7 @@
 
  function initBoard(scene, response, flag) {
 
-     console.log(response);
+     //console.log(response);
      if (response['message'] === "OK") {
 
          scene.currentBoard = JSON.parse(response['newBoard']);
@@ -220,7 +211,7 @@
          if (flag) {
              scene.replayOfGame = true;
          } else {
-             console.log("Flag False");
+             //console.log("Flag False");
              scene.replayOfGame = false;
              scene.gameOver = false;
              scene.replayingMove = false;
@@ -232,14 +223,14 @@
  };
 
  function checkError(scene, response) {
-     console.log(response);
+     //console.log(response);
      if (response['message'] !== "OK") {
          scene.gameError = true;
      }
  };
 
  function statsCheck(scene, response, player) {
-     console.log(response);
+     //console.log(response);
      if (response['message'] === "OK") {
          //moveToUndo
          //THIS IS CALLED WHEN STATS CHECK IS DONE
@@ -247,7 +238,7 @@
          getStats(scene);
          scene.currentPlayer = player;
          scene.changePlayer = true;
-         console.log(scene.currentPlayer);
+         //console.log(scene.currentPlayer);
      }
  };
 
@@ -256,14 +247,14 @@
          var response = JSON.parse(data.target.response);
          if (response['message'] === "OK") {
              scene.gameStats = JSON.parse(response['newPlayer']);
-             console.log(response);
+             //console.log(response);
          }
      }).bind(scene));
  };
 
  function incStat(scene, player, move) {
      //add player who did the move to each "move"; the placed piece occupies the 4th position on the array of moves
-     console.log(player);
+     //console.log(player);
      makeRequest("incStats", [player, move[3]], (function(data) {
 
          statsCheck(scene, JSON.parse(data.target.response), player);
@@ -274,7 +265,7 @@
  function play(scene, move) {
      if (!scene.animationPlaying && scene.gameStarted && !scene.play && !this.gameOver && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected || (scene.replayOfGame && move.length > 0))) {
          scene.play = true;
-         console.log("currentPlayer", scene.currentPlayer, scene.currentBoard, move);
+         //console.log("currentPlayer", scene.currentPlayer, scene.currentBoard, move);
          makeRequest("play", [JSON.stringify(scene.currentBoard), scene.currentPlayer, JSON.stringify(move)], (function(data) {
 
              handlePlay(scene, JSON.parse(data.target.response));
@@ -295,7 +286,7 @@
              console.log("SOMEONE WON");
              console.log(scene.moves.length);
          } else {
-             console.log(data);
+             //console.log(data);
              var newBoard = JSON.parse(data['newPlayer']);
              var newMove = JSON.parse(data['message']);
              scene.boards.push(newBoard);
@@ -324,7 +315,7 @@
                  scene.graph.movTrack.copy(scene.graph.movTrack.cell, cellToMove);
                  if (scene.replayOfGame) {
                      scene.moves.splice(0, 1);
-                     console.log(scene.moves.length);
+                     //console.log(scene.moves.length);
                  }
 
 
@@ -381,7 +372,7 @@
          this.rotateCameraFlag = false;
          this.camera.updateZeros();
          this.camera.updatePos();
-         console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
+         //console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
          //console.log(deltaT, timePassed, this.camera.theta, this.camera.thetaZero, this.camera.position);
      }
  };
@@ -390,7 +381,7 @@
  XMLscene.prototype.init = function(application) {
 
      CGFscene.prototype.init.call(this, application);
-     this.camera = new MyCamera(0.4, 0.1, 500, CAMERA_DEFAULT_POSITION, vec3.fromValues(0, 0, 7));
+     this.camera = new MyCamera(0.4, 0.1, 500, CAMERA_DEFAULT_POSITION, vec3.fromValues(0, 0, 4));
 
      this.initLights();
      //    console.log(this.camera);
@@ -443,7 +434,7 @@
          this.lights[i].setAmbient(parsedLights[i].amb[0], parsedLights[i].amb[1], parsedLights[i].amb[2], parsedLights[i].amb[3]);
          this.lights[i].setDiffuse(parsedLights[i].diff[0], parsedLights[i].diff[1], parsedLights[i].diff[2], parsedLights[i].diff[3]);
          this.lights[i].setSpecular(parsedLights[i].spec[0], parsedLights[i].spec[1], parsedLights[i].spec[2], parsedLights[i].spec[3]);
-         this.lights[i].setVisible(true);
+         this.lights[i].setVisible(false);
 
          //enable the light if flag set to true, false otherwise
          this.lightsEnable.push(parsedLights[i].isEnabled() ? true : false);
@@ -492,17 +483,17 @@
          this.camera.calcAngles();
          this.camera.updatePos();
          this.camera.updateZeros();
-         console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
+         //console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
          if (typeof this.cameraToMovePos !== 'undefined') {
              // console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
 
              //console.log(this.camera.theta, this.cameraToMovePos);
              var distance = distanceBetweenTwoSphericPoint(this.camera, this.cameraToMovePos);
-             console.log(this.cameraToMovePos);
+             //console.log(this.cameraToMovePos);
              this.cameraPhiDelta = distance[2];
              this.cameraThetaDelta = distance[1];
              this.cameraRadiusDelta = distance[0];
-             console.log(distance);
+             //console.log(distance);
 
 
              var absoluteDistance = absoluteDistanceBetweenTwoSphericPoints([this.camera.radius, this.camera.theta, this.camera.phi], [this.cameraToMovePos.radius, this.cameraToMovePos.theta, this.cameraToMovePos.phi]);
@@ -616,7 +607,6 @@
          //add play if bot
          if (this.replayOfGame && this.moves.length > 0 && !this.play && !this.replayingMove) {
 
-             console.log(this.moves.length);
              var moveToReplay = this.moves[0];
              this.replayMove(moveToReplay);
              this.replayingMove = true;
@@ -681,5 +671,4 @@
  //Handle the JSON Reply
  function handleReply(data) {
      response = JSON.parse(data.target.response);
-     console.log(response);
  };

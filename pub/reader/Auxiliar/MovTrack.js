@@ -66,6 +66,10 @@ MovTrack.prototype.setLastPick = function(obj){
     this.pickArray[1] = obj;
 };
 
+MovTrack.prototype.lastPick = function(){
+    return this.pickArray[1];
+};
+
 MovTrack.prototype.stackToCell = function(){
     return (this.pickArray[0] == "piece" && this.pickArray[1] == "cell");
 };
@@ -106,7 +110,7 @@ MovTrack.prototype.translateObj = function(obj,id){
             this.piece.node.setPicking(this.piece.id);
         }
     }
-    else if(obj instanceof BoardCell){
+    else if(obj instanceof BoardCell && this.lastPick() == "piece"){
         var info = this.getCellInfo(id);
 
         if(this.scene.canSelectCell()){
@@ -153,6 +157,9 @@ MovTrack.prototype.undo = function(worldCoords) {
     this.piece.coord = cell;
     this.cell.coord = stack;
     this.scene.animationPlaying = true;
+    this.piece.node.setPicking(this.piece.id);
+    if(this.cell.node != null)
+        this.cell.node.clearPicking();
     node.reverseMove(stack, cell);
     this.board.togglePicked(this.piece.id);
 }
@@ -168,14 +175,17 @@ MovTrack.prototype.validateMove = function() {
     if (this.stackToCell() && !this.scene.animationPlaying && (botPlayers.indexOf(this.scene.currentPlayer) < 0)) {
         this.scene.moveSelected = true;
         play(this.scene, [this.cell.info2, this.cell.info1, convertToProlog(this.piece.info1, this.piece.info2)])
-        console.log(this.scene.playResponse);
     }
 };
 MovTrack.prototype.response = function(result){
     if(result)
         this.board.togglePicked(this.piece.id);
-    else if(this.piece.node != null)
+    else {
+     if(this.piece.node != null)
         this.piece.node.clearPicking();
+    if(this.cell.node != null)
+        this.cell.node.clearPicking();
+}
 };
 
 MovTrack.prototype.removeTopPiece = function(type) {
