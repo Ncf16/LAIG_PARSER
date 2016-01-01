@@ -68,12 +68,12 @@
          botPlayers.push(player2Color);
  };
 
- XMLscene.prototype.canSelectPiece = function(color){
-    return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
+ XMLscene.prototype.canSelectPiece = function(color) {
+     return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
  }
 
- XMLscene.prototype.canSelectCell = function(){
-    return this.gameStarted;
+ XMLscene.prototype.canSelectCell = function() {
+     return this.gameStarted;
  }
 
  XMLscene.prototype.initCameraPos = function() {
@@ -114,7 +114,7 @@
      this.resetGame = (function() {
          if (this.gameStarted && !this.animationPlaying) {
              this.replayingMove = false;
-
+             this.gameStarted = true;
              this.moves.splice(0, this.moves.length);
              this.boards.splice(0, this.boards.length);
              this.reset(false);
@@ -236,8 +236,6 @@
      //console.log(response);
      if (response['message'] === "OK") {
          //moveToUndo
-         //THIS IS CALLED WHEN STATS CHECK IS DONE
-         //SO THIS SHOULD BE ENOUGH
          getStats(scene);
          scene.currentPlayer = player;
          scene.changePlayer = true;
@@ -275,7 +273,7 @@
 
          }).bind(scene));
      } else {
-        scene.graph.movTrack.response(false);
+         scene.graph.movTrack.response(false);
          //   console.log(!scene.animationPlaying, scene.gameStarted, !scene.play, !this.gameOver, (botPlayers.indexOf(scene.currentPlayer) >= 0), scene.moveSelected, scene.replayOfGame);
      }
  };
@@ -538,6 +536,8 @@
 
      this.gui.scene = this;
      this.setUpdatePeriod(updateTime);
+     this.testeP = new PoolTriangle(this);
+     this.testeP1 = new fullCylinder(this);
  };
 
  XMLscene.prototype.update = function(currTime) {
@@ -545,19 +545,19 @@
 
 
      if (this.gameStarted && !this.gameOver) {
-         /*  if (this.changePlayer) {
-               this.moveTime = 0;
-               this.startPlay = currTime;
-               this.changePlayer = false;
-               console.log("updatePlayTime");
-           } else {
-               this.moveTime = (this.currTime - this.startPlay) / 1000.0;
-               //  console.log(this.moveTime);
-               if (this.moveTime >= this.maxMoveTime) {
-                   this.moveTime = 0;
-                   nextPlayer(this);
-               }
-           }*/
+         if (this.changePlayer) {
+             this.moveTime = 0;
+             this.startPlay = currTime;
+             this.changePlayer = false;
+             console.log("updatePlayTime");
+         } else {
+             this.moveTime = (this.currTime - this.startPlay) / 1000.0;
+             //  console.log(this.moveTime);
+             if (this.moveTime >= this.maxMoveTime) {
+                 this.moveTime = 0;
+                 nextPlayer(this);
+             }
+         }
      }
 
      if (this.graph.loadedOk) {
@@ -596,7 +596,8 @@
      if (!this.playingAnimation) {
 
          if (!this.gameOver) {
-             if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame /* && (this.endMoveTime >= endTimeMax)*/ ) {
+             //TODO por o tempo de volta
+             if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame && (this.endMoveTime >= endTimeMax)) {
                  this.endMoveTime = 0;
                  this.updateEndTime = false;
                  play(this, []);
@@ -633,7 +634,9 @@
          }
 
          //draw the graphScene
-         this.graph.display();
+         //this.graph.display();
+         this.testeP.display();
+         this.testeP1.display();
 
      }
  };

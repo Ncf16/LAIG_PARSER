@@ -20,7 +20,6 @@ function Triangle(scene, point1, point2, point3) {
 
 Triangle.prototype = Object.create(CGFobject.prototype);
 Triangle.prototype.constructor = Triangle;
-
 Triangle.prototype.initBuffers = function() {
     this.vertices = [];
 
