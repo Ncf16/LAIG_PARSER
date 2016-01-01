@@ -304,28 +304,28 @@ function LeafText(scene, element, text, texture) {
 LeafText.prototype = Object.create(Leaf.prototype);
 LeafText.prototype.constructor = LeafText;
 
-LeafText.prototype.translateId = function(id){
+LeafText.prototype.translateId = function(id) {
 
     var value;
 
-    switch(id){
+    switch (id) {
         case "whiteDisksStats":
-        value = this.graph.scene.gameStats[0];
-        break;
+            value = this.graph.scene.gameStats[0];
+            break;
         case "whiteRingsStats":
-        value = this.graph.scene.gameStats[1];
-        break;
+            value = this.graph.scene.gameStats[1];
+            break;
         case "blackDisksStats":
-        value = this.graph.scene.gameStats[2];
-        break;
+            value = this.graph.scene.gameStats[2];
+            break;
         case "blackRingsStats":
-        value = this.graph.scene.gameStats[3];
-        break;
+            value = this.graph.scene.gameStats[3];
+            break;
         default:
-        return;
+            return;
     }
 
-    if(value < 10)
+    if (value < 10)
         this.text = "0" + value.toString();
     else
         this.text = value.toString();
@@ -343,12 +343,12 @@ LeafText.prototype.display = function(parentElement) {
     for (var i = 0; i < this.text.length; i++) {
         this.scene.pushMatrix();
         var coords = this.findLocation(this.text.charCodeAt(i));
-       // console.log(coords);
+        // console.log(coords);
         this.scene.activeShader.setUniformsValues({
             'charCoords': coords
         });
         this.scene.translate(i, 0, 0);
-        if(this.text[i] != " ")
+        if (this.text[i] != " ")
             this.element.display();
         this.scene.popMatrix();
     }
@@ -369,9 +369,38 @@ LeafText.prototype.parseLeaf = function(args, scene) {
 LeafText.prototype.processArgs = function(leaf, currLeaf, scene) {
     var value = readElement(leaf, ["value"], 1)[FIRST_ELEMENT];
     var texture = readElement(leaf, ["texture"], 1);
-    this.parseLeaf([value,texture], scene);
+    this.parseLeaf([value, texture], scene);
 };
 LeafText.prototype.setText = function(text) {
     if (typeof text !== 'undefined' && typeof text === "string")
         this.text = text;
 };
+
+function LeafFullCylinder() {
+    Leaf.call(this);
+};
+
+LeafFullCylinder.prototype.parseLeaf = function(args, scene) {
+    this.type = "Torus";
+    var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
+    var tempIndex = tempArgs.indexOf("inf");
+    if (tempIndex != -1) {
+        console.error("Invalid paramenter in the creation of a sphere ( " + tempArgs[tempIndex] + " ), this leaf will be ignored");
+    } else {
+        this.element = new Torus(scene, tempArgs[0], tempArgs[1], tempArgs[2], tempArgs[3]);
+    }
+};
+LeafFullCylinder.prototype = Object.create(Leaf.prototype);
+LeafFullCylinder.prototype.constructor = LeafFullCylinder;
+
+function LeafPoolTriangle() {
+    Leaf.call(this);
+};
+
+LeafPoolTriangle.prototype.parseLeaf = function(args, scene) {
+    this.type = "PoolTriangle";
+
+    this.element = new PoolTriangle(scene);
+};
+LeafPoolTriangle.prototype = Object.create(Leaf.prototype);
+LeafPoolTriangle.prototype.constructor = LeafPoolTriangle;

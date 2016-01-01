@@ -27,7 +27,7 @@ Date.prototype.yyyymmdd = function() {
     var yyyy = this.getFullYear().toString();
     var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
     var dd = this.getDate().toString();
-    return yyyy+"/" + (mm[1] ? mm : "0" + mm[0]) +"/"+ (dd[1] ? dd : "0" + dd[0]); // padding
+    return yyyy + "/" + (mm[1] ? mm : "0" + mm[0]) + "/" + (dd[1] ? dd : "0" + dd[0]); // padding
 };
 
 /*
@@ -49,13 +49,13 @@ function distanceBetweenTwoSphericPoint(point1, point2) {
     ];
 };
 
-function boardCoordsToWorld(lin,col) {
+function boardCoordsToWorld(lin, col) {
     return [1.5 * (col - lin), 0, 0.866 * (col + lin)];
 };
 
-function stackCoordsToWorld(lin,col,sign){
+function stackCoordsToWorld(lin, col, sign) {
 
-    return [1.5 * (col - lin - sign * 1.6), 0.6, 0.866 * (col + lin-1.6)];
+    return [1.5 * (col - lin - sign * 1.6), 0.6, 0.866 * (col + lin - 1.6)];
 }
 
 function equal(Element1, Element2) {
@@ -226,7 +226,11 @@ function parseLeafAux(leave, type) {
         return new LeafTorus();
     } else if (type == "text") {
         return new LeafText();
-    } else {
+    } else if (type == "fullCylinder")
+        return new LeafFullCylinder();
+    else if (tyoe == "poolTriangle")
+        return new LeafPoolTriangle();
+    else {
         console.warn("Invalid type of Leaf: " + type);
     }
 };
