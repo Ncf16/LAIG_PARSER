@@ -46,7 +46,6 @@ Leaf.prototype.processArgs = function(leaf, currLeaf, scene) {
             return false;
 
     });
-
     this.parseLeaf(processedArgs, scene);
 };
 Leaf.prototype.processDescendents = function() {};
@@ -379,28 +378,32 @@ LeafText.prototype.setText = function(text) {
 function LeafFullCylinder() {
     Leaf.call(this);
 };
-
-LeafFullCylinder.prototype.parseLeaf = function(args, scene) {
-    this.type = "Torus";
-    var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
-    var tempIndex = tempArgs.indexOf("inf");
-    if (tempIndex != -1) {
-        console.error("Invalid paramenter in the creation of a sphere ( " + tempArgs[tempIndex] + " ), this leaf will be ignored");
-    } else {
-        this.element = new Torus(scene, tempArgs[0], tempArgs[1], tempArgs[2], tempArgs[3]);
-    }
-};
 LeafFullCylinder.prototype = Object.create(Leaf.prototype);
 LeafFullCylinder.prototype.constructor = LeafFullCylinder;
 
+LeafFullCylinder.prototype.parseLeaf = function(args, scene) {
+    var tempArgs = stringArrayToNumber(args, "ff", "inf", "inf", 1);
+    var tempIndex = tempArgs.indexOf("inf");
+    if (tempIndex != -1) {
+        console.error("Invalid paramenter in the creation of a FullCylinder ( " + tempArgs[tempIndex] + " ), this leaf will be ignored");
+    } else {
+        this.element = new fullCylinder(scene, tempArgs[0], tempArgs[1]);
+    }
+};
+
 function LeafPoolTriangle() {
     Leaf.call(this);
+    console.log(this);
 };
+
+LeafPoolTriangle.prototype = Object.create(Leaf.prototype);
+LeafPoolTriangle.prototype.constructor = LeafPoolTriangle;
 
 LeafPoolTriangle.prototype.parseLeaf = function(args, scene) {
     this.type = "PoolTriangle";
 
     this.element = new PoolTriangle(scene);
 };
-LeafPoolTriangle.prototype = Object.create(Leaf.prototype);
-LeafPoolTriangle.prototype.constructor = LeafPoolTriangle;
+LeafPoolTriangle.prototype.processArgs = function(leaf, currLeaf, scene) {
+    this.parseLeaf(null, scene);
+};

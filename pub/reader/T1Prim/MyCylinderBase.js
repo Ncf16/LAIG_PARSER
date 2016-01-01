@@ -1,8 +1,8 @@
  function MyCylinderBase(scene, slices, stacks, choice, minS, maxS, minT, maxT) {
      CGFobject.call(this, scene);
-
-     this.slices = typeof slices !== 'undefined' ? slices : 8;
-     this.stacks = typeof stacks !== 'undefined' ? stacks : 20;
+     console.log(choice);
+     this.slices = typeof slices !== 'undefined' ? slices : 20;
+     this.stacks = typeof stacks !== 'undefined' ? stacks : 8;
      this.choice = typeof choice !== 'undefined' ? choice : 1;
 
      this.minS = typeof minS !== 'undefined' ? minS : 0;

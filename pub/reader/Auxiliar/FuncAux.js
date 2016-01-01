@@ -228,7 +228,7 @@ function parseLeafAux(leave, type) {
         return new LeafText();
     } else if (type == "fullCylinder")
         return new LeafFullCylinder();
-    else if (tyoe == "poolTriangle")
+    else if (type == "poolTriangle")
         return new LeafPoolTriangle();
     else {
         console.warn("Invalid type of Leaf: " + type);

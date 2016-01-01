@@ -1,8 +1,8 @@
 function fullCylinder(scene, slices, stacks) {
     CGFobject.call(this, scene);
-
-    this.cilinderBase = new MyCylinderBase(scene, slices, stack, 3, 0, 1, 0, 1);
-    this.cilinderSide = new Cylinder(scene, 1, 1, 1, stack, slices);
+    console.log(slices, stacks);
+    this.cilinderBase = new MyCylinderBase(scene, slices, stacks, 3);
+    this.cilinderSide = new Cylinder(scene, 1, 1, 1, stacks, slices);
 };
 
 fullCylinder.prototype = Object.create(CGFobject.prototype);

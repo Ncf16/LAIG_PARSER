@@ -103,6 +103,8 @@
         <LEAF id="sphere" type="sphere" args="0.65 20 20" />
         <LEAF id="hex" type="hex" />
         <LEAF id="torus" type="torus" args="0.7 0.1 20 20" />
+        <LEAF id="pool" type="poolTriangle" args="0"/>
+        <LEAF id="full" type="fullCylinder" args="20 8"/>
     </LEAVES>
     <NODES>
         <ROOT id="root" />
@@ -110,9 +112,11 @@
             <MATERIAL id="defaultMaterial" />
             <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="board" />
+                <DESCENDANT id="pool"/>
+                <DESCENDANT id="full"/>
+             <!--   <DESCENDANT id="board" />
                 <DESCENDANT id="containers" />
-                <DESCENDANT id="pieces" />
+                <DESCENDANT id="pieces" />-->
             </DESCENDANTS>
         </NODE>
         <NODE id="containers">

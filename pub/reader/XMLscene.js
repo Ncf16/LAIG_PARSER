@@ -634,9 +634,9 @@
          }
 
          //draw the graphScene
-         //this.graph.display();
-         this.testeP.display();
-         this.testeP1.display();
+         this.graph.display();
+      /**  this.testeP.display();
+         this.testeP1.display();*/
 
      }
  };
