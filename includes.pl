@@ -98,15 +98,18 @@ printElement(7):- printChar('P').
 %% prints cell with black ring and white disk
 printElement(8):- printChar('p').
 
-getSimplePiece(8,black,[4]).
+getSimplePiece(8,black,[3]).
 getSimplePiece(8,white,[2]).
 getSimplePiece(7,black,[3,4]).
 getSimplePiece(7,white,[]).
-getSimplePiece(6,black,[3]).
+getSimplePiece(6,black,[4]).
 getSimplePiece(6,white,[1]).
 getSimplePiece(5,black,[]).
 getSimplePiece(5,white,[1,2]).
-getSimplePiece(Var,_,Var).
+getSimplePiece(4,_,4).
+getSimplePiece(3,_,3).
+getSimplePiece(2,_,2).
+getSimplePiece(1,_,1).
 
 getNumberOfRings(Player,Number):-!,stats(Player,[_|[Number|_]]).
 getNumberOfDisks(Player,Number):-!,stats(Player,[Number|_]).
