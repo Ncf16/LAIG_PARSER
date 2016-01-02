@@ -62,6 +62,10 @@ function equal(Element1, Element2) {
     return Element1 == Element2;
 };
 
+function compareWithID(Element, id) {
+    return (Element.id == id || Element.ID == id);
+};
+
 function equalCoords(Element1, Element2) {
     return (Element1[0] == Element2[0] && Element1[1] == Element2[1] && Element1[2] == Element2[2]);
 };
@@ -74,6 +78,14 @@ function getIndex(array, element, process) {
     } while (j);
 
     return -1;
+};
+
+function getIndexedArrayLength(arr) {
+    var length = 0;
+    for (key in arr) {
+        length++;
+    }
+    return length;
 }
 
 function absoluteDistanceBetweenTwoSphericPoints(point1, point2) {
@@ -341,7 +353,6 @@ function addID(DOM, sceneGraph, ArrayOfIDs, newID) {
 };
 
 function readElement(DOM, elementToRead, DOMnumberOfElements) {
-
     if (DOM == undefined)
         return [];
     var size = elementToRead.length;
@@ -352,7 +363,6 @@ function readElement(DOM, elementToRead, DOMnumberOfElements) {
     }
     for (var j = 0; j < DOMnumberOfElements; j++) {
         for (var i = 0; i < size; i++) {
-
             var tempValue = DOM[j].attributes.getNamedItem(elementToRead[i]);
             if (tempValue != null)
                 returnValues.push(tempValue.value);

@@ -3,21 +3,24 @@ var FIRST_ELEMENT = 0;
 
 function Leaf(graph) {
     this.element = null;
-    this.ID;
+    this.id;
     this.type;
     this.graph = graph;
     this.args = [];
     this.stillChecking = false;
+    this.currentAmbient = "Default"
 };
 Leaf.prototype.update = function(currTime) {};
 Leaf.prototype.setID = function(newID) {
-    this.ID = newID;
+    this.id = newID;
 };
 Leaf.prototype.getID = function() {
-    return this.ID;
+    return this.id;
 };
 Leaf.prototype.getElement = function() {
     return this.element;
+};
+Leaf.prototype.copyTransformationInfo = function(toCopyNode) {
 };
 Leaf.prototype.setArgs = function(newArgs) {
     this.args = newArgs;

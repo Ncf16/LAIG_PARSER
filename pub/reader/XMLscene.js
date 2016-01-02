@@ -16,74 +16,73 @@
 
 
  function XMLscene() {
-   CGFscene.call(this);
-   this.Loop = false;
-   this.returnsToStart = false;
-   this.gui = null;
-   this.player1 = player1Color;
-   this.player2 = player2Color;
-   this.maxMoveTime = 5;
-   this.gameStarted = false;
-   this.rotateCameraFlag = false;
-   this.startCameraAnimation = false;
-   this.cameraAnimationdeltaT = 0;
-   this.play = false;
-   this.moves = [];
-   this.boards = [];
-   this.currentBoard = null;
-   this.currentPlayer = null;
-   this.gameOver = false;
-   this.gameError = false;
-   this.currTime = 0;
-   this.replayOfGame = false;
-   this.playingAnimation = false;
-   this.cameraPhiDelta = 0;
-   this.cameraThetaDelta = 0;
-   this.cameraRadiusDelta = 0;
-   this.cameraSpeed = 1;
-   this.cameraToMovePos = new Object();
-   this.animationPlaying = false;
-   this.changePlayer = false;
-   this.replayingMove = false;
-   this.moveTime = 0;
-   this.startPlay = 0;
-   this.ambientID = "";
-   this.rotateCamera = new Object();
-   this.gameStats = [24, 24, 24, 24];
-   this.endMoveTime = 0;
-   this.updateEndTime = false;
-   this.initCameraPos();
-   this.initHandlers();
-};
+     CGFscene.call(this);
+     this.Loop = false;
+     this.returnsToStart = false;
+     this.gui = null;
+     this.player1 = player1Color;
+     this.player2 = player2Color;
+     this.maxMoveTime = 5;
+     this.gameStarted = false;
+     this.rotateCameraFlag = false;
+     this.startCameraAnimation = false;
+     this.cameraAnimationdeltaT = 0;
+     this.play = false;
+     this.moves = [];
+     this.boards = [];
+     this.currentBoard = null;
+     this.currentPlayer = null;
+     this.gameOver = false;
+     this.gameError = false;
+     this.currTime = 0;
+     this.replayOfGame = false;
+     this.playingAnimation = false;
+     this.cameraPhiDelta = 0;
+     this.cameraThetaDelta = 0;
+     this.cameraRadiusDelta = 0;
+     this.cameraSpeed = 1;
+     this.cameraToMovePos = new Object();
+     this.animationPlaying = false;
+     this.changePlayer = false;
+     this.replayingMove = false;
+     this.moveTime = 0;
+     this.startPlay = 0;
+     this.ambientID = "Default";
+     this.rotateCamera = new Object();
+     this.gameStats = [24, 24, 24, 24];
+     this.endMoveTime = 0;
+     this.updateEndTime = false;
+     this.initCameraPos();
+     this.initHandlers();
+ };
 
-XMLscene.prototype = Object.create(CGFscene.prototype);
-XMLscene.prototype.constructor = XMLscene;
+ XMLscene.prototype = Object.create(CGFscene.prototype);
+ XMLscene.prototype.constructor = XMLscene;
 
-XMLscene.prototype.parsePlayers = function() {
-   botPlayers = [];
-   if (botTypes.indexOf(this.player1) >= 0)
-       botPlayers.push(player1Color);
+ XMLscene.prototype.parsePlayers = function() {
+     botPlayers = [];
+     if (botTypes.indexOf(this.player1) >= 0)
+         botPlayers.push(player1Color);
 
-   if (botTypes.indexOf(this.player2) >= 0)
-       botPlayers.push(player2Color);
-};
+     if (botTypes.indexOf(this.player2) >= 0)
+         botPlayers.push(player2Color);
+ };
 
-XMLscene.prototype.canSelectPiece = function(color) {
+ XMLscene.prototype.canSelectPiece = function(color) {
+     return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
+ }
 
-    return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
-}
+ XMLscene.prototype.canSelectCell = function() {
+     return this.gameStarted;
+ }
 
-XMLscene.prototype.canSelectCell = function() {
-   return this.gameStarted;
-}
+ XMLscene.prototype.initCameraPos = function() {
 
-XMLscene.prototype.initCameraPos = function() {
-
-   var initialPosTemp = cartesianToSphericCoords(CAMERA_DEFAULT_POSITION);
-   var initialPos = new Object();
-   initialPos.radius = initialPosTemp[0];
-   initialPos.theta = initialPosTemp[1];
-   initialPos.phi = initialPosTemp[2];
+     var initialPosTemp = cartesianToSphericCoords(CAMERA_DEFAULT_POSITION);
+     var initialPos = new Object();
+     initialPos.radius = initialPosTemp[0];
+     initialPos.theta = initialPosTemp[1];
+     initialPos.phi = initialPosTemp[2];
      //console.log(initialPos);
 
      for (var i = 0; i < 4; i++) {

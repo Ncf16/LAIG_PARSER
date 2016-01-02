@@ -19,27 +19,67 @@ function Node(graph) {
     //different ambients
     this.materials = [];
     this.textures = [];
+    this.ambientNodes = [];
+    this.currentAmbient = "Default"
 };
 
 Node.prototype.getID = function() {
 
     return this.id;
 }
-Node.prototype.setAmbient = function(){
+Node.prototype.setAmbient = function() {
 
     text = this.graph.scene.ambientID;
 
-    if (typeof text !== 'undefined' && typeof text === "string"){
+    if (typeof text !== 'undefined' && typeof text === "string") {
         var tmpMaterial = this.materials[text];
-        if(typeof tmpMaterial !== "undefined")
+        if (typeof tmpMaterial !== "undefined")
             this.material = tmpMaterial;
         var tmpTexture = this.textures[text];
-        if(typeof tmpTexture !== "undefined")
+        if (typeof tmpTexture !== "undefined")
             this.texture = tmpTexture;
     }
-}
+};
+Node.prototype.copyTransformationInfo = function(toCopyNode) {
+    this.transformation = toCopyNode.transformation;
+    if (toCopyNode.currentAnimation != null) {
+        this.animations.push(toCopyNode.currentAnimation);
+        this.currentAnimation = toCopyNode.currentAnimation;
+    }
+};
+Node.prototype.setNode = function(parentElement) {
 
-Node.prototype.setPickingAmbient = function(){
+    var nodeAmbient = this.graph.scene.ambientID;
+    if (this.currentAmbient !== nodeAmbient && getIndexedArrayLength(this.ambientNodes) > 0) {
+        var oldID = this.currentAmbient;
+        this.currentAmbient = nodeAmbient;
+        console.log(nodeAmbient, this.id);
+        if (typeof nodeAmbient !== 'undefined' && typeof nodeAmbient === "string") {
+            var tmpNodeID = this.ambientNodes[nodeAmbient];
+            var index = getIndex(this.graph.nodes, tmpNodeID, compareWithID);
+
+            var tmpNode = this.graph.nodes[index];
+            console.log(tmpNode);
+            if (typeof tmpNode !== "undefined") {
+                tmpNode.currentAmbient = nodeAmbient;
+                tmpNode.copyTransformationInfo(this);
+                 this.descendents[0] = tmpNode;
+            }
+        }
+    }
+};
+//garantir que os nodes alternativos são criados com tudo igual
+Node.prototype.swapDescentds = function(idToSwap, node) {
+
+    console.log(this.id, this.descendents,idToSwap);
+    var index = getIndex(this.descendents, idToSwap, compareWithID);
+    if (index > -1) {
+        //TODO copy info from descendent to Node, just to be sure
+        this.descendents[index] = node;
+    }
+    console.log(this.descendents);
+};
+Node.prototype.setPickingAmbient = function() {
 
 };
 
@@ -61,9 +101,8 @@ Node.prototype.update = function(currTime) {
                 this.currentAnimation = this.animations[this.index++];
                 this.currentAnimation.init(currTime);
                 this.currentAnimation.update(currTime);
-            }
-            else
-                this.currentAnimation=null;
+            } else
+                this.currentAnimation = null;
         }
     }
 
@@ -74,8 +113,9 @@ Node.prototype.display = function(parentElement) {
     //create the variables
     var material;
     var texture;
-
+    //  console.log("AMBIENT: " + this.currentAmbient, this.id);
     this.setAmbient();
+    this.setNode(parentElement);
 
     //if string Material from node is different from null is necessary to push the material to material Stack
     if (this.material != "null") {
@@ -104,7 +144,7 @@ Node.prototype.display = function(parentElement) {
 
         if (this.currentAnimation != null)
             this.currentAnimation.apply();
-        
+
         //if Node exists calls recursily, else displays that Node doesn't exist
         if (this.descendents[i] != null)
             this.descendents[i].display(this);
@@ -165,4 +205,8 @@ Node.prototype.processDescendents = function() {
         else
             console.warn("Element with ID: " + idToFind + " does not exist");
     }
+};
+
+Node.prototype.clone = function() {
+
 };

@@ -133,7 +133,7 @@ MySceneGraph.prototype.parseAmbients = function(rootElement) {
         if (currAmbient.nodeName == 'AMBIENT') {
             addID(currAmbient, this, this.scene.ambients);
         }
-       
+
     }
     console.log("END AMBIENTS");
 };
@@ -645,6 +645,8 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
 
         if (node.id == rootName)
             this.rootNode = node;
+
+        console.log(node.currentAmbient);
     }
 
     for (var i = 0; i < this.nodes.length; i++) {
@@ -652,9 +654,41 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
     }
 
     this.checkCycle();
+    this.parseAmbientNodes(rootElement);
     console.log("END NODES");
 };
 
+MySceneGraph.prototype.parseAmbientNodes = function(rootElement) {
+    var elems = this.checkTag(rootElement, 'NODES', false);
+
+
+    elems = this.checkTag(elems[0], 'NODE', false, 1);
+
+    for (var i = 0; i < elems.length; i++) {
+
+        var id = this.reader.getString(elems[i], 'id');
+        var index = getIndex(this.nodes, id, compareWithID);
+        if (index > -1) {
+            var node = this.nodes[index];
+            var elems2 = elems[i].getElementsByTagName("ALT");
+            if (elems2.length > 0) {
+                console.log(node.descendents);
+                this.parseNodeGeometryAmbients(elems2, node.ambientNodes,node.descendents[0].id);
+
+            }
+        }
+    }
+};
+MySceneGraph.prototype.parseNodeGeometryAmbients = function(elems2, arr, id) {
+    arr['Default'] = id;
+    for (var i = 0; i < elems2.length; i++) {
+        var id = this.reader.getString(elems2[i], 'id');
+        var ambient = this.reader.getString(elems2[i], 'ambient', false);
+
+        if (ambient != null)
+            arr[ambient] = id;
+    }
+};
 MySceneGraph.prototype.setUnvisited = function() {
 
     for (var key = 0; key < this.nodes.length; key++) {
