@@ -27,7 +27,11 @@ Leaf.prototype.getArgs = function() {
 };
 Leaf.prototype.setGraph = function(newGraph) {
     this.graph = newGraph;
-}
+};
+Leaf.prototype.setGraphA = function(newGraph) {
+    console.log("Here");
+    this.graph = newGraph;
+};
 Leaf.prototype.parseLeaf = function(args, scene) {};
 
 Leaf.prototype.getVisited = function() {
@@ -361,7 +365,7 @@ LeafText.prototype.findLocation = function(code) {
 };
 LeafText.prototype.parseLeaf = function(args, scene) {
     this.scene = scene;
-    this.element = new Rectangle(scene, [-0.5, 0.5, 0], [0.5, -0.5, 0]);;
+    this.element = new Rectangle(scene, [-0.5, 0.5, 0], [0.5, -0.5, 0]);
     this.text = args[0];
     this.texture = new CGFtexture(scene, args[1]);
 };

@@ -16,108 +16,109 @@
 
 
  function XMLscene() {
-     CGFscene.call(this);
-     this.Loop = false;
-     this.returnsToStart = false;
-     this.gui = null;
-     this.player1 = player1Color;
-     this.player2 = player2Color;
-     this.maxMoveTime = 5;
-     this.gameStarted = false;
-     this.rotateCameraFlag = false;
-     this.startCameraAnimation = false;
-     this.cameraAnimationdeltaT = 0;
-     this.play = false;
-     this.moves = [];
-     this.boards = [];
-     this.currentBoard = null;
-     this.currentPlayer = null;
-     this.gameOver = false;
-     this.gameError = false;
-     this.currTime = 0;
-     this.replayOfGame = false;
-     this.playingAnimation = false;
-     this.cameraPhiDelta = 0;
-     this.cameraThetaDelta = 0;
-     this.cameraRadiusDelta = 0;
-     this.cameraSpeed = 1;
-     this.cameraToMovePos = new Object();
-     this.animationPlaying = false;
-     this.changePlayer = false;
-     this.replayingMove = false;
-     this.moveTime = 0;
-     this.startPlay = 0;
-     this.ambientID = "";
-     this.rotateCamera = new Object();
-     this.gameStats = [24, 24, 24, 24];
-     this.endMoveTime = 0;
-     this.updateEndTime = false;
-     this.initCameraPos();
-     this.initHandlers();
- };
+   CGFscene.call(this);
+   this.Loop = false;
+   this.returnsToStart = false;
+   this.gui = null;
+   this.player1 = player1Color;
+   this.player2 = player2Color;
+   this.maxMoveTime = 5;
+   this.gameStarted = false;
+   this.rotateCameraFlag = false;
+   this.startCameraAnimation = false;
+   this.cameraAnimationdeltaT = 0;
+   this.play = false;
+   this.moves = [];
+   this.boards = [];
+   this.currentBoard = null;
+   this.currentPlayer = null;
+   this.gameOver = false;
+   this.gameError = false;
+   this.currTime = 0;
+   this.replayOfGame = false;
+   this.playingAnimation = false;
+   this.cameraPhiDelta = 0;
+   this.cameraThetaDelta = 0;
+   this.cameraRadiusDelta = 0;
+   this.cameraSpeed = 1;
+   this.cameraToMovePos = new Object();
+   this.animationPlaying = false;
+   this.changePlayer = false;
+   this.replayingMove = false;
+   this.moveTime = 0;
+   this.startPlay = 0;
+   this.ambientID = "";
+   this.rotateCamera = new Object();
+   this.gameStats = [24, 24, 24, 24];
+   this.endMoveTime = 0;
+   this.updateEndTime = false;
+   this.initCameraPos();
+   this.initHandlers();
+};
 
- XMLscene.prototype = Object.create(CGFscene.prototype);
- XMLscene.prototype.constructor = XMLscene;
+XMLscene.prototype = Object.create(CGFscene.prototype);
+XMLscene.prototype.constructor = XMLscene;
 
- XMLscene.prototype.parsePlayers = function() {
-     botPlayers = [];
-     if (botTypes.indexOf(this.player1) >= 0)
-         botPlayers.push(player1Color);
+XMLscene.prototype.parsePlayers = function() {
+   botPlayers = [];
+   if (botTypes.indexOf(this.player1) >= 0)
+       botPlayers.push(player1Color);
 
-     if (botTypes.indexOf(this.player2) >= 0)
-         botPlayers.push(player2Color);
- };
+   if (botTypes.indexOf(this.player2) >= 0)
+       botPlayers.push(player2Color);
+};
 
- XMLscene.prototype.canSelectPiece = function(color) {
-     return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
- }
+XMLscene.prototype.canSelectPiece = function(color) {
 
- XMLscene.prototype.canSelectCell = function() {
-     return this.gameStarted;
- }
+    return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
+}
 
- XMLscene.prototype.initCameraPos = function() {
+XMLscene.prototype.canSelectCell = function() {
+   return this.gameStarted;
+}
 
-     var initialPosTemp = cartesianToSphericCoords(CAMERA_DEFAULT_POSITION);
-     var initialPos = new Object();
-     initialPos.radius = initialPosTemp[0];
-     initialPos.theta = initialPosTemp[1];
-     initialPos.phi = initialPosTemp[2];
+XMLscene.prototype.initCameraPos = function() {
+
+   var initialPosTemp = cartesianToSphericCoords(CAMERA_DEFAULT_POSITION);
+   var initialPos = new Object();
+   initialPos.radius = initialPosTemp[0];
+   initialPos.theta = initialPosTemp[1];
+   initialPos.phi = initialPosTemp[2];
      //console.log(initialPos);
 
      for (var i = 0; i < 4; i++) {
-         var newPos = new Object();
-         newPos.radius = initialPos.radius;
-         newPos.theta = initialPos.theta + degToRad(90) * i;
-         newPos.phi = initialPos.phi;
-         cameraPositionsCoords.push(newPos);
-     };
+       var newPos = new Object();
+       newPos.radius = initialPos.radius;
+       newPos.theta = initialPos.theta + degToRad(90) * i;
+       newPos.phi = initialPos.phi;
+       cameraPositionsCoords.push(newPos);
+   };
 
      //console.log(cameraPositionsCoords);
  };
 
  XMLscene.prototype.initHandlers = function() {
-     this.startGame = (function() {
-         if (!this.gameStarted && !this.replayOfGame) {
+   this.startGame = (function() {
+       if (!this.gameStarted && !this.replayOfGame) {
 
 
-             this.moves.splice(0, this.moves.length);
-             this.boards.splice(0, this.boards.length);
-             this.gameStarted = true;
-             this.gameOver = false;
-             this.reset(false);
-             this.endMoveTime = 1001;
-         }
+           this.moves.splice(0, this.moves.length);
+           this.boards.splice(0, this.boards.length);
+           this.gameStarted = true;
+           this.gameOver = false;
+           this.reset(false);
+           this.endMoveTime = 1001;
+       }
 
-     }).bind(this);
+   }).bind(this);
 
-     this.resetGame = (function() {
-         if (this.gameStarted && !this.animationPlaying) {
-             this.replayingMove = false;
-             this.gameStarted = true;
-             this.moves.splice(0, this.moves.length);
-             this.boards.splice(0, this.boards.length);
-             this.reset(false);
+   this.resetGame = (function() {
+       if (this.gameStarted && !this.animationPlaying) {
+           this.replayingMove = false;
+           this.gameStarted = true;
+           this.moves.splice(0, this.moves.length);
+           this.boards.splice(0, this.boards.length);
+           this.reset(false);
              //console.log(this.graph.movTrack.board);
              this.gamestatS = [24, 24, 24, 24];
              console.log("End Reset");
@@ -126,94 +127,94 @@
          }
      }).bind(this)
 
-     this.undoMove = (function() {
-         if (this.gameStarted && this.moves.length > 0 && !this.animationPlaying) {
-             var moveToUndo = this.moves[this.moves.length - 1];
-             this.undoPlacement(moveToUndo);
-             this.boards.splice(this.boards.length - 1, 1);
-             this.currentBoard = this.boards[this.boards.length - 1];
-             var newPlayer = getPlayer(moveToUndo);
+   this.undoMove = (function() {
+       if (this.gameStarted && this.moves.length > 0 && !this.animationPlaying) {
+           var moveToUndo = this.moves[this.moves.length - 1];
+           this.undoPlacement(moveToUndo);
+           this.boards.splice(this.boards.length - 1, 1);
+           this.currentBoard = this.boards[this.boards.length - 1];
+           var newPlayer = getPlayer(moveToUndo);
              //console.log("newPlayer", newPlayer);
              incStat(this, newPlayer, moveToUndo);
              this.moves.splice(this.moves.length - 1, 1);
          }
 
      }).bind(this);
-     this.replayGame = (function() {
-         if (this.gameOver) {
-             this.replayingMove = false;
-             this.boards.splice(0, this.boards.length);
-             this.reset(true);
+   this.replayGame = (function() {
+       if (this.gameOver) {
+           this.replayingMove = false;
+           this.boards.splice(0, this.boards.length);
+           this.reset(true);
              //console.log(this.moves);
              /* var date = new Date();
               console.log(date.yyyymmdd());
               window.webkitRequestFileSystem(window.TEMPORARY, 5 * 1024 * 1024 /*5MB* , onInitFs, errorHandler);*/
-         } else {
-             console.log("No reset", this.gameStarted, this.gameOver);
-         }
-     }).bind(this);
- };
+          } else {
+           console.log("No reset", this.gameStarted, this.gameOver);
+       }
+   }).bind(this);
+};
 
- function getPlayer(move) {
-     if (move[3] <= 2)
-         return player2Color;
-     else
-         return player1Color;
+function getPlayer(move) {
+   if (move[3] <= 2)
+       return player2Color;
+   else
+       return player1Color;
 
- };
- XMLscene.prototype.handleReset = function(scene, flag) {
-     var player1;
-     var player2;
-     if (flag) {
-         player1 = player1Color;
-         player2 = player2Color;
-     } else {
-         player1 = this.player1;
-         player2 = this.player2;
-     }
+};
+XMLscene.prototype.handleReset = function(scene, flag) {
+   var player1;
+   var player2;
+   if (flag) {
+       player1 = player1Color;
+       player2 = player2Color;
+   } else {
+       player1 = this.player1;
+       player2 = this.player2;
+   }
 
-     makeRequest("initialize", [player1, player2], (function(data) {
+   makeRequest("initialize", [player1, player2], (function(data) {
 
-         checkError(scene, JSON.parse(data.target.response));
+       checkError(scene, JSON.parse(data.target.response));
 
-     }).bind(scene));
-     makeRequest("initStats", [], (function(data) {
+   }).bind(scene));
+   makeRequest("initStats", [], (function(data) {
 
-         initBoard(scene, JSON.parse(data.target.response), flag);
+       initBoard(scene, JSON.parse(data.target.response), flag);
 
-     }).bind(scene));
+   }).bind(scene));
 
 
- };
- XMLscene.prototype.reset = function(flag) {
-     if (this.gameStarted) {
-         this.graph.movTrack.resetBoard();
-         this.graph.movTrack.board.createStacks();
-         this.gameStats = [24, 24, 24, 24];
+};
+XMLscene.prototype.reset = function(flag) {
+   if (this.gameStarted) {
+       this.graph.movTrack.resetBoard();
+       this.graph.movTrack.board.createStacks();
+       this.gameStats = [24, 24, 24, 24];
 
-         makeRequest("retract", [], (function(data) {
-             this.handleReset(this, flag);
-         }).bind(this));
-     }
- };
+       makeRequest("retract", [], (function(data) {
+           this.handleReset(this, flag);
+       }).bind(this));
+   }
+};
 
- XMLscene.prototype.undoPlacement = function(move) {
+XMLscene.prototype.undoPlacement = function(move) {
 
-     this.graph.movTrack.undo(boardCoordsToWorld(move[0], move[1]));
- };
+   this.graph.movTrack.undo(boardCoordsToWorld(move[0], move[1]));
+};
 
- function initBoard(scene, response, flag) {
+function initBoard(scene, response, flag) {
 
      //console.log(response);
      if (response['message'] === "OK") {
 
-         scene.currentBoard = JSON.parse(response['newBoard']);
-         scene.boards.push(scene.currentBoard);
-         scene.gameStarted = true;
-         scene.currentPlayer = player1Color;
-         if (flag) {
-             scene.replayOfGame = true;
-         } else {
+       scene.currentBoard = JSON.parse(response['newBoard']);
+       scene.boards.push(scene.currentBoard);
+       scene.gameStarted = true;
+       scene.currentPlayer = player1Color;
+       if (flag) {
+           scene.replayOfGame = true;
+       } else {
              //console.log("Flag False");
              scene.replayOfGame = false;
              scene.gameOver = false;
@@ -228,11 +229,11 @@
  function checkError(scene, response) {
      //console.log(response);
      if (response['message'] !== "OK") {
-         scene.gameError = true;
-     }
- };
+       scene.gameError = true;
+   }
+};
 
- function statsCheck(scene, response, player) {
+function statsCheck(scene, response, player) {
      //console.log(response);
      if (response['message'] === "OK") {
          //moveToUndo
@@ -244,57 +245,57 @@
  };
 
  function getStats(scene) {
-     makeRequest("getStats", [], (function(data) {
-         var response = JSON.parse(data.target.response);
-         if (response['message'] === "OK") {
-             scene.gameStats = JSON.parse(response['newPlayer']);
+   makeRequest("getStats", [], (function(data) {
+       var response = JSON.parse(data.target.response);
+       if (response['message'] === "OK") {
+           scene.gameStats = JSON.parse(response['newPlayer']);
              //console.log(response);
          }
      }).bind(scene));
- };
+};
 
- function incStat(scene, player, move) {
+function incStat(scene, player, move) {
      //add player who did the move to each "move"; the placed piece occupies the 4th position on the array of moves
      //console.log(player);
      makeRequest("incStats", [player, move[3]], (function(data) {
 
-         statsCheck(scene, JSON.parse(data.target.response), player);
+       statsCheck(scene, JSON.parse(data.target.response), player);
 
-     }).bind(scene));
+   }).bind(scene));
  };
 
  function play(scene, move) {
-     if (!scene.animationPlaying && scene.gameStarted && !scene.play && !this.gameOver && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected || (scene.replayOfGame && move.length > 0))) {
-         scene.play = true;
+   if (!scene.animationPlaying && scene.gameStarted && !scene.play && !this.gameOver && ((botPlayers.indexOf(scene.currentPlayer) >= 0) || scene.moveSelected || (scene.replayOfGame && move.length > 0))) {
+       scene.play = true;
          //console.log("currentPlayer", scene.currentPlayer, scene.currentBoard, move);
          makeRequest("play", [JSON.stringify(scene.currentBoard), scene.currentPlayer, JSON.stringify(move)], (function(data) {
 
-             handlePlay(scene, JSON.parse(data.target.response));
+           handlePlay(scene, JSON.parse(data.target.response));
 
-         }).bind(scene));
+       }).bind(scene));
      } else {
-         scene.graph.movTrack.response(false);
+       scene.graph.movTrack.response(false);
          //   console.log(!scene.animationPlaying, scene.gameStarted, !scene.play, !this.gameOver, (botPlayers.indexOf(scene.currentPlayer) >= 0), scene.moveSelected, scene.replayOfGame);
      }
  };
 
  function handlePlay(scene, data) {
-     scene.moveSelected = false;
-     if (data['message'].indexOf(FAILURE_MESSAGE) == -1 && data['message'].indexOf(DRAW_MESSAGE) == -1) {
-         if (data['message'].indexOf(VICTORY_MESSAGE) > -1) {
-             scene.gameOver = true;
-             scene.endStatus = data['message'];
-             console.log("SOMEONE WON");
-             console.log(scene.moves.length);
-         } else {
+   scene.moveSelected = false;
+   if (data['message'].indexOf(FAILURE_MESSAGE) == -1 && data['message'].indexOf(DRAW_MESSAGE) == -1) {
+       if (data['message'].indexOf(VICTORY_MESSAGE) > -1) {
+           scene.gameOver = true;
+           scene.endStatus = data['message'];
+           console.log("SOMEONE WON");
+           console.log(scene.moves.length);
+       } else {
              //console.log(data);
              var newBoard = JSON.parse(data['newPlayer']);
              var newMove = JSON.parse(data['message']);
              scene.boards.push(newBoard);
              if (!scene.replayOfGame) {
-                 scene.currentBoard = newBoard;
-                 scene.moves.push(newMove);
-             }
+               scene.currentBoard = newBoard;
+               scene.moves.push(newMove);
+           }
 
              //4th position is the placed piece
              if (botPlayers.indexOf(scene.currentPlayer) >= 0 || scene.replayOfGame && !scene.animationPlaying) {
@@ -315,8 +316,8 @@
                  scene.graph.movTrack.copy(scene.graph.movTrack.piece, pieceToMove);
                  scene.graph.movTrack.copy(scene.graph.movTrack.cell, cellToMove);
                  if (scene.replayOfGame) {
-                     console.log("Cutting used move");
-                     scene.moves.splice(0, 1);
+                   console.log("Cutting used move");
+                   scene.moves.splice(0, 1);
                      //console.log(scene.moves.length);
                  }
 
@@ -330,28 +331,28 @@
              nextPlayer(scene);
          }
      } else {
-         console.log("ERROR", data);
-         scene.graph.movTrack.response(false);
-         scene.replayOfGame = false;
-     }
-     scene.updateEndTime = true;
-     scene.play = false;
+       console.log("ERROR", data);
+       scene.graph.movTrack.response(false);
+       scene.replayOfGame = false;
+   }
+   scene.updateEndTime = true;
+   scene.play = false;
      // console.log("HAVE ASNWERS");
  };
 
  function nextPlayer(scene) {
-     scene.changePlayer = true;
-     switch (scene.currentPlayer) {
-         case player1Color:
-             scene.currentPlayer = player2Color;
-             break;
-         case player2Color:
-             scene.currentPlayer = player1Color;
-             break;
-     }
- };
+   scene.changePlayer = true;
+   switch (scene.currentPlayer) {
+       case player1Color:
+       scene.currentPlayer = player2Color;
+       break;
+       case player2Color:
+       scene.currentPlayer = player1Color;
+       break;
+   }
+};
 
- XMLscene.prototype.updateCamera = function(currTime) {
+XMLscene.prototype.updateCamera = function(currTime) {
      var deltaT = (currTime - this.camera.startTime); // / 1000.0
 
      var timePassed = deltaT / this.cameraAnimationdeltaT;
@@ -361,9 +362,9 @@
      var currentRadius = (this.camera.radiusZero + this.cameraRadiusDelta * timePassed);
 
      if (deltaT < this.cameraAnimationdeltaT) {
-         this.camera.setTheta(currentTheta);
-         this.camera.setPhi(currentPhi);
-         this.camera.setRadius(currentRadius);
+       this.camera.setTheta(currentTheta);
+       this.camera.setPhi(currentPhi);
+       this.camera.setRadius(currentRadius);
 
          //   console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
          this.camera.updatePos();
@@ -381,10 +382,10 @@
  //initialize the scene with default values while the scene has not been loaded
  XMLscene.prototype.init = function(application) {
 
-     CGFscene.prototype.init.call(this, application);
-     this.camera = new MyCamera(0.4, 0.1, 500, CAMERA_DEFAULT_POSITION, vec3.fromValues(0, 0, 4));
+   CGFscene.prototype.init.call(this, application);
+   this.camera = new MyCamera(0.4, 0.1, 500, CAMERA_DEFAULT_POSITION, vec3.fromValues(0, 0, 4));
 
-     this.initLights();
+   this.initLights();
      //    console.log(this.camera);
      this.camera.startTime = 0;
      this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -400,42 +401,46 @@
 
      this.textShader = new CGFshader(this.gl, "shaders/font.vert", "shaders/font.frag");
      this.textShader.setUniformsValues({
-         'dims': [16, 16]
-     });
+       'dims': [16, 16]
+   });
+
+     var element = new Rectangle(this, [-0.5, 0.5, 0], [0.5, -0.5, 0]);
+     this.currentText = new LeafText(this,element,"current Player","textures/tileset-font.png");
+     this.currentText.texture = new CGFtexture(this, "textures/tileset-font.png");
  };
 
  //initialize with scene with a light that will be overwrited after the parsing of the file
  //given the is necessary at least one light
  XMLscene.prototype.initLights = function() {
 
-     this.lights[0].setPosition(2, 3, 3, 1);
-     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
-     this.lights[0].update();
-     this.lights[0].enable();
-     this.lights[0].setVisible(true);
- };
+   this.lights[0].setPosition(2, 3, 3, 1);
+   this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
+   this.lights[0].update();
+   this.lights[0].enable();
+   this.lights[0].setVisible(true);
+};
 
  //after the parsing, the camera will be update given the frustum fromINITIALS
  XMLscene.prototype.UpdateCamera = function() {
 
-     this.camera.near = this.graph.initials.getNear();
-     this.camera.far = this.graph.initials.getFar();
- };
+   this.camera.near = this.graph.initials.getNear();
+   this.camera.far = this.graph.initials.getFar();
+};
 
  //create the lights read from the scene
  XMLscene.prototype.CreateLights = function() {
 
-     var parsedLights = this.graph.lights;
-     this.nLights = parsedLights.length;
+   var parsedLights = this.graph.lights;
+   this.nLights = parsedLights.length;
 
      //iterate the lights
      for (var i = 0; i < this.nLights; i++) {
 
-         this.lights[i].setPosition(parsedLights[i].pos[0], parsedLights[i].pos[1], parsedLights[i].pos[2], parsedLights[i].pos[3]);
-         this.lights[i].setAmbient(parsedLights[i].amb[0], parsedLights[i].amb[1], parsedLights[i].amb[2], parsedLights[i].amb[3]);
-         this.lights[i].setDiffuse(parsedLights[i].diff[0], parsedLights[i].diff[1], parsedLights[i].diff[2], parsedLights[i].diff[3]);
-         this.lights[i].setSpecular(parsedLights[i].spec[0], parsedLights[i].spec[1], parsedLights[i].spec[2], parsedLights[i].spec[3]);
-         this.lights[i].setVisible(false);
+       this.lights[i].setPosition(parsedLights[i].pos[0], parsedLights[i].pos[1], parsedLights[i].pos[2], parsedLights[i].pos[3]);
+       this.lights[i].setAmbient(parsedLights[i].amb[0], parsedLights[i].amb[1], parsedLights[i].amb[2], parsedLights[i].amb[3]);
+       this.lights[i].setDiffuse(parsedLights[i].diff[0], parsedLights[i].diff[1], parsedLights[i].diff[2], parsedLights[i].diff[3]);
+       this.lights[i].setSpecular(parsedLights[i].spec[0], parsedLights[i].spec[1], parsedLights[i].spec[2], parsedLights[i].spec[3]);
+       this.lights[i].setVisible(false);
 
          //enable the light if flag set to true, false otherwise
          this.lightsEnable.push(parsedLights[i].isEnabled() ? true : false);
@@ -448,7 +453,7 @@
  //create the default material
  XMLscene.prototype.CreateMaterials = function() {
 
-     var materialDefault = new CGFappearance(this);
+   var materialDefault = new CGFappearance(this);
      //add new ID to material
      var defaultID = addID(null, this.graph, this.graph.materialsID, "materialDefault");
      //call the object constructor
@@ -463,27 +468,28 @@
      defaultMaterial.setAppearence(this);
      //input the created default Material in Materials array
      this.materials[defaultID] = defaultMaterial;
+     this.graph.matArray.push(defaultMaterial);
  };
 
  // Handler called when the graph is finally loaded. 
  // As loading is asynchronous, this may be called already after the application has started the run loop
  XMLscene.prototype.cameraChange = function() {
 
-     if (this.graph.loadedOk && !this.rotateCameraFlag) {
-         var cameraIndex = getIndex(cameraPositions, this.rotateCamera, equal);
-         this.rotateCameraFlag = true;
-         this.cameraToMovePos = cameraPositionsCoords[cameraIndex];
-         this.startCameraAnimation = true;
-     }
+   if (this.graph.loadedOk && !this.rotateCameraFlag) {
+       var cameraIndex = getIndex(cameraPositions, this.rotateCamera, equal);
+       this.rotateCameraFlag = true;
+       this.cameraToMovePos = cameraPositionsCoords[cameraIndex];
+       this.startCameraAnimation = true;
+   }
 
-     if (this.startCameraAnimation) {
+   if (this.startCameraAnimation) {
 
-         this.startCameraAnimation = false;
-         this.camera.startTime = Date.now();
-         this.camera.calcRadius();
-         this.camera.calcAngles();
-         this.camera.updatePos();
-         this.camera.updateZeros();
+       this.startCameraAnimation = false;
+       this.camera.startTime = Date.now();
+       this.camera.calcRadius();
+       this.camera.calcAngles();
+       this.camera.updatePos();
+       this.camera.updateZeros();
          //console.log(this.camera.radius, this.camera.theta, this.camera.phi, this.camera.position);
          if (typeof this.cameraToMovePos !== 'undefined') {
              // console.log(this.camera.theta, this.camera.thetaZero, this.camera.position);
@@ -501,12 +507,12 @@
 
              this.cameraAnimationdeltaT = absoluteDistance / this.cameraSpeed * 100.0;
              if (this.cameraAnimationdeltaT < 1000)
-                 this.cameraAnimationdeltaT = 1000
-         } else
-             this.rotateCameraFlag = false;
-     }
- };
- XMLscene.prototype.onGraphLoaded = function() {
+               this.cameraAnimationdeltaT = 1000
+       } else
+       this.rotateCameraFlag = false;
+   }
+};
+XMLscene.prototype.onGraphLoaded = function() {
      //set the backgroun and global ambient illumination parsed from the ILLUMINATION
      this.gl.clearColor(this.graph.background['r'], this.graph.background['g'], this.graph.background['b'], this.graph.background['a']);
      this.setGlobalAmbientLight(this.graph.ambient['r'], this.graph.ambient['g'], this.graph.ambient['b'], this.graph.ambient['a']);
@@ -541,52 +547,61 @@
  };
 
  XMLscene.prototype.update = function(currTime) {
-     this.currTime = currTime;
+   this.currTime = currTime;
 
 
-     if (this.gameStarted && !this.gameOver) {
-         if (this.changePlayer) {
-             this.moveTime = 0;
-             this.startPlay = currTime;
-             this.changePlayer = false;
-             console.log("updatePlayTime");
-         } else {
-             this.moveTime = (this.currTime - this.startPlay) / 1000.0;
+   if (this.gameStarted && !this.gameOver) {
+       if (this.changePlayer) {
+           this.moveTime = 0;
+           this.startPlay = currTime;
+           this.changePlayer = false;
+           console.log("updatePlayTime");
+       } else {
+           this.moveTime = (this.currTime - this.startPlay) / 1000.0;
              //  console.log(this.moveTime);
              if (this.moveTime >= this.maxMoveTime) {
-                 this.moveTime = 0;
-                 nextPlayer(this);
-             }
-         }
-     }
+               this.moveTime = 0;
+               nextPlayer(this);
+           }
+       }
+   }
 
-     if (this.graph.loadedOk) {
-         this.graph.update(currTime);
-     }
-     if (this.updateEndTime)
-         this.endMoveTime++;
+   if (this.graph.loadedOk) {
+       this.graph.update(currTime);
+   }
+   if (this.updateEndTime)
+       this.endMoveTime++;
 
-     if (this.rotateCameraFlag)
-         this.updateCamera(currTime);
- };
+   if (this.rotateCameraFlag)
+       this.updateCamera(currTime);
+};
 
- XMLscene.prototype.replayMove = function(move) {
-     console.log("Replay Move", move, this.moves);
-     play(this, move);
- };
+XMLscene.prototype.replayMove = function(move) {
+   console.log("Replay Move", move, this.moves);
+   play(this, move);
+};
 
- XMLscene.prototype.display = function() {
+XMLscene.prototype.display = function() {
 
-     this.graph.movTrack.listen();
-     this.clearPickRegistration();
+   this.graph.movTrack.listen();
+   this.clearPickRegistration();
 
      // Clear image and depth buffer everytime we update the scene
      this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
      this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
      // Initialize Model-View matrix as identity (no transformation
-     this.updateProjectionMatrix();
+        this.updateProjectionMatrix();
+       this.loadIdentity();
 
-     this.loadIdentity();
+    if (this.graph.loadedOk) {
+            console.log("before",this.graph.matArray);
+            this.currentText.setGraphA(this.graph);
+            this.pushMatrix();
+            this.translate(-6.5,2.7,-18);
+            this.scale(0.2,0.4,1);
+            this.currentText.display("a");
+            this.popMatrix();
+        }
 
      // Apply transformations corresponding to the camera position relative to the origin
      this.applyViewMatrix();
@@ -595,28 +610,28 @@
      this.axis.display();
      if (!this.playingAnimation) {
 
-         if (!this.gameOver) {
+       if (!this.gameOver) {
              //TODO por o tempo de volta
              if (botPlayers.indexOf(this.currentPlayer) >= 0 && !this.replayOfGame && (this.endMoveTime >= endTimeMax)) {
-                 this.endMoveTime = 0;
-                 this.updateEndTime = false;
-                 play(this, []);
-             } else {
+               this.endMoveTime = 0;
+               this.updateEndTime = false;
+               play(this, []);
+           } else {
 
-             }
+           }
              //console.log(this.endMoveTime);
              /*else
-                             console.log(botPlayers.indexOf(this.currentPlayer) >= 0, this.replayOfGame);*/
+             console.log(botPlayers.indexOf(this.currentPlayer) >= 0, this.replayOfGame);*/
          }
          //add play if bot
          if (this.replayOfGame && this.moves.length > 0 && !this.play && !this.replayingMove) {
 
-             var moveToReplay = this.moves[0];
-             this.replayMove(moveToReplay);
-             this.replayingMove = true;
-         }
+           var moveToReplay = this.moves[0];
+           this.replayMove(moveToReplay);
+           this.replayingMove = true;
+       }
 
-     }
+   }
      // ---- END Background, camera and axis setup
      // it is important that things depending on the proper loading of the graph
      // only get executed after the graph has loaded correctly.
@@ -625,56 +640,56 @@
      if (this.graph.loadedOk) {
          //constant update from this values. Checking for each light is enabled or disable
          for (var j = 0; j < this.nLights; j++) {
-             if (!this.lightsEnable[j])
-                 this.lights[j].disable();
-             else
-                 this.lights[j].enable();
+           if (!this.lightsEnable[j])
+               this.lights[j].disable();
+           else
+               this.lights[j].enable();
 
-             this.lights[j].update();
-         }
+           this.lights[j].update();
+       }
 
          //draw the graphScene
          this.graph.display();
       /**  this.testeP.display();
-         this.testeP1.display();*/
+      this.testeP1.display();*/
 
-     }
- };
+  }
+};
 
- function postGameRequest(requestString, onSuccess, onError) {
-     var request = new XMLHttpRequest();
-     request.open('POST', 'http://localhost:8081/game', true);
+function postGameRequest(requestString, onSuccess, onError) {
+   var request = new XMLHttpRequest();
+   request.open('POST', 'http://localhost:8081/game', true);
 
-     request.onload = onSuccess || function(data) {
-         console.log("Request successful. Reply: " + data.target.response);
-     };
-     request.onerror = onError || function() {
-         console.log("Error waiting for response");
-     };
+   request.onload = onSuccess || function(data) {
+       console.log("Request successful. Reply: " + data.target.response);
+   };
+   request.onerror = onError || function() {
+       console.log("Error waiting for response");
+   };
 
-     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-     request.send('requestString=' + encodeURIComponent(requestString));
- };
+   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+   request.send('requestString=' + encodeURIComponent(requestString));
+};
 
- function makeRequest(functionName, arguments, handleReply) {
+function makeRequest(functionName, arguments, handleReply) {
 
      // Compose Request String
      var requestString = "[ " + functionName;
      if (typeof arguments !== 'undefined') {
-         for (var i = 0; i < arguments.length; i++) {
-             requestString += " , " + arguments[i];
+       for (var i = 0; i < arguments.length; i++) {
+           requestString += " , " + arguments[i];
 
-             if (i == arguments.length - 1) {
-                 requestString += " ]";
-             }
-         }
-     }
-     if (arguments.length == 0 && functionName != null && (typeof functionName !== 'undefined'))
-         requestString += " ]";
-     postGameRequest(requestString, handleReply);
- };
+           if (i == arguments.length - 1) {
+               requestString += " ]";
+           }
+       }
+   }
+   if (arguments.length == 0 && functionName != null && (typeof functionName !== 'undefined'))
+       requestString += " ]";
+   postGameRequest(requestString, handleReply);
+};
 
  //Handle the JSON Reply
  function handleReply(data) {
-     response = JSON.parse(data.target.response);
- };
+   response = JSON.parse(data.target.response);
+};
