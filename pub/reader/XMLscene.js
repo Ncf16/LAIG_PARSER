@@ -593,7 +593,7 @@ XMLscene.prototype.display = function() {
        this.loadIdentity();
 
     if (this.graph.loadedOk) {
-            console.log("before",this.graph.matArray);
+           // console.log("before",this.graph.matArray);
             this.currentText.setGraphA(this.graph);
             this.pushMatrix();
             this.translate(-6.5,2.7,-18);

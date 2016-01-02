@@ -63,7 +63,7 @@ Node.prototype.setNode = function(parentElement) {
             if (typeof tmpNode !== "undefined") {
                 tmpNode.currentAmbient = nodeAmbient;
                 tmpNode.copyTransformationInfo(this);
-                 this.descendents[0] = tmpNode;
+                this.descendents[0] = tmpNode;
             }
         }
     }
@@ -71,7 +71,7 @@ Node.prototype.setNode = function(parentElement) {
 //garantir que os nodes alternativos são criados com tudo igual
 Node.prototype.swapDescentds = function(idToSwap, node) {
 
-    console.log(this.id, this.descendents,idToSwap);
+    console.log(this.id, this.descendents, idToSwap);
     var index = getIndex(this.descendents, idToSwap, compareWithID);
     if (index > -1) {
         //TODO copy info from descendent to Node, just to be sure

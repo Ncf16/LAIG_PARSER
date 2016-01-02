@@ -11,7 +11,7 @@ function Piece(graph) {
     this.requestId = 0;
     this.pickingMaterial = null;
     this.pickingTexture = null;
-     
+
 }
 
 Piece.prototype = Object.create(Node.prototype);
@@ -71,6 +71,7 @@ Piece.prototype.display = function(parentElement) {
     var texture;
 
     this.setAmbient();
+    this.setNode(parentElement);
 
     //if string Material from node is different from null is necessary to push the material to material Stack
     if (this.material != "null") {

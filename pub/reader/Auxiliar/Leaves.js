@@ -32,7 +32,7 @@ Leaf.prototype.setGraph = function(newGraph) {
     this.graph = newGraph;
 };
 Leaf.prototype.setGraphA = function(newGraph) {
-    console.log("Here");
+   // console.log("Here");
     this.graph = newGraph;
 };
 Leaf.prototype.parseLeaf = function(args, scene) {};

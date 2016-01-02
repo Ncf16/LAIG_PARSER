@@ -93,6 +93,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
         this.parseAmbients(rootElement);
+        console.log(this.nodes);
 
     } catch (err) {
         if (err instanceof XMLError) {
@@ -673,7 +674,7 @@ MySceneGraph.prototype.parseAmbientNodes = function(rootElement) {
             var elems2 = elems[i].getElementsByTagName("ALT");
             if (elems2.length > 0) {
                 console.log(node.descendents);
-                this.parseNodeGeometryAmbients(elems2, node.ambientNodes,node.descendents[0].id);
+                this.parseNodeGeometryAmbients(elems2, node.ambientNodes, node.descendents[0].id);
 
             }
         }
