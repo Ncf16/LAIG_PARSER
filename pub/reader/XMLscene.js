@@ -47,7 +47,7 @@
      this.replayingMove = false;
      this.moveTime = 0;
      this.startPlay = 0;
-     this.ambientID = "";
+     this.ambientID = "Default";
      this.rotateCamera = new Object();
      this.gameStats = [24, 24, 24, 24];
      this.endMoveTime = 0;

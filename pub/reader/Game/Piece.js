@@ -11,62 +11,63 @@ function Piece(graph) {
     this.requestId = 0;
     this.pickingMaterial = null;
     this.pickingTexture = null;
+     
 }
 
 Piece.prototype = Object.create(Node.prototype);
 Piece.prototype.constructor = Piece;
 
-Piece.prototype.setObjects = function(idObject){
+Piece.prototype.setObjects = function(idObject) {
     var id = 0;
-    if(idObject == "ringObject")
+    if (idObject == "ringObject")
         id = 24;
 
-    for(var i=0; i < 48; i++){
-        if(i < 24)
-            this.graph.movTrack.board.setPieceNode(50+i+id,this);
+    for (var i = 0; i < 48; i++) {
+        if (i < 24)
+            this.graph.movTrack.board.setPieceNode(50 + i + id, this);
         else
-            this.graph.movTrack.board.setPieceNode(74+i+id,this);
+            this.graph.movTrack.board.setPieceNode(74 + i + id, this);
     }
 }
 
-Piece.prototype.setPickingAmbient = function(){
+Piece.prototype.setPickingAmbient = function() {
 
     this.pickingMaterial = this.material;
     this.pickingTexture = this.texture;
 
     var tmpMaterial = this.materials["picking"];
-    if(typeof tmpMaterial !== "undefined")
+    if (typeof tmpMaterial !== "undefined")
         this.pickingMaterial = tmpMaterial;
     var tmpTexture = this.textures["picking"];
-    if(typeof tmpTexture !== "undefined")
+    if (typeof tmpTexture !== "undefined")
         this.pixkingTexture = tmpTexture;
 }
 
-Piece.prototype.setPicking = function(id){
+Piece.prototype.setPicking = function(id) {
     this.requestId = id;
 }
 
-Piece.prototype.clearPicking = function(){
+Piece.prototype.clearPicking = function() {
     this.requestId = 0;
 }
 
 
-Piece.prototype.display = function(parentElement){
-	
+Piece.prototype.display = function(parentElement) {
+
     var pieceId;
-	var piece = this.graph.movTrack.getPiece();
-	if(piece != null)
-		pieceId = piece.id;
-	id = this.graph.movTrack.id;
-    if(id == this.requestId){
+    var piece = this.graph.movTrack.getPiece();
+    if (piece != null)
+        pieceId = piece.id;
+    id = this.graph.movTrack.id;
+    if (id == this.requestId) {
         var tmpMaterial = this.material;
         this.material = this.pickingMaterial;
         var tmpTexture = this.texture;
         this.texture = this.pickingTexture;
     }
-	this.graph.scene.registerForPick(this.graph.movTrack.id++, this);
-	
-	var material;
+    this.graph.scene.registerForPick(this.graph.movTrack.id++, this);
+
+    var material;
     var texture;
 
     this.setAmbient();
@@ -117,7 +118,7 @@ Piece.prototype.display = function(parentElement){
     if (material != null)
         this.graph.matArray.pop();
 
-    if(id == this.requestId){
+    if (id == this.requestId) {
         this.material = tmpMaterial;
         this.texture = tmpTexture;
     }
@@ -125,13 +126,13 @@ Piece.prototype.display = function(parentElement){
 
 Piece.prototype.getCoords = function(color, type) {
     if (color == "white" && type == "disk")
-        return stackCoordsToWorld(4,0,1);
+        return stackCoordsToWorld(4, 0, 1);
     else if (color == "white" && type == "ring")
-        return  stackCoordsToWorld(1,0,1);
+        return stackCoordsToWorld(1, 0, 1);
     else if (color == "black" && type == "disk")
-        return  stackCoordsToWorld(0,4,-1);
+        return stackCoordsToWorld(0, 4, -1);
     else if (color == "black" && type == "ring")
-        return  stackCoordsToWorld(0,1,-1);
+        return stackCoordsToWorld(0, 1, -1);
     return [];
 };
 
@@ -142,22 +143,29 @@ Piece.prototype.move = function(orig, dest) {
     var deltaZ = dest[2] - orig[2];
     var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     var deltaT = this.deltaT + (0.01 * distance);
-    var control = [this.origin, [this.origin[0], this.deltaY, this.origin[2]],[deltaX, this.deltaY, deltaZ],[deltaX, deltaY, deltaZ]];
-    this.animate(deltaT,control);
+    var control = [this.origin, [this.origin[0], this.deltaY, this.origin[2]],
+        [deltaX, this.deltaY, deltaZ],
+        [deltaX, deltaY, deltaZ]
+    ];
+    this.animate(deltaT, control);
 };
 
-Piece.prototype.reverseMove = function(orig,dest){
-    
+Piece.prototype.reverseMove = function(orig, dest) {
+
     var deltaX = dest[0] - orig[0];
     var deltaY = dest[1] - orig[1];
     var deltaZ = dest[2] - orig[2];
-    var distance = Math.sqrt(deltaX*deltaX + deltaY * deltaY + deltaZ * deltaZ);
-    var deltaT = this.deltaT + (0.01* distance);
-    var control = [[deltaX,deltaY,deltaZ], [deltaX,this.deltaY,deltaZ], [this.origin[0],this.deltaY,this.origin[2]], this.origin];
-    this.animate(deltaT,control);
+    var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+    var deltaT = this.deltaT + (0.01 * distance);
+    var control = [
+        [deltaX, deltaY, deltaZ],
+        [deltaX, this.deltaY, deltaZ],
+        [this.origin[0], this.deltaY, this.origin[2]], this.origin
+    ];
+    this.animate(deltaT, control);
 };
 
-Piece.prototype.animate = function(deltaT,control){
+Piece.prototype.animate = function(deltaT, control) {
     var tempAnimation = new LinearAnimation(this.graph.scene, deltaT, control);
     tempAnimation.type = "linear";
     this.graph.movTrack.animation = tempAnimation;

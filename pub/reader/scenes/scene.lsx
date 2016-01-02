@@ -112,11 +112,9 @@
             <MATERIAL id="defaultMaterial" />
             <TEXTURE id="clear" />
             <DESCENDANTS>
-                <DESCENDANT id="pool"/>
-                <DESCENDANT id="full"/>
-             <!--   <DESCENDANT id="board" />
+                <DESCENDANT id="board" />
                 <DESCENDANT id="containers" />
-                <DESCENDANT id="pieces" />-->
+                <DESCENDANT id="pieces" /> 
             </DESCENDANTS>
         </NODE>
         <NODE id="containers">
