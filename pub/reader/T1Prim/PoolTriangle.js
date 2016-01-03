@@ -18,8 +18,6 @@
  PoolTriangle.prototype.constructor = PoolTriangle;
 
  PoolTriangle.prototype.display = function() {
-     this.scene.pushMatrix();
-     this.scene.scale(1.5, 1.5, 1.5);
      this.T1.display();
      this.T2.display();
      this.T3.display();
@@ -32,5 +30,4 @@
      this.T10.display();
      this.T11.display();
      this.T12.display();
-     this.scene.popMatrix();
  };

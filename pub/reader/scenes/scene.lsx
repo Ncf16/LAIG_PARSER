@@ -442,7 +442,17 @@
             <SCALE sx="1" sy="0.3" sz="1" />
             <DESCENDANTS>
                 <DESCENDANT id="sphere" />
-                <DESCENDANT id="full" ambient="Lighting" />
+                <DESCENDANT id="fullTemp" ambient="Lighting" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="fullTemp">
+            <MATERIAL id="null"/>
+            <TEXTURE id="clear"/>
+            <ROTATION  axis="x" angle="90"/>
+            <SCALE sx="0.35" sy="0.35" sz="1.5"/>
+            <TRANSLATION x="0" y="0" z="-1"/>
+            <DESCENDANTS>
+                <DESCENDANT id="full"/>
             </DESCENDANTS>
         </NODE>
         <NODE id="ringObject">
@@ -453,7 +463,15 @@
             <SCALE sx="1" sy="0.3" sz="1" />
             <DESCENDANTS>
                 <DESCENDANT id="torus" />
-                <DESCENDANT id="pool" ambient="Lighting" />
+                <DESCENDANT id="poolTemp" ambient="Lighting" />
+            </DESCENDANTS>
+        </NODE>
+        <NODE id="poolTemp">
+            <MATERIAL id="null"/>
+            <TEXTURE id="clear"/>
+            <SCALE sx="0.5" sy="1.5" sz="0.5"/>
+            <DESCENDANTS>
+                <DESCENDANT id="pool"/>
             </DESCENDANTS>
         </NODE>
         <NODE id="line1">
