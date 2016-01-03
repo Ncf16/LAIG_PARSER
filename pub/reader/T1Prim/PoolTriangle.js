@@ -19,7 +19,7 @@
 
  PoolTriangle.prototype.display = function() {
      this.scene.pushMatrix();
-     this.scene.scale(0.5, 1.5, 0.5);
+     this.scene.scale(1.5, 1.5, 1.5);
      this.T1.display();
      this.T2.display();
      this.T3.display();

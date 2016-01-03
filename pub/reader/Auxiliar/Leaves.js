@@ -3,24 +3,21 @@ var FIRST_ELEMENT = 0;
 
 function Leaf(graph) {
     this.element = null;
-    this.id;
+    this.ID;
     this.type;
     this.graph = graph;
     this.args = [];
     this.stillChecking = false;
-    this.currentAmbient = "Default"
 };
 Leaf.prototype.update = function(currTime) {};
 Leaf.prototype.setID = function(newID) {
-    this.id = newID;
+    this.ID = newID;
 };
 Leaf.prototype.getID = function() {
-    return this.id;
+    return this.ID;
 };
 Leaf.prototype.getElement = function() {
     return this.element;
-};
-Leaf.prototype.copyTransformationInfo = function(toCopyNode) {
 };
 Leaf.prototype.setArgs = function(newArgs) {
     this.args = newArgs;
@@ -29,10 +26,6 @@ Leaf.prototype.getArgs = function() {
     return this.args;
 };
 Leaf.prototype.setGraph = function(newGraph) {
-    this.graph = newGraph;
-};
-Leaf.prototype.setGraphA = function(newGraph) {
-   // console.log("Here");
     this.graph = newGraph;
 };
 Leaf.prototype.parseLeaf = function(args, scene) {};
@@ -327,6 +320,16 @@ LeafText.prototype.translateId = function(id) {
         case "blackRingsStats":
             value = this.graph.scene.gameStats[3];
             break;
+        case "currPlayerInfo":
+            if (this.graph.scene.currentPlayer != null)
+                this.text = this.graph.scene.currentPlayer;
+            return;
+        case "whiteNbVictories":
+            this.text = this.graph.scene.victories[0].toString();
+            return;
+        case "blackNbVictories":
+            this.text = this.graph.scene.victories[1].toString();
+            return;
         default:
             return;
     }
@@ -400,7 +403,6 @@ LeafFullCylinder.prototype.parseLeaf = function(args, scene) {
 
 function LeafPoolTriangle() {
     Leaf.call(this);
-    console.log(this);
 };
 
 LeafPoolTriangle.prototype = Object.create(Leaf.prototype);

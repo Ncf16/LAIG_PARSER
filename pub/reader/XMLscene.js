@@ -16,74 +16,86 @@
 
 
  function XMLscene() {
-     CGFscene.call(this);
-     this.Loop = false;
-     this.returnsToStart = false;
-     this.gui = null;
-     this.player1 = player1Color;
-     this.player2 = player2Color;
-     this.maxMoveTime = 5;
-     this.gameStarted = false;
-     this.rotateCameraFlag = false;
-     this.startCameraAnimation = false;
-     this.cameraAnimationdeltaT = 0;
-     this.play = false;
-     this.moves = [];
-     this.boards = [];
-     this.currentBoard = null;
-     this.currentPlayer = null;
-     this.gameOver = false;
-     this.gameError = false;
-     this.currTime = 0;
-     this.replayOfGame = false;
-     this.playingAnimation = false;
-     this.cameraPhiDelta = 0;
-     this.cameraThetaDelta = 0;
-     this.cameraRadiusDelta = 0;
-     this.cameraSpeed = 1;
-     this.cameraToMovePos = new Object();
-     this.animationPlaying = false;
-     this.changePlayer = false;
-     this.replayingMove = false;
-     this.moveTime = 0;
-     this.startPlay = 0;
-     this.ambientID = "Default";
-     this.rotateCamera = new Object();
-     this.gameStats = [24, 24, 24, 24];
-     this.endMoveTime = 0;
-     this.updateEndTime = false;
-     this.initCameraPos();
-     this.initHandlers();
- };
+   CGFscene.call(this);
+   this.Loop = false;
+   this.returnsToStart = false;
+   this.gui = null;
+   this.player1 = player1Color;
+   this.player2 = player2Color;
+   this.maxMoveTime = 20;
+   this.gameStarted = false;
+   this.rotateCameraFlag = false;
+   this.startCameraAnimation = false;
+   this.cameraAnimationdeltaT = 0;
+   this.play = false;
+   this.moves = [];
+   this.boards = [];
+   this.currentBoard = null;
+   this.currentPlayer = null;
+   this.gameOver = false;
+   this.gameError = false;
+   this.currTime = 0;
+   this.victories = [0,0];
+   this.replayOfGame = false;
+   this.playingAnimation = false;
+   this.cameraPhiDelta = 0;
+   this.cameraThetaDelta = 0;
+   this.cameraRadiusDelta = 0;
+   this.cameraSpeed = 1;
+   this.cameraToMovePos = new Object();
+   this.animationPlaying = false;
+   this.changePlayer = false;
+   this.replayingMove = false;
+   this.moveTime = 0;
+   this.startPlay = 0;
+   this.ambientID = "Default";
+   this.rotateCamera = new Object();
+   this.gameStats = [24, 24, 24, 24];
+   this.endMoveTime = 0;
+   this.updateEndTime = false;
+   this.initCameraPos();
+   this.initHandlers();
+};
 
- XMLscene.prototype = Object.create(CGFscene.prototype);
- XMLscene.prototype.constructor = XMLscene;
+XMLscene.prototype = Object.create(CGFscene.prototype);
+XMLscene.prototype.constructor = XMLscene;
 
- XMLscene.prototype.parsePlayers = function() {
-     botPlayers = [];
-     if (botTypes.indexOf(this.player1) >= 0)
-         botPlayers.push(player1Color);
+XMLscene.prototype.parsePlayers = function() {
+   botPlayers = [];
+   if (botTypes.indexOf(this.player1) >= 0)
+       botPlayers.push(player1Color);
 
-     if (botTypes.indexOf(this.player2) >= 0)
-         botPlayers.push(player2Color);
- };
+   if (botTypes.indexOf(this.player2) >= 0)
+       botPlayers.push(player2Color);
+};
 
- XMLscene.prototype.canSelectPiece = function(color) {
-     return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
- }
+XMLscene.prototype.giveVictory = function(player){
+  if(player == player1Color){
+    console.log("black Victory"),
+    this.victories[1]++;
+  }
+  else if(player == player2Color){
+    console.log("white victory");
+    this.victories[0]++;
+  }
+};
 
- XMLscene.prototype.canSelectCell = function() {
-     return this.gameStarted;
- }
+XMLscene.prototype.canSelectPiece = function(color) {
 
- XMLscene.prototype.initCameraPos = function() {
+    return this.gameStarted && !this.animationPlaying && (botPlayers.indexOf(color) == -1) && this.currentPlayer == color;
+}
 
-     var initialPosTemp = cartesianToSphericCoords(CAMERA_DEFAULT_POSITION);
-     var initialPos = new Object();
-     initialPos.radius = initialPosTemp[0];
-     initialPos.theta = initialPosTemp[1];
-     initialPos.phi = initialPosTemp[2];
-     //console.log(initialPos);
+XMLscene.prototype.canSelectCell = function() {
+   return this.gameStarted;
+}
+
+XMLscene.prototype.initCameraPos = function() {
+
+   var initialPosTemp = cartesianToSphericCoords(CAMERA_DEFAULT_POSITION);
+   var initialPos = new Object();
+   initialPos.radius = initialPosTemp[0];
+   initialPos.theta = initialPosTemp[1];
+   initialPos.phi = initialPosTemp[2];
 
      for (var i = 0; i < 4; i++) {
        var newPos = new Object();
@@ -92,8 +104,6 @@
        newPos.phi = initialPos.phi;
        cameraPositionsCoords.push(newPos);
    };
-
-     //console.log(cameraPositionsCoords);
  };
 
  XMLscene.prototype.initHandlers = function() {
@@ -118,7 +128,6 @@
            this.moves.splice(0, this.moves.length);
            this.boards.splice(0, this.boards.length);
            this.reset(false);
-             //console.log(this.graph.movTrack.board);
              this.gamestatS = [24, 24, 24, 24];
              console.log("End Reset");
 
@@ -133,7 +142,6 @@
            this.boards.splice(this.boards.length - 1, 1);
            this.currentBoard = this.boards[this.boards.length - 1];
            var newPlayer = getPlayer(moveToUndo);
-             //console.log("newPlayer", newPlayer);
              incStat(this, newPlayer, moveToUndo);
              this.moves.splice(this.moves.length - 1, 1);
          }
@@ -239,7 +247,6 @@ function statsCheck(scene, response, player) {
          getStats(scene);
          scene.currentPlayer = player;
          scene.changePlayer = true;
-         //console.log(scene.currentPlayer);
      }
  };
 
@@ -254,7 +261,6 @@ function statsCheck(scene, response, player) {
 };
 
 function incStat(scene, player, move) {
-     //add player who did the move to each "move"; the placed piece occupies the 4th position on the array of moves
      //console.log(player);
      makeRequest("incStats", [player, move[3]], (function(data) {
 
@@ -278,13 +284,17 @@ function incStat(scene, player, move) {
      }
  };
 
+
+
  function handlePlay(scene, data) {
    scene.moveSelected = false;
    if (data['message'].indexOf(FAILURE_MESSAGE) == -1 && data['message'].indexOf(DRAW_MESSAGE) == -1) {
        if (data['message'].indexOf(VICTORY_MESSAGE) > -1) {
            scene.gameOver = true;
            scene.endStatus = data['message'];
-           console.log("SOMEONE WON");
+           var victory = scene.endStatus.substring(0,5);
+           scene.giveVictory(victory);
+           console.log(victory);
            console.log(scene.moves.length);
        } else {
              //console.log(data);
@@ -296,17 +306,15 @@ function incStat(scene, player, move) {
                scene.moves.push(newMove);
            }
 
-             //4th position is the placed piece
              if (botPlayers.indexOf(scene.currentPlayer) >= 0 || scene.replayOfGame && !scene.animationPlaying) {
 
-                 //Aqui é para fazer o move do bot mas ele está a borkar //where exactly
                  var pieceToAnimateId = scene.graph.movTrack.removeTopPiece(newMove[3]);
                  var worldCoords = boardCoordsToWorld(newMove[0], newMove[1]);
-                 var pieceToMove = new Info(); //got it? will it work?
+                 var pieceToMove = new Info();
                  prologToInfo(newMove[3], pieceToMove);
                  pieceToMove.node = scene.graph.movTrack.board.getPieceNode(pieceToAnimateId);
-                 pieceToMove.coord = pieceToMove.node.getCoords(pieceToMove.info1, pieceToMove.info2); //sabes color e type da p já acrescentei//? nao é isto? oh merda troquei
-                 pieceToMove.id = pieceToAnimateId; // ->acrescentei esta linha 
+                 pieceToMove.coord = pieceToMove.node.getCoords(pieceToMove.info1, pieceToMove.info2);
+                 pieceToMove.id = pieceToAnimateId; 
                  var cellToMove = new Object();
                  cellToMove.info1 = newMove[1];
                  cellToMove.info2 = newMove[0];
@@ -319,9 +327,6 @@ function incStat(scene, player, move) {
                    scene.moves.splice(0, 1);
                      //console.log(scene.moves.length);
                  }
-
-
-                 //   console.log(pieceToAnimateId, pieceToMove, worldCoords);
              }
 
              scene.graph.movTrack.animate();
@@ -336,7 +341,6 @@ function incStat(scene, player, move) {
    }
    scene.updateEndTime = true;
    scene.play = false;
-     // console.log("HAVE ASNWERS");
  };
 
  function nextPlayer(scene) {
@@ -402,10 +406,6 @@ XMLscene.prototype.updateCamera = function(currTime) {
      this.textShader.setUniformsValues({
        'dims': [16, 16]
    });
-
-     var element = new Rectangle(this, [-0.5, 0.5, 0], [0.5, -0.5, 0]);
-     this.currentText = new LeafText(this,element,"current Player","textures/tileset-font.png");
-     this.currentText.texture = new CGFtexture(this, "textures/tileset-font.png");
  };
 
  //initialize with scene with a light that will be overwrited after the parsing of the file
@@ -541,13 +541,10 @@ XMLscene.prototype.onGraphLoaded = function() {
 
      this.gui.scene = this;
      this.setUpdatePeriod(updateTime);
-     this.testeP = new PoolTriangle(this);
-     this.testeP1 = new fullCylinder(this);
  };
 
  XMLscene.prototype.update = function(currTime) {
    this.currTime = currTime;
-
 
    if (this.gameStarted && !this.gameOver) {
        if (this.changePlayer) {
@@ -565,9 +562,8 @@ XMLscene.prototype.onGraphLoaded = function() {
        }
    }
 
-   if (this.graph.loadedOk) {
+   if (this.graph.loadedOk)
        this.graph.update(currTime);
-   }
    if (this.updateEndTime)
        this.endMoveTime++;
 
@@ -592,15 +588,9 @@ XMLscene.prototype.display = function() {
         this.updateProjectionMatrix();
        this.loadIdentity();
 
-    if (this.graph.loadedOk) {
-           // console.log("before",this.graph.matArray);
-            this.currentText.setGraphA(this.graph);
-            this.pushMatrix();
-            this.translate(-6.5,2.7,-18);
-            this.scale(0.2,0.4,1);
-            this.currentText.display("a");
-            this.popMatrix();
-        }
+      if (this.graph.loadedOk) {
+        this.graph.displayHUD();
+      }
 
      // Apply transformations corresponding to the camera position relative to the origin
      this.applyViewMatrix();
@@ -615,12 +605,7 @@ XMLscene.prototype.display = function() {
                this.endMoveTime = 0;
                this.updateEndTime = false;
                play(this, []);
-           } else {
-
            }
-             //console.log(this.endMoveTime);
-             /*else
-             console.log(botPlayers.indexOf(this.currentPlayer) >= 0, this.replayOfGame);*/
          }
          //add play if bot
          if (this.replayOfGame && this.moves.length > 0 && !this.play && !this.replayingMove) {
@@ -649,8 +634,6 @@ XMLscene.prototype.display = function() {
 
          //draw the graphScene
          this.graph.display();
-      /**  this.testeP.display();
-      this.testeP1.display();*/
 
   }
 };

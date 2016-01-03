@@ -44,7 +44,7 @@ function getUrlVars() {
 
 
 serialInclude(['../lib/CGF.js', 'Auxiliar/Node.js', 'Auxiliar/Materials.js', 'T1PRim/Triangle.js', 'T1PRim/MyCylinderBase.js', 'T1PRim/PoolTriangle.js', 'T1PRim/Torus.js', 'T1Prim/Rectangle.js', 'T1Prim/Sphere.js', 'T1Prim/Cylinder.js', 'T1Prim/Hex.js',
-    'T1PRim/fullCylinder.js', 'Auxiliar/Transformations.js', 'Auxiliar/FuncAux.js', 'Auxiliar/Leaves.js', 'Game/Board.js', 'Game/BoardCell.js', 'Game/Piece.js',
+    'T1PRim/fullCylinder.js', 'Auxiliar/Transformations.js', 'Auxiliar/FuncAux.js', 'Auxiliar/Leaves.js', 'Game/HUD.js', 'Game/Board.js', 'Game/BoardCell.js', 'Game/Piece.js',
     'Auxiliar/MyInterface.js', 'Auxiliar/Texture.js', 'Auxiliar/MyCamera.js', 'Animation/Animation.js', 'Animation/LinearAnimation.js', 'Animation/CircularAnimation.js',
     ' Auxiliar/MovTrack.js', 'XMLscene.js', 'MySceneGraph.js', 'Auxiliar/Initials.js', 'Auxiliar/Frustum.js', 'Auxiliar/Lights.js',
 

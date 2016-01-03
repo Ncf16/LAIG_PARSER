@@ -69,6 +69,11 @@ MySceneGraph.prototype.display = function() {
         this.onXMLError("Element Root missing");
 };
 
+MySceneGraph.prototype.displayHUD = function(){
+    if(typeof this.hud !== "undefined")
+      this.hud.display();
+}
+
 /*
  * Callback to be executed after successful reading
  */
@@ -93,7 +98,6 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.parseAnimations(rootElement);
         this.parseNodes(rootElement);
         this.parseAmbients(rootElement);
-        console.log(this.nodes);
 
     } catch (err) {
         if (err instanceof XMLError) {
@@ -134,7 +138,7 @@ MySceneGraph.prototype.parseAmbients = function(rootElement) {
         if (currAmbient.nodeName == 'AMBIENT') {
             addID(currAmbient, this, this.scene.ambients);
         }
-
+       
     }
     console.log("END AMBIENTS");
 };
@@ -565,6 +569,22 @@ MySceneGraph.prototype.parseNodeAmbients = function(elems2, arr) {
     return def;
 }
 
+MySceneGraph.prototype.parseNodeDesAmbients = function(elems2, arr) {
+
+    var def = null;
+    for (var i = 0; i < elems2.length; i++) {
+        var id = this.reader.getString(elems2[i], 'id');
+        var ambient = this.reader.getString(elems2[i], 'ambient', false);
+        //if ambient is null is default
+        if (ambient == null)
+            ambient = "Default";
+
+        if(typeof arr[ambient] === "undefined")
+            arr[ambient] = [];
+         arr[ambient].push(id);
+    }
+}
+
 MySceneGraph.prototype.parseNodes = function(rootElement) {
     console.log("Start NODES");
     var elems = this.checkTag(rootElement, 'NODES', false);
@@ -585,27 +605,25 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
         else if (id == "diskObject" || id == "ringObject") {
             node = new Piece(this);
             node.setObjects(id);
-        } else
+        } else if (id == "hud"){
+            node = new HUD(this);
+            this.hud = node;
+        }
+        else
             node = new Node(this);
 
-        var descendants = [];
         var nodeTransformation = new Transformation(this.scene);
         node.id = id;
         var elems2 = this.checkTag(elems[i], 'MATERIAL', false, 1);
         node.material = this.parseNodeAmbients(elems2, node.materials);
         elems2 = this.checkTag(elems[i], 'TEXTURE', false, 1);
         node.texture = this.parseNodeAmbients(elems2, node.textures);
-        node.setPickingAmbient();
 
         //descendants
+        var descendants = [];
         elems2 = this.checkTag(elems[i], 'DESCENDANTS', false);
         elems2 = this.checkTag(elems2[0], 'DESCENDANT', false, 1);
-
-        for (var j = 0; j < elems2.length; j++) {
-            var descendant = this.reader.getString(elems2[j], 'id');
-            descendants.push(descendant);
-        }
-        node.descendentsID = descendants;
+        this.parseNodeDesAmbients(elems2, node.descendentsID);
 
         //get Animations
         var tempList = elems[i].getElementsByTagName('ANIMATION');
@@ -646,50 +664,16 @@ MySceneGraph.prototype.parseNodes = function(rootElement) {
 
         if (node.id == rootName)
             this.rootNode = node;
-
-        console.log(node.currentAmbient);
     }
 
     for (var i = 0; i < this.nodes.length; i++) {
         this.nodes[i].processDescendents();
     }
 
-    this.checkCycle();
-    this.parseAmbientNodes(rootElement);
+    //this.checkCycle();
     console.log("END NODES");
 };
 
-MySceneGraph.prototype.parseAmbientNodes = function(rootElement) {
-    var elems = this.checkTag(rootElement, 'NODES', false);
-
-
-    elems = this.checkTag(elems[0], 'NODE', false, 1);
-
-    for (var i = 0; i < elems.length; i++) {
-
-        var id = this.reader.getString(elems[i], 'id');
-        var index = getIndex(this.nodes, id, compareWithID);
-        if (index > -1) {
-            var node = this.nodes[index];
-            var elems2 = elems[i].getElementsByTagName("ALT");
-            if (elems2.length > 0) {
-                console.log(node.descendents);
-                this.parseNodeGeometryAmbients(elems2, node.ambientNodes, node.descendents[0].id);
-
-            }
-        }
-    }
-};
-MySceneGraph.prototype.parseNodeGeometryAmbients = function(elems2, arr, id) {
-    arr['Default'] = id;
-    for (var i = 0; i < elems2.length; i++) {
-        var id = this.reader.getString(elems2[i], 'id');
-        var ambient = this.reader.getString(elems2[i], 'ambient', false);
-
-        if (ambient != null)
-            arr[ambient] = id;
-    }
-};
 MySceneGraph.prototype.setUnvisited = function() {
 
     for (var key = 0; key < this.nodes.length; key++) {

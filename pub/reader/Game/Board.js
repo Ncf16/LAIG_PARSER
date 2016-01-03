@@ -91,7 +91,6 @@ Board.prototype.addPiece = function(type, id) {
 };
 Board.prototype.removeTopPiece = function(type) {
     var tempStack = this.getStackByPieceType(type);
-    console.log(type,tempStack);
     var idToReturn = tempStack[tempStack.length - 1];
     tempStack.splice(tempStack.length - 1, 1);
     return idToReturn;
